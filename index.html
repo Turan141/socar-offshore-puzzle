@@ -988,9 +988,23 @@ const surround = (() => {
 
   // Riser caisson & subsea manifold dolphin upper-left of main jacket (connected via pipe bridge)
   const dolphinHost = new THREE.Group();
-  dolphinHost.position.set(-5.95, 0, -5.35);
+  dolphinHost.position.set(-5.55, 0, -4.15);
   dolphinHost.rotation.y = -Math.PI / 2;
   const dolphinWrap = new THREE.Group();
+  {
+    const dkM = mat(0x384148, 0.55, 0.6), ocM = mat(0xb89432, 0.48, 0.2), rdM = mat(0xc6282e, 0.42, 0.15);
+    addMesh(dolphinWrap, new THREE.BoxGeometry(1.8, 0.2, 1.8), dkM, 0, -0.1, 0, false);
+    for (const sx of [-0.72, 0.72]) for (const sz of [-0.72, 0.72]) {
+      addMesh(dolphinWrap, new THREE.CylinderGeometry(0.13, 0.15, 4.8, 8), dkM, sx, -2.4, sz, false);
+    }
+    for (const rx of [-0.44, 0, 0.44]) {
+      addMesh(dolphinWrap, new THREE.CylinderGeometry(0.08, 0.08, 0.56, 8), pipeA, rx, 0.28, -0.25, false);
+      addMesh(dolphinWrap, new THREE.BoxGeometry(0.16, 0.12, 0.16), rdM, rx, 0.38, -0.25, false);
+    }
+    const br = addMesh(dolphinWrap, new THREE.BoxGeometry(1.75, 0.16, 0.36), dkM, 1.1, 0.08, -0.68, false);
+    br.rotation.y = Math.atan2(1.35, 1.1);
+    void ocM;
+  }
   dolphinHost.add(dolphinWrap);
   scene.add(dolphinHost);
 
@@ -1054,11 +1068,15 @@ const surround = (() => {
 
   // Fast offshore crew boat idling near the starboard (+X) boat landing
   const crewBoat = new THREE.Group();
-  const crewWrap = new THREE.Group(); crewBoat.add(crewWrap);
-  const crewWake = new THREE.Mesh(new THREE.PlaneGeometry(1.7, 3.0).rotateX(-Math.PI / 2),
+  const crewWrap = new THREE.Group();
+  addMesh(crewWrap, new THREE.BoxGeometry(0.86, 0.42, 2.75), mat(0x0b3659, 0.45, 0.25), 0, 0.08, 0, false);
+  addMesh(crewWrap, new THREE.BoxGeometry(0.98, 0.12, 2.65), mat(0xc6282e, 0.42, 0.14), 0, 0.26, 0, false);
+  addMesh(crewWrap, new THREE.BoxGeometry(0.64, 0.50, 1.05), mat(0xdce2e6, 0.38, 0.12), 0, 0.50, -0.25, false);
+  crewBoat.add(crewWrap);
+  const crewWake = new THREE.Mesh(new THREE.PlaneGeometry(1.9, 3.3).rotateX(-Math.PI / 2),
     new THREE.MeshBasicMaterial({ map: foamTex, color: 0xd0e6ed, transparent: true, opacity: 0.26, depthWrite: false }));
   crewWake.position.set(0, 0.02, 0); crewBoat.add(crewWake);
-  crewBoat.userData = { x: 6.15, z: 1.10, yaw: -0.18, wrap: crewWrap, wake: crewWake };
+  crewBoat.userData = { x: 6.05, z: 1.35, yaw: -0.22, wrap: crewWrap, wake: crewWake };
   scene.add(crewBoat);
 
   // Navigation channel buoys with blinking lamps
@@ -1375,7 +1393,7 @@ async function loadKit() {
     addAll(gltf.scene);
     if (params0.get('kit') !== 'v1') {
       const loader = new GLTFLoader();
-      await Promise.all(['assets/pieces_v2.glb', 'assets/buildings_v2.glb', 'assets/platform_v2.glb', 'assets/marine_v2.glb'].map(url =>
+      await Promise.all(['assets/pieces_v2.glb?v=7', 'assets/buildings_v2.glb?v=7', 'assets/platform_v2.glb?v=7', 'assets/marine_v2.glb?v=7'].map(url =>
         loader.loadAsync(url).then(g => addAll(g.scene)).catch(e => console.warn(url, 'not loaded:', e.message || e))));
     }
   } catch (e) {
@@ -2684,6 +2702,27 @@ function resize() {
   placeCamera();
 }
 addEventListener('resize', resize);
+// mobile browsers: never let the page zoom (pinch / double-tap / rotation keep-zoom) — the side panel would slide off screen
+(() => {
+  const meta = document.querySelector('meta[name=viewport]');
+  const resetZoom = () => {
+    if (!window.visualViewport || visualViewport.scale <= 1.01) return;
+    const c = meta.content; meta.content = c + ',minimum-scale=1'; setTimeout(() => { meta.content = c; }, 60);
+  };
+  const later = () => { resize(); resetZoom(); setTimeout(() => { resize(); resetZoom(); }, 350); };
+  addEventListener('orientationchange', later);
+  document.addEventListener('fullscreenchange', later);
+  if (window.visualViewport) visualViewport.addEventListener('resize', () => { resetZoom(); resize(); });
+  document.addEventListener('touchstart', e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
+  let lastEnd = 0;
+  document.addEventListener('touchend', e => {
+    const now = performance.now();
+    if (now - lastEnd < 350 && !e.target.closest('button')) e.preventDefault();   // kill double-tap zoom
+    lastEnd = now;
+  }, { passive: false });
+  document.addEventListener('dblclick', e => e.preventDefault(), { passive: false });
+  ['gesturestart', 'gesturechange'].forEach(t => document.addEventListener(t, e => e.preventDefault(), { passive: false }));
+})();
 applyQuality();
 
 const perf = { acc: 0, n: 0, since: 0, fps: 0, ms: 0, show: params0.has('fps') };
