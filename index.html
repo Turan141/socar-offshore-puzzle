@@ -2219,7 +2219,9 @@ function confirm() {
   ensureAudio();
   if (status === 'ready') { setStatus('play'); sfx('start', () => beep(520, 0.1, 'triangle', 0.12)); }
   else if (status === 'play') place();
-  else if (performance.now() - endTime > 600) newRound();
+  else if (performance.now() - endTime > 600) {   // «YENİ RAUND» / «YENİDƏN CƏHD ET»: straight into the next round
+    newRound(); setStatus('play'); sfx('start', () => beep(520, 0.1, 'triangle', 0.12));
+  }
 }
 function win() {
   const total = roundDuration();
@@ -2462,7 +2464,8 @@ $('btnBack').addEventListener('click', () => { ensureAudio(); undoLast(); });
 
 $('screen').addEventListener('pointerdown', e => {
   ensureAudio();
-  if (status === 'win' || status === 'lose') endTime = performance.now();
+  // touching the result panel (name slots etc.) postpones the auto-restart, but the main button must still work
+  if ((status === 'win' || status === 'lose') && !e.target.closest('[data-go]')) endTime = performance.now();
   const lb = e.target.closest('[data-lang]');
   if (lb) { e.stopPropagation(); setLang(lb.dataset.lang); return; }
   const tb = e.target.closest('[data-tier]');
