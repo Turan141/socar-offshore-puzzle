@@ -284,7 +284,7 @@ import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
-if ('serviceWorker' in navigator) {
+if ('serviceWorker' in navigator && !/^(localhost|127\.|\[::1\])/.test(location.hostname)) {   // no offline cache while developing
   navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
 
@@ -659,10 +659,11 @@ const WATER_Y = -2.4;
 const WAVES = [
   [1.0, 0.35, 0.16, 9.0], [-0.45, 1.0, 0.13, 5.6], [0.75, -0.6, 0.10, 3.2], [-0.9, -0.25, 0.08, 1.9], [0.2, 1.0, 0.05, 1.1],
 ];
-const waterUniforms = { uTime: { value: 0 } };
+const waterUniforms = { uTime: { value: 0 }, uDeck: { value: new THREE.Vector2(3.9, 3.9) } };
 const waterMat = new THREE.MeshStandardMaterial({ color: 0x0d4558, roughness: 0.06, metalness: 0.0, envMapIntensity: 0.95 });
 waterMat.onBeforeCompile = sh => {
   sh.uniforms.uTime = waterUniforms.uTime;
+  sh.uniforms.uDeck = waterUniforms.uDeck;
   const waveGLSL = WAVES.map(w => `disp += gerstner(vec4(${w.map(v => v.toFixed(3)).join(',')}), gp, tng, bin);`).join('\n');
   sh.vertexShader = sh.vertexShader
     .replace('#include <common>', `#include <common>
@@ -693,7 +694,7 @@ waterMat.onBeforeCompile = sh => {
         g += vec2( 0.30, 0.95) * cos(dot(p, vec2( 0.30, 0.95)) * 23.9 + t * 5.3) * 0.11;
         return g;
       }
-      float deckDist(){ return length(max(abs(vWXZ) - vec2(3.9), 0.0)); }`)
+      uniform vec2 uDeck; float deckDist(){ return length(max(abs(vWXZ) - uDeck, 0.0)); }`)
     .replace('#include <color_fragment>', `#include <color_fragment>
       float dDeck = deckDist();
       float dDol = length(vWXZ - vec2(-5.95, -5.35));
@@ -730,15 +731,19 @@ const foamTex = (() => {
   g.fillStyle = gr; g.fillRect(0, 0, 128, 128);
   return new THREE.CanvasTexture(c);
 })();
+// one group per scene: its base, its foam rings and scene-only surroundings; shared sea/boats/heli stay in `scene`
+const ENV = { platform: new THREE.Group(), offshore: new THREE.Group() };
+for (const k in ENV) { ENV[k].visible = false; scene.add(ENV[k]); }
 const foams = [];
 const FOAM_GEO = new THREE.PlaneGeometry(1.6, 1.6).rotateX(-Math.PI / 2);
 const foamSpots = [];
-for (const sx of [-1, 0, 1]) for (const sz of [-1, 1]) foamSpots.push([sx * 4.28, sz * 4.28, 1.0]);
-foamSpots.push([1.75, 4.83, 0.65], [3.15, 4.83, 0.65], [5.55, 0.25, 0.85], [-6.5, -4.8, 0.72], [-5.4, -5.9, 0.72]);
-for (const [fx, fz, sc] of foamSpots) for (let k = 0; k < 2; k++) {
+for (const sx of [-1, 0, 1]) for (const sz of [-1, 1]) foamSpots.push([sx * 4.28, sz * 4.28, 1.0, ENV.platform]);
+foamSpots.push(...[[1.75, 4.83, 0.65], [3.15, 4.83, 0.65], [5.55, 0.25, 0.85], [-6.5, -4.8, 0.72], [-5.4, -5.9, 0.72]].map(f => [...f, ENV.platform]));
+for (const sx of [-1, 1]) for (const sz of [-1, 0, 1]) foamSpots.push([sx * 3.6, sz * 3.6, 1.45, ENV.offshore]);   // semi-sub columns
+for (const [fx, fz, sc, grp] of foamSpots) for (let k = 0; k < 2; k++) {
   const m = new THREE.Mesh(FOAM_GEO, new THREE.MeshBasicMaterial({ map: foamTex, color: 0xb8c8cc, transparent: true, depthWrite: false, opacity: 0.55 }));
   m.userData = { x: fx, z: fz, base: sc, phase: k * 0.5 + Math.random() * 0.2 };
-  scene.add(m); foams.push(m);
+  grp.add(m); foams.push(m);
 }
 function animWater(t) {
   waterUniforms.uTime.value = t;
@@ -859,7 +864,7 @@ function indKindForName(name) {
   if (/^(grating|pf_grating|b2_grating)$/.test(name)) return 'grating';
   if (name === 'pf_deck') return 'deck';
   if (/^(pf_steel|pf_steel_dk|b2_steel|b2_steel_dk|skid_steel|metal|pipe_grey|b2_pipe|trim_dark|b2_graphite|mv_steel|mv_steel_dk)$/.test(name)) return 'steel';
-  if (/^(piece_body|b2_clad|b2_offwhite|tank_white|b2_tank|b2_green|pf_ochre|b2_ochre|safety_yellow|pipe_yellow|mv_hull_navy|mv_white|mv_socar_blue|mv_hull_red|mv_socar_red|mv_socar_green|mv_ochre)$/.test(name)) return 'cladding';
+  if (/^(piece_body|b2_clad|b2_offwhite|tank_white|b2_tank|b2_green|pf_ochre|b2_ochre|safety_yellow|pipe_yellow|mv_hull_navy|mv_white|mv_socar_blue|mv_hull_red|mv_socar_red|mv_socar_green|mv_ochre|derrick_red|hull_antifoul|heli_green)$/.test(name)) return 'cladding';
   return null;
 }
 
@@ -948,7 +953,7 @@ const surround = (() => {
   const poleGeo = new THREE.CylinderGeometry(0.025, 0.03, 1.1, 6), headGeo = new THREE.BoxGeometry(0.2, 0.06, 0.1);
   for (let z = 3; z < L; z += 6.8) { addMesh(t, poleGeo, steel, -0.72, 0.2, z, false); addMesh(t, headGeo, lampMat, -0.6, 0.74, z, false); }
   const wrap = new THREE.Group(); wrap.add(t);
-  scene.add(bakeStatic(wrap));
+  ENV.platform.add(bakeStatic(wrap));
 
   // Satellite jacket platforms on orbit/trestle horizon
   const navBeaconMat = new THREE.MeshStandardMaterial({ color: 0x3a1010, emissive: 0xff3b2a, emissiveIntensity: 3.0 });
@@ -1006,11 +1011,11 @@ const surround = (() => {
     void ocM;
   }
   dolphinHost.add(dolphinWrap);
-  scene.add(dolphinHost);
+  ENV.platform.add(dolphinHost);
 
   // Cantilevered offshore gas flare boom off the far-right (+X, -Z) jacket corner, framed inside active view
   const flareBoomWrap = new THREE.Group();
-  scene.add(flareBoomWrap);
+  ENV.platform.add(flareBoomWrap);
   const fb = new THREE.Group();
   const fStrut = (a, b, r, m) => {
     const p0 = new THREE.Vector3(...a), p1 = new THREE.Vector3(...b), d = p1.clone().sub(p0);
@@ -1263,16 +1268,21 @@ const platformPrim = (function buildPlatform() {
   const legGeo = new THREE.CylinderGeometry(0.28, 0.36, 3.2, 12);
   const P = N / 2 - 0.5;
   for (const sx of [-1, 0, 1]) for (const sz of [-1, 1]) addMesh(g, legGeo, metal, sx * P, -2.4, sz * P);
-  scene.add(g);
+  ENV.platform.add(g);
   return g;
 })();
 const deckGrid = new THREE.GridHelper(N, N, 0x3b444c, 0x3b444c);
 deckGrid.position.y = 0.004;
 scene.add(deckGrid);
 function applyKitPlatform() {
-  if (!KIT || !KIT.platform_base) return;
-  platformPrim.visible = false;
-  scene.add(bakeStatic(KIT.platform_base.clone()));
+  for (const id in SCENES) {
+    const base = KITS[id] && KITS[id].own.platform_base;
+    if (!base) continue;
+    if (id === 'platform') platformPrim.visible = false;
+    ENV[id].add(bakeStatic(base.clone()));
+    const hs = base.getObjectByName('heli_spot');
+    if (hs) { base.updateMatrixWorld(true); SCENES[id].heliSpot = hs.getWorldPosition(new THREE.Vector3()); }
+  }
   dirtyShadows();
 }
 
@@ -1365,13 +1375,38 @@ const holeMat = new THREE.MeshBasicMaterial({ map: cellTex, color: 0xffffff, tra
 
 // ---------------------------------------------------------------- Blender kit & 3D Thumbnails
 let KIT = null;
+// Scenes. Random pick each round among loaded, non-hidden ones; `?scene=<id>` forces one (also hidden ones) for review.
+const SCENES = {
+  offshore: { files: ['assets/offshore/base.glb', 'assets/offshore/pieces.glb', 'assets/offshore/buildings.glb'], deck: [5.1, 4.9], camX: -1.0, camZ: -0.6, camFit: 1.08,
+    names: {   // drilling-rig modules (semi-submersible, «Dədə Qorqud» type)
+      I3: { az: 'Qazma boruları stellajı', en: 'Drill Pipe Rack' },
+      I4: { az: 'Riser stellajı', en: 'Marine Riser Rack' },
+      O:  { az: 'Qazma məhlulu çənləri', en: 'Mud Tank Module' },
+      T:  { az: 'Qazma nasosu', en: 'Mud Pump' },
+      L:  { az: 'Sementləmə aqreqatı', en: 'Cementing Unit' },
+      J:  { az: 'Vibrasiya ələyi bloku', en: 'Shale Shaker Skid' },
+      S:  { az: 'Dizel-generator bloku', en: 'Diesel Generator Set' },
+      Z:  { az: 'Kompressor bloku', en: 'Air Compressor Skid' },
+      V:  { az: 'Preventor idarəetmə bloku', en: 'BOP Control Unit' },
+    } },
+  platform: { hidden: true, deck: [3.9, 3.9] },   // the earlier fixed jacket platform
+};
+const KITS = {};          // id -> lookup (own names first, then allowed fallbacks); .own = names from the scene's own files
+let sceneId = 'platform', KIT_LOADED = false;
+const sceneReady = id => !!(SCENES[id] && KITS[id] && (id === 'platform' ? KIT_LOADED : KITS[id].own.platform_base));
+function setScene(id) {
+  sceneId = id; KIT = KITS[id] || null;
+  for (const k in ENV) ENV[k].visible = k === id;
+  waterUniforms.uDeck.value.set(...SCENES[id].deck);
+}
+const sceneName = type => (SCENES[sceneId].names && SCENES[sceneId].names[type] && SCENES[sceneId].names[type][lang]) || SHAPES[type].name[lang];
 const THUMB_CACHE = {};
 async function loadKit() {
   try {
     const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js');
     const gltf = await new GLTFLoader().loadAsync('assets/platform_kit.glb');
     KIT = {};
-    const addAll = root => {
+    const addAll = (root, into = KIT) => {
       for (const o of root.children) {
         o.traverse(m => {
           if (!m.isMesh) return;
@@ -1387,7 +1422,7 @@ async function loadKit() {
           m.material = Array.isArray(m.material) ? m.material.map(tag) : tag(m.material);
         });
         o.userData.h = new THREE.Box3().setFromObject(o).max.y;
-        KIT[o.name] = o;
+        into[o.name] = o;
       }
     };
     addAll(gltf.scene);
@@ -1396,6 +1431,23 @@ async function loadKit() {
       await Promise.all(['assets/pieces_v2.glb?v=7', 'assets/buildings_v2.glb?v=7', 'assets/platform_v2.glb?v=7', 'assets/marine_v2.glb?v=7'].map(url =>
         loader.loadAsync(url).then(g => addAll(g.scene)).catch(e => console.warn(url, 'not loaded:', e.message || e))));
     }
+    KITS.platform = Object.assign(Object.create(null), KIT); KITS.platform.own = KITS.platform;
+    KIT_LOADED = true;
+    // other scenes: own files; pieces fall back to the platform kit until the scene ships its own,
+    // buildings fall back only if the scene has none at all (never mix a jacket derrick/helipad into another scene)
+    const loader2 = new GLTFLoader();
+    await Promise.all(Object.entries(SCENES).filter(([id, sc]) => sc.files).map(async ([id, sc]) => {
+      const own = Object.create(null);
+      await Promise.all(sc.files.map(url => loader2.loadAsync(url + '?v=1').then(g => addAll(g.scene, own)).catch(() => {})));
+      const look = Object.create(null);
+      const hasPieces = Object.keys(own).some(n => n.startsWith('piece_')), hasBld = Object.keys(own).some(n => n.startsWith('bld_'));
+      for (const n in KIT) {
+        if (n.startsWith('piece_') && !hasPieces) look[n] = KIT[n];
+        if (n.startsWith('bld_') && !hasBld && n !== 'bld_2x2_d' && n !== 'bld_2x2_c') look[n] = KIT[n];
+      }
+      Object.assign(look, own); look.own = own;
+      KITS[id] = look;
+    }));
   } catch (e) {
     console.warn('platform_kit.glb not loaded, using primitives:', e.message || e);
     KIT = null;
@@ -1539,7 +1591,7 @@ function buildThumbCache() {
       tmpCtx.putImageData(imgData, 0, 0);
       const outCv = document.createElement('canvas'); outCv.width = outCv.height = OUT;
       outCv.getContext('2d').drawImage(tmpCv, 0, 0, OUT, OUT);
-      THUMB_CACHE[type + ':' + r] = outCv;
+      THUMB_CACHE[sceneId + ':' + type + ':' + r] = outCv;
 
       tScene.remove(holder);
     }
@@ -1626,7 +1678,7 @@ const KIT_BUILDINGS = {
   '1x1': ['bld_1x1_a', 'bld_1x1_b', 'bld_1x1_c', 'bld_1x1_d', 'bld_1x1_e', 'bld_1x1_f'],
   '2x1': ['bld_2x1_a', 'bld_2x1_b', 'bld_2x1_c', 'bld_2x1_d'],
   '3x1': ['bld_3x1_a', 'bld_3x1_b', 'bld_3x1_c', 'bld_3x1_d'],
-  '2x2': ['bld_2x2_a', 'bld_2x2_b', 'bld_2x2_c', 'bld_2x2_d', 'bld_2x2_e'],
+  '2x2': ['bld_2x2_a', 'bld_2x2_b', 'bld_2x2_c', 'bld_2x2_d', 'bld_2x2_e', 'bld_2x2_f'],
   '3x2': ['bld_3x2_a'],
   '2x3': ['bld_2x3_a'],
 };
@@ -1842,11 +1894,16 @@ function newRound(opt = {}) {
   if (ghost) { scene.remove(ghost); ghost = null; }
   heli.visible = false; heli.userData.active = false;
   tagSaved = false; lastSavedTs = 0;
+  {
+    const forced = params0.get('scene');
+    const pool = Object.keys(SCENES).filter(id => !SCENES[id].hidden && sceneReady(id));
+    setScene(forced && sceneReady(forced) ? forced : pool.length ? pool[Math.floor(Math.random() * pool.length)] : 'platform');
+  }
   level = generateUnique();
   const decor = new THREE.Group();
   buildBayFrame(level.hole, decor);
   const decorState = buildDecor(level, decor);
-  currentHeliPos = decorState.heliPos;
+  currentHeliPos = decorState.heliPos || (SCENES[sceneId].heliSpot ? SCENES[sceneId].heliSpot.clone() : null);
   levelGroup.add(bakeStatic(decor));
   disposeGroup(decor);
   dirtyShadows();
@@ -2254,7 +2311,7 @@ function lose() {
 function drawIcon(cv, type, r) {
   const g = cv.getContext('2d'), W = cv.width;
   g.clearRect(0, 0, W, W);
-  const cached = THUMB_CACHE[type + ':' + (r % ROTS[type].length)];
+  const cached = THUMB_CACHE[sceneId + ':' + type + ':' + (r % ROTS[type].length)];
   if (cached) { g.drawImage(cached, 0, 0, W, W); return; }
   const cells = ROTS[type][r % ROTS[type].length];
   let w = 0, h = 0; for (const [x, y] of cells) { w = Math.max(w, x + 1); h = Math.max(h, y + 1); }
@@ -2300,7 +2357,7 @@ function renderTray() {
     const code = document.createElement('span'); code.className = 'card-code';
     code.textContent = SHAPES[t.type].code;
     code.style.borderColor = hex(COLORS[t.type]);
-    const sp = document.createElement('span'); sp.className = 'cname'; sp.textContent = SHAPES[t.type].name[lang];
+    const sp = document.createElement('span'); sp.className = 'cname'; sp.textContent = sceneName(t.type);
     d.append(makeMiniGrid(t.type, r), code, cv, sp);
     box.append(d);
   });
@@ -2677,8 +2734,10 @@ function sidePx() {
 }
 function placeCamera() {
   const fit = Math.max(1.04, 1.4 / viewAspect), s = Math.sin(camOrbit), c = Math.cos(camOrbit);
-  camera.position.set(s * 7.4 * fit, 12.4 * fit, c * 7.4 * fit);
-  camera.lookAt(s * 0.25, -0.6, c * 0.25);
+  const sc = (typeof SCENES !== 'undefined' && SCENES[sceneId]) || {};   // per-scene framing (room for a tall derrick)
+  const f = fit * (sc.camFit || 1), dx = sc.camX || 0, dz = sc.camZ || 0;
+  camera.position.set(s * 7.4 * f + dx, 12.4 * f, c * 7.4 * f + dz);
+  camera.lookAt(s * 0.25 + dx, -0.6, c * 0.25 + dz);
 }
 function applyQuality() {
   const q = QUALITY[qLevel];
@@ -2824,9 +2883,10 @@ window.__game = {
 };
 
 await loadKit();
+KIT = KITS.platform || null;
 applyKitPlatform();
-applyKitMarine();
-buildThumbCache();
+applyKitMarine();          // shared sea props come from the platform kit
+for (const id in SCENES) if (sceneReady(id)) { setScene(id); buildThumbCache(); }
 newRound();
 applyLangUI();
 requestAnimationFrame(loop);
