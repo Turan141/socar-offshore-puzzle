@@ -615,7 +615,8 @@ composer.addPass(bloom);
 composer.addPass(new ShaderPass(GradeShader));
 composer.addPass(new OutputPass());
 
-scene.add(new THREE.HemisphereLight(0xc8dff0, 0x10222c, 0.95));
+const hemi = new THREE.HemisphereLight(0xc8dff0, 0x10222c, 0.95);
+scene.add(hemi);
 const sun = new THREE.DirectionalLight(0xfff0dc, 2.65);
 sun.position.set(-6, 12, 7);
 sun.castShadow = true;
@@ -715,7 +716,8 @@ waterGeo.rotateX(-Math.PI / 2);
 const water = new THREE.Mesh(waterGeo, waterMat);
 water.position.y = WATER_Y;
 water.receiveShadow = true;
-scene.add(water);
+const SEA = new THREE.Group(); scene.add(SEA);   // everything that only makes sense at sea (hidden in land scenes)
+SEA.add(water);
 function waveHeight(x, z, t) {
   let y = 0;
   for (const [dx, dz, st, wl] of WAVES) {
@@ -732,7 +734,7 @@ const foamTex = (() => {
   return new THREE.CanvasTexture(c);
 })();
 // one group per scene: its base, its foam rings and scene-only surroundings; shared sea/boats/heli stay in `scene`
-const ENV = { platform: new THREE.Group(), offshore: new THREE.Group() };
+const ENV = { platform: new THREE.Group(), offshore: new THREE.Group(), onshore: new THREE.Group(), kacalka: new THREE.Group() };
 for (const k in ENV) { ENV[k].visible = false; scene.add(ENV[k]); }
 const foams = [];
 const FOAM_GEO = new THREE.PlaneGeometry(1.6, 1.6).rotateX(-Math.PI / 2);
@@ -984,7 +986,7 @@ const surround = (() => {
     const beacon = new THREE.Mesh(new THREE.SphereGeometry(0.14, 8, 6), navBeaconMat);
     beacon.position.set(-0.4, 4.40, -1.1);
     host.add(beacon);
-    scene.add(host);
+    SEA.add(host);
     sisters.push({ host, body });
   }
   const endX = S.x + dir.x * (L + 3.2), endZ = S.y + dir.y * (L + 3.2);
@@ -1036,21 +1038,21 @@ const surround = (() => {
   const flareCoreMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(3.6, 1.7, 0.35) });
   const flareHaloMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(2.2, 0.75, 0.15), transparent: true, opacity: 0.45, blending: THREE.AdditiveBlending, depthWrite: false });
   const flareCore = new THREE.Mesh(new THREE.ConeGeometry(0.18, 0.72, 10), flareCoreMat);
-  flareCore.position.copy(flarePos); flareCore.position.y += 0.32; scene.add(flareCore);
+  flareCore.position.copy(flarePos); flareCore.position.y += 0.32; ENV.platform.add(flareCore);
   const flareHalo = new THREE.Mesh(new THREE.SphereGeometry(0.48, 12, 10), flareHaloMat);
-  flareHalo.position.copy(flarePos); flareHalo.position.y += 0.36; scene.add(flareHalo);
+  flareHalo.position.copy(flarePos); flareHalo.position.y += 0.36; ENV.platform.add(flareHalo);
   const flareLight = new THREE.PointLight(0xff7a22, 3.2, 14, 1.8);
-  flareLight.position.set(flarePos.x, flarePos.y + 0.55, flarePos.z); scene.add(flareLight);
+  flareLight.position.set(flarePos.x, flarePos.y + 0.55, flarePos.z); ENV.platform.add(flareLight);
   const flareGlowWater = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 4.2).rotateX(-Math.PI / 2),
     new THREE.MeshBasicMaterial({ map: foamTex, color: 0xff7b29, transparent: true, opacity: 0.25, depthWrite: false, blending: THREE.AdditiveBlending }));
-  flareGlowWater.position.set(flarePos.x, WATER_Y + 0.08, flarePos.z); scene.add(flareGlowWater);
+  flareGlowWater.position.set(flarePos.x, WATER_Y + 0.08, flarePos.z); ENV.platform.add(flareGlowWater);
 
   // Glowing rising gas flare embers
   const EMBER_N = 18;
   const emberMesh = new THREE.InstancedMesh(new THREE.SphereGeometry(0.032, 6, 4),
     new THREE.MeshBasicMaterial({ color: new THREE.Color(3.2, 1.25, 0.25), transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false }),
     EMBER_N);
-  emberMesh.frustumCulled = false; scene.add(emberMesh);
+  emberMesh.frustumCulled = false; ENV.platform.add(emberMesh);
   const embers = Array.from({ length: EMBER_N }, (_, i) => ({
     phase: i / EMBER_N, driftX: (Math.sin(i * 4.1) * 0.22), driftZ: (Math.cos(i * 3.3) * 0.22), speed: 0.65 + (i % 5) * 0.12,
   }));
@@ -1069,7 +1071,7 @@ const surround = (() => {
     new THREE.MeshBasicMaterial({ map: foamTex, color: 0xd0e6ed, transparent: true, opacity: 0.28, depthWrite: false }));
   boatWake.position.set(0, 0.02, 0); boat.add(boatWake);
   boat.userData = { x: -6.25, z: -1.40, yaw: 0.24, wrap: boatWrap, wake: boatWake };
-  scene.add(boat);
+  SEA.add(boat);
 
   // Fast offshore crew boat idling near the starboard (+X) boat landing
   const crewBoat = new THREE.Group();
@@ -1082,7 +1084,7 @@ const surround = (() => {
     new THREE.MeshBasicMaterial({ map: foamTex, color: 0xd0e6ed, transparent: true, opacity: 0.26, depthWrite: false }));
   crewWake.position.set(0, 0.02, 0); crewBoat.add(crewWake);
   crewBoat.userData = { x: 6.05, z: 1.35, yaw: -0.22, wrap: crewWrap, wake: crewWake };
-  scene.add(crewBoat);
+  SEA.add(crewBoat);
 
   // Navigation channel buoys with blinking lamps
   const buoyBody = new THREE.CylinderGeometry(0.2, 0.24, 0.5, 12), buoyTop = new THREE.ConeGeometry(0.1, 0.32, 10), buoyRing = new THREE.TorusGeometry(0.23, 0.04, 6, 14).rotateX(Math.PI / 2);
@@ -1095,7 +1097,7 @@ const surround = (() => {
     addMesh(wrap, buoyTop, steel, 0, 0.56, 0);
     g.add(wrap);
     addMesh(g, new THREE.SphereGeometry(0.055, 8, 6), buoyLamp, 0, 0.77, 0, false);
-    g.userData = { x, z, wrap }; scene.add(g); return g;
+    g.userData = { x, z, wrap }; SEA.add(g); return g;
   });
 
   // gulls
@@ -1279,7 +1281,14 @@ function applyKitPlatform() {
     const base = KITS[id] && KITS[id].own.platform_base;
     if (!base) continue;
     if (id === 'platform') platformPrim.visible = false;
-    ENV[id].add(bakeStatic(base.clone()));
+    const copy = base.clone();
+    // animated parts (pumpjack beam/crank) stay live; everything else is baked into static batches
+    const live = ['pumpjack_beam', 'pumpjack_crank'].map(n => copy.getObjectByName(n)).filter(Boolean);
+    for (const o of live) o.parent.remove(o);
+    ENV[id].add(bakeStatic(copy));
+    if (live.length) {
+      SCENES[id].anim = live.map(o => { ENV[id].add(o); return { o, rest: o.quaternion.clone(), crank: o.name === 'pumpjack_crank' }; });
+    }
     const hs = base.getObjectByName('heli_spot');
     if (hs) { base.updateMatrixWorld(true); SCENES[id].heliSpot = hs.getWorldPosition(new THREE.Vector3()); }
   }
@@ -1389,15 +1398,50 @@ const SCENES = {
       Z:  { az: 'Kompressor bloku', en: 'Air Compressor Skid' },
       V:  { az: 'Preventor idarəetmə bloku', en: 'BOP Control Unit' },
     } },
+  onshore: { files: ['assets/onshore/base.glb', 'assets/onshore/pieces.glb', 'assets/onshore/buildings.glb'], land: true,
+    camX: -1.0, camZ: -0.6, camFit: 1.08,
+    atmo: { bg: 0xb9c7cf, fog: [40, 150], hemi: [0xdfe9f2, 0x5a6a3a, 1.0], sun: [0xffe1b0, 2.9], env: 0.9 },
+    names: {   // land drilling pad
+      I3: { az: 'Boru körpüsü', en: 'Catwalk & Pipe Rack' },
+      I4: { az: 'Qazma məhlulu çənləri', en: 'Mud Tank Train' },
+      O:  { az: 'Yanacaq çənləri', en: 'Fuel Tank Farm' },
+      T:  { az: 'Nasos stansiyası', en: 'Mud Pump House' },
+      L:  { az: 'Sement siloları', en: 'Cement Silo Unit' },
+      J:  { az: 'Şlam təmizləmə bloku', en: 'Solids Control Unit' },
+      S:  { az: 'Generator qoşquları', en: 'Generator Trailers' },
+      Z:  { az: 'Su təmizləmə qurğusu', en: 'Water Treatment Skid' },
+      V:  { az: 'Ofis konteynerləri', en: 'Site Office Containers' },
+    } },
+  kacalka: { files: ['assets/kacalka/base.glb', 'assets/kacalka/pieces.glb', 'assets/kacalka/buildings.glb'], land: true,
+    camX: -1.0, camZ: -0.6, camFit: 1.08,
+    atmo: { bg: 0xd8c7a8, fog: [22, 70], hemi: [0xf3e2c4, 0x6b5232, 1.0], sun: [0xffd49a, 3.0], env: 0.85 },
+    names: {   // Absheron hillside oil field
+      I3: { az: 'Neft kəməri manifoldu', en: 'Flowline Manifold' },
+      I4: { az: 'Mancanaq', en: 'Pumpjack' },
+      O:  { az: 'Neft çəni', en: 'Oil Storage Tank' },
+      T:  { az: 'Qrup ölçü qurğusu', en: 'Group Metering Unit' },
+      L:  { az: 'Neft-qaz separatoru', en: 'Oil-Gas Separator' },
+      J:  { az: 'Transformator yarımstansiyası', en: 'Transformer Substation' },
+      S:  { az: 'Nasos stansiyası', en: 'Booster Pump Station' },
+      Z:  { az: 'Xətt qızdırıcısı', en: 'Line Heater' },
+      V:  { az: 'Operator otağı', en: "Operator's Booth" },
+    } },
   platform: { hidden: true, deck: [3.9, 3.9] },   // the earlier fixed jacket platform
 };
+const SEA_ATMO = { bg: 0x182b38, fog: [28, 82], hemi: [0xc8dff0, 0x10222c, 0.95], sun: [0xfff0dc, 2.65], env: 0.78 };
 const KITS = {};          // id -> lookup (own names first, then allowed fallbacks); .own = names from the scene's own files
 let sceneId = 'platform', KIT_LOADED = false;
 const sceneReady = id => !!(SCENES[id] && KITS[id] && (id === 'platform' ? KIT_LOADED : KITS[id].own.platform_base));
 function setScene(id) {
   sceneId = id; KIT = KITS[id] || null;
   for (const k in ENV) ENV[k].visible = k === id;
-  waterUniforms.uDeck.value.set(...SCENES[id].deck);
+  const sc = SCENES[id], a = sc.atmo || SEA_ATMO;
+  SEA.visible = !sc.land;
+  if (sc.deck) waterUniforms.uDeck.value.set(...sc.deck);
+  scene.background.setHex(a.bg); scene.fog.color.setHex(a.bg); scene.fog.near = a.fog[0]; scene.fog.far = a.fog[1];
+  hemi.color.setHex(a.hemi[0]); hemi.groundColor.setHex(a.hemi[1]); hemi.intensity = a.hemi[2];
+  sun.color.setHex(a.sun[0]); sun.intensity = a.sun[1];
+  scene.environmentIntensity = a.env;
 }
 const sceneName = type => (SCENES[sceneId].names && SCENES[sceneId].names[type] && SCENES[sceneId].names[type][lang]) || SHAPES[type].name[lang];
 const THUMB_CACHE = {};
@@ -1428,7 +1472,9 @@ async function loadKit() {
     addAll(gltf.scene);
     if (params0.get('kit') !== 'v1') {
       const loader = new GLTFLoader();
-      await Promise.all(['assets/pieces_v2.glb?v=7', 'assets/buildings_v2.glb?v=7', 'assets/platform_v2.glb?v=7', 'assets/marine_v2.glb?v=7'].map(url =>
+      // the old jacket platform's kits are only needed when that hidden scene is forced (saves ~10 MB on start)
+      const legacy = params0.get('scene') === 'platform' ? ['assets/pieces_v2.glb?v=7', 'assets/buildings_v2.glb?v=7', 'assets/platform_v2.glb?v=7'] : [];
+      await Promise.all([...legacy, 'assets/marine_v2.glb?v=7'].map(url =>
         loader.loadAsync(url).then(g => addAll(g.scene)).catch(e => console.warn(url, 'not loaded:', e.message || e))));
     }
     KITS.platform = Object.assign(Object.create(null), KIT); KITS.platform.own = KITS.platform;
@@ -2810,6 +2856,10 @@ function loop(now) {
   trackPerf(rawMs, now);
   pollPad(dt);
   animWater(T); surround(T);
+  if (SCENES[sceneId].anim) {   // pumpjack: crank turns, walking beam nods (~7 strokes/min sped up for the stand)
+    const th = T * 1.6;
+    for (const a of SCENES[sceneId].anim) { a.o.quaternion.copy(a.rest); a.o.rotateZ(a.crank ? -th : -0.2 * Math.sin(th)); }
+  }
   if (status === 'play') {
     timeLeft -= dt;
     if (timeLeft <= 0) { timeLeft = 0; lose(); }
@@ -2886,7 +2936,7 @@ await loadKit();
 KIT = KITS.platform || null;
 applyKitPlatform();
 applyKitMarine();          // shared sea props come from the platform kit
-for (const id in SCENES) if (sceneReady(id)) { setScene(id); buildThumbCache(); }
+for (const id in SCENES) if (sceneReady(id) && (!SCENES[id].hidden || params0.get('scene') === id)) { setScene(id); buildThumbCache(); }
 newRound();
 applyLangUI();
 requestAnimationFrame(loop);
