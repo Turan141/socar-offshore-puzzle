@@ -1939,7 +1939,15 @@ function newRound(opt = {}) {
   {
     const forced = params0.get('scene');
     const pool = Object.keys(SCENES).filter(id => !SCENES[id].hidden && sceneReady(id));
-    setScene(forced && sceneReady(forced) ? forced : pool.length ? pool[Math.floor(Math.random() * pool.length)] : 'platform');
+    // scenes take turns (offshore → onshore → kaçalka → …), never the same scene twice in a row; survives reloads
+    let next = 'platform';
+    if (forced && sceneReady(forced)) next = forced;
+    else if (pool.length) {
+      let last = null; try { last = localStorage.getItem('pf_scene'); } catch { }
+      next = pool[(pool.indexOf(last) + 1) % pool.length];
+      try { localStorage.setItem('pf_scene', next); } catch { }
+    }
+    setScene(next);
   }
   level = generateUnique();
   const decor = new THREE.Group();
