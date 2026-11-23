@@ -337,6 +337,26 @@
   #staff .danger{background:#5c2222;border-color:rgba(255,90,78,.4)}
   #staff .close{background:#00699e}
 
+  /* full leaderboard (all entries) */
+  .lb-more{display:flex;align-items:center;justify-content:center;gap:.4rem;width:100%;margin-top:.34rem;padding:.34rem .5rem;border-radius:.52rem;
+           border:1px dashed rgba(255,255,255,.18);background:rgba(255,255,255,.03);color:var(--ac);font-size:.64rem;font-weight:800;letter-spacing:.08rem;text-transform:uppercase;cursor:pointer}
+  .lb-gap{text-align:center;font-size:.7rem;opacity:.45;line-height:.7rem}
+  #lbModal{position:fixed;inset:0;z-index:25;display:none;align-items:center;justify-content:center;background:rgba(2,10,16,.74)}
+  #lbModal.show{display:flex}
+  .lbm-box{width:min(34rem,92vw);max-height:86vh;padding:1.1rem 1.15rem;border-radius:1.3rem;display:flex;flex-direction:column;gap:.7rem;box-sizing:border-box}
+  .lbm-head{display:flex;align-items:center;justify-content:space-between;gap:.6rem}
+  .lbm-head h4{margin:0;font-size:.95rem;font-weight:900;letter-spacing:.14rem;color:var(--ac);text-transform:uppercase}
+  .lbm-head span{font-size:.72rem;opacity:.65;font-weight:700}
+  .lbm-list{min-height:0;flex:1 1 auto;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;display:flex;flex-direction:column;gap:.26rem;padding-right:.3rem}
+  .lbm-list .lb-row{font-size:.86rem;padding:.42rem .62rem}
+  .lbm-list .lb-row .lb-tag{max-width:none}
+  .lbm-list .lb-row .lb-rank{width:1.55rem;height:1.55rem;font-size:.7rem}
+  .lbm-close{height:2.8rem;border-radius:.8rem;border:1px solid var(--line);background:#00699e;font-size:.86rem;font-weight:800;cursor:pointer;flex:none}
+  .full-btn{width:2.3rem;height:2.3rem;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;
+            background:rgba(4,16,25,.65);border:1px solid rgba(118,205,255,.22);color:inherit;padding:0}
+  .full-btn svg,#btnFull svg{width:1.15rem;height:1.15rem}
+  .panel-top-r{display:flex;align-items:center;gap:.5rem}
+  html.no-fs .full-btn,html.no-fs #btnFull{display:none}
   /* password modal for clearing leaderboard */
   #pwdModal{position:fixed;inset:0;z-index:26;display:none;align-items:center;justify-content:center;background:rgba(2,10,16,.74)}
   #pwdModal.show{display:flex}
@@ -381,6 +401,7 @@
   </div>
   <div id="title">PLATFORMANI BOŞLUQSUZ DOLDURUN!</div>
   <div id="recBadge" class="glass">🏆 <b id="recVal">—</b></div>
+  <button type="button" class="hud-btn glass" id="btnFull" title="Fullscreen"></button>
   <button type="button" class="hud-btn glass" id="btnMute" title="Sound"><svg id="icoSound" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg></button>
 </div>
 <aside id="tray" class="glass">
@@ -410,6 +431,7 @@
 <canvas id="dragIcon" width="224" height="224"></canvas>
 <div id="staffHot"></div>
 <div id="staff"></div>
+<div id="lbModal"></div>
 <div id="pwdModal"></div>
 <div id="portrait">
   <svg viewBox="0 0 24 24" fill="none" stroke="#29d3ff" stroke-width="1.5" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18.5h2"/></svg>
@@ -627,6 +649,7 @@ const I18N = {
     lbTitle: 'Ən sürətli nəticələr',
     lbEmpty: 'Hələ rekord qeydə alınmayıb',
     lbClearBtn: 'Sıfırla',
+    lbAll: 'Bütün nəticələr', lbAllTitle: 'Liderlər cədvəli', lbPlayers: 'iştirakçı', staffDemoLb: 'Demo cədvəl (50)', staffDemoDone: 'Demo cədvəl dolduruldu',
     tagLabel: 'ADINIZI DAXİL EDİN',
     namePlaceholder: 'Adınız və ya nikiniz...',
     saveBtn: 'YADDA SAXLA',
@@ -696,6 +719,7 @@ const I18N = {
     lbTitle: 'Top Engineers',
     lbEmpty: 'No records saved yet',
     lbClearBtn: 'Reset',
+    lbAll: 'All results', lbAllTitle: 'Leaderboard', lbPlayers: 'players', staffDemoLb: 'Demo board (50)', staffDemoDone: 'Demo board filled',
     tagLabel: 'ENTER YOUR NAME',
     namePlaceholder: 'Your name or nickname...',
     saveBtn: 'SAVE',
@@ -2254,6 +2278,7 @@ function buildBayFrame(hole, group) {
 
 // ---------------------------------------------------------------- Persistent Stand Leaderboard + Free-Text Player Name + Password Clear
 const LB_KEY = 'socar_puzzle_lb_v1';
+const LB_MAX = 50;
 const CLEAR_PWD = '12345';
 let playerName = '';
 let tagSaved = false;
@@ -2291,20 +2316,55 @@ function addLeaderboardEntry(tier, rawName, elapsed, stars) {
   const entry = { name: clean, tag: clean, elapsed: Math.round(elapsed * 10) / 10, stars, scene: sceneId, ts: Date.now() };
   list.push(entry);
   list.sort((a, b) => a.elapsed - b.elapsed || b.stars - a.stars);
-  lb[tier] = list.slice(0, 20);
+  lb[tier] = list.slice(0, LB_MAX);
   saveLeaderboard(lb);
   return entry.ts;
 }
-function renderLeaderboardHtml(tier, highlightTs = 0) {
-  const t = TR();
-  const list = (loadLeaderboard()[tier] || []).slice(0, 5);
-  const rows = list.length
-    ? list.map((e, i) => `<div class="lb-row${i < 3 ? ' r' + (i + 1) : ''}${e.ts === highlightTs ? ' me' : ''}">
+const lbRowHtml = (e, i, highlightTs) => `<div class="lb-row${i < 3 ? ' r' + (i + 1) : ''}${e.ts === highlightTs ? ' me' : ''}">
         <span class="lb-r"><span class="lb-rank">${i + 1}</span><span class="lb-tag">${escHtml(e.name || e.tag || '—')}</span></span>
         <span class="lb-time">${e.elapsed.toFixed(1)}s · ${'★'.repeat(e.stars)}</span>
-      </div>`).join('')
+      </div>`;
+function renderLeaderboardHtml(tier, highlightTs = 0) {
+  const t = TR();
+  const all = loadLeaderboard()[tier] || [], list = all.slice(0, 5);
+  const meIdx = highlightTs ? all.findIndex(e => e.ts === highlightTs) : -1;
+  const rows = list.length
+    ? list.map((e, i) => lbRowHtml(e, i, highlightTs)).join('')
+      + (meIdx >= 5 ? `<div class="lb-gap">⋯</div>` + lbRowHtml(all[meIdx], meIdx, highlightTs) : '')
+      + (all.length > 5 ? `<button type="button" class="lb-more" data-lb-all>${t.lbAll} · ${all.length}</button>` : '')
     : `<div class="lb-empty"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" opacity=".7"><path d="M8 21h8M12 17v4M7 4h10v6a5 5 0 0 1-10 0V4z"/><path d="M7 6H4a1 1 0 0 0-1 1v1a3 3 0 0 0 3 3h1M17 6h3a1 1 0 0 1 1 1v1a3 3 0 0 1-3 3h-1"/></svg><span>${t.lbEmpty}</span></div>`;
   return `<div class="lb-box"><div class="lb-head"><span class="lb-head-l"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 21h8M12 17v4M7 4h10v6a5 5 0 0 1-10 0V4z"/></svg><span>${t.lbTitle}</span></span><button type="button" class="lb-clear-btn" data-clear-lb title="${t.staffResetLb}"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/></svg><span>${t.lbClearBtn}</span></button></div><div class="lb-list">${rows}</div></div>`;
+}
+
+function openLbModal() {
+  const t = TR(), m = $('lbModal'), all = loadLeaderboard()[activeTier] || [];
+  m.innerHTML = `<div class="lbm-box glass">
+    <div class="lbm-head"><h4>${t.lbAllTitle}</h4><span>${all.length} ${t.lbPlayers}</span></div>
+    <div class="lbm-list">${all.map((e, i) => lbRowHtml(e, i, lastSavedTs)).join('')}</div>
+    <button type="button" class="lbm-close" data-lbm-close>${t.staffClose}</button>
+  </div>`;
+  m.classList.add('show');
+  const me = m.querySelector('.lb-row.me');
+  if (me) me.scrollIntoView({ block: 'center' });
+}
+const lbModalOpen = () => $('lbModal').classList.contains('show');
+function closeLbModal() { $('lbModal').classList.remove('show'); $('lbModal').innerHTML = ''; }
+// demo data so the stand can see a full board; real results then mix in, the password reset clears it
+function fillDemoLeaderboard(n = LB_MAX) {
+  const first = ['Aysel', 'Murad', 'Leyla', 'Elvin', 'Nigar', 'Rauf', 'Günay', 'Tural', 'Səbinə', 'Orxan', 'Aynur', 'Kamran', 'Nərmin', 'Fərid',
+    'Lalə', 'Ramil', 'Könül', 'Vüsal', 'Aytən', 'Emin', 'Zəhra', 'Cavid', 'Sevinc', 'İlkin', 'Ülviyyə', 'Nihad', 'Fidan', 'Rəşad', 'Gülnar', 'Anar'];
+  const last = ['M.', 'Ə.', 'H.', 'Q.', 'R.', 'S.', 'İ.', 'N.', 'C.', 'B.'];
+  const lb = loadLeaderboard(), now = Date.now();
+  const list = Array.from({ length: n }, (_, i) => {
+    const elapsed = Math.round((14 + 44 * Math.pow(Math.random(), 1.25)) * 10) / 10;
+    return { name: first[i % first.length] + ' ' + last[(i * 7 + Math.floor(i / first.length)) % last.length], elapsed,
+      stars: elapsed <= 30 ? 3 : elapsed <= 45 ? 2 : 1, scene: WORLD_IDS[i % WORLD_IDS.length], ts: now - (i + 1) * 61000, demo: true };
+  });
+  list.sort((a, b) => a.elapsed - b.elapsed || b.stars - a.stars);
+  lb[activeTier] = list.slice(0, LB_MAX);
+  saveLeaderboard(lb);
+  updateRecBadge();
+  if (status === 'ready' || status === 'win' || status === 'lose') renderScreen();
 }
 
 // ---------------------------------------------------------------- game state
@@ -2349,6 +2409,7 @@ function updateRecBadge() {
 }
 
 function newRound(opt = {}) {
+  if (!opt.keepScreen && lbModalOpen()) closeLbModal();
   disposeGroup(levelGroup);
   if (ghost) { scene.remove(ghost); ghost = null; }
   heli.visible = false; heli.userData.active = false;
@@ -2442,7 +2503,7 @@ function renderScreen() {
     sc.innerHTML = `<div class="panel glass">
       <div class="panel-top">
         <div class="panel-brand">${logoSvg}<span class="brand-sep"></span><span class="brand-tag">3D EXPO</span></div>
-        <div class="lang-pill"><button type="button" data-lang="az" class="${lang === 'az' ? 'on' : ''}">AZ</button><button type="button" data-lang="en" class="${lang === 'en' ? 'on' : ''}">EN</button></div>
+        <div class="panel-top-r"><button type="button" class="full-btn" title="Fullscreen">${fsIco()}</button><div class="lang-pill"><button type="button" data-lang="az" class="${lang === 'az' ? 'on' : ''}">AZ</button><button type="button" data-lang="en" class="${lang === 'en' ? 'on' : ''}">EN</button></div></div>
       </div>
       <div class="eyebrow-pill"><i></i><span>${t.eyebrowReady}</span></div>
       <h1>${t.startTitle}</h1>
@@ -3310,6 +3371,8 @@ $('screen').addEventListener('pointerdown', e => {
   if (lb) { e.stopPropagation(); setLang(lb.dataset.lang); return; }
   const wb = e.target.closest('[data-world]');
   if (wb) { e.stopPropagation(); pickWorld(wb.dataset.world); return; }
+  if (e.target.closest('.full-btn')) { e.stopPropagation(); toggleFull(); return; }
+  if (e.target.closest('[data-lb-all]')) { e.stopPropagation(); openLbModal(); return; }
   const clearBtn = e.target.closest('[data-clear-lb]');
   if (clearBtn) { e.stopPropagation(); openPwdModal(); return; }
   const saveBtn = e.target.closest('[data-save]');
@@ -3318,6 +3381,28 @@ $('screen').addEventListener('pointerdown', e => {
     e.preventDefault(); goFull(); confirm();
   }
 });
+
+$('lbModal').addEventListener('pointerdown', () => { lastInput = performance.now(); attractTimer = 0; if (status === 'win' || status === 'lose') endTime = performance.now(); });
+$('lbModal').addEventListener('click', e => { if (e.target.id === 'lbModal' || e.target.closest('[data-lbm-close]')) closeLbModal(); });
+
+const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement;
+const fsOk = !!(document.fullscreenEnabled || document.webkitFullscreenEnabled);
+if (!fsOk) document.documentElement.classList.add('no-fs');   // iPhone Safari: no element fullscreen, use "Add to Home Screen"
+function toggleFull() {
+  const d = document.documentElement;
+  if (fsEl()) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); return; }
+  const req = d.requestFullscreen || d.webkitRequestFullscreen;
+  if (!req) return;
+  const pr = req.call(d, { navigationUI: 'hide' });
+  if (pr && pr.then) pr.then(() => screen.orientation && screen.orientation.lock && screen.orientation.lock('landscape').catch(() => {})).catch(() => {});
+}
+const FS_ICO_IN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>';
+const FS_ICO_OUT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>';
+const fsIco = () => fsEl() ? FS_ICO_OUT : FS_ICO_IN;
+function updateFullBtns() { for (const b of document.querySelectorAll('#btnFull,.full-btn')) b.innerHTML = fsIco(); }
+$('btnFull').addEventListener('click', e => { e.stopPropagation(); toggleFull(); });
+for (const ev of ['fullscreenchange', 'webkitfullscreenchange']) document.addEventListener(ev, updateFullBtns);
+updateFullBtns();
 
 function goFull() {
   if (!IS_TOUCH || document.fullscreenElement || !document.documentElement.requestFullscreen) return;
@@ -3428,7 +3513,7 @@ function tickExpo(now, dt) {
   if (status === 'play') {
     if (idle > IDLE_RESET) { newRound(); return; }
     if (!handOn && !drag && placed.length === 0 && idle > HAND_DELAY) showHand();
-  } else if (status === 'ready' && !orbitDrag && !params0.has('scene')) {
+  } else if (status === 'ready' && !orbitDrag && !params0.has('scene') && !lbModalOpen()) {
     const pool = WORLD_IDS.filter(id => sceneReady(id));
     if (pool.length > 1) {
       attractTimer += dt;
@@ -3462,6 +3547,7 @@ function renderStaff() {
       <button data-a="q">${t.staffQual}: ${qLocked ? 'q' + qLevel : t.staffAuto + ' (q' + qLevel + ')'}</button></div>
     <div class="row"><button data-a="kit">${t.staffModels}: ${kitV1 ? t.staffSimple : t.staffDet}</button>
       <button data-a="full">${t.staffFull}</button></div>
+    <button data-a="demolb">${t.staffDemoLb}</button>
     <button data-a="resetlb" class="danger">${t.staffResetLb}</button>
     <button data-a="close" class="close">${t.staffClose}</button>
   </div>`;
@@ -3477,7 +3563,8 @@ $('staff').addEventListener('click', e => {
     applyQuality();
   }
   if (a === 'kit') { const u = new URL(location.href); if (u.searchParams.get('kit') === 'v1') u.searchParams.delete('kit'); else u.searchParams.set('kit', 'v1'); location.href = u.href; return; }
-  if (a === 'full') { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(() => {}); }
+  if (a === 'full') toggleFull();
+  if (a === 'demolb') { fillDemoLeaderboard(); toast(TR().staffDemoDone, 'good'); }
   if (a === 'resetlb') { openPwdModal(); return; }
   renderStaff();
 });
@@ -3710,6 +3797,7 @@ KIT = KITS.platform || null;
 applyKitPlatform();
 applyKitMarine();
 setLoadProgress(100);
+if (params0.has('lbdemo')) fillDemoLeaderboard();
 newRound();
 applyLangUI();
 bootReadyAt = performance.now();
