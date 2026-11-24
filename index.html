@@ -28,10 +28,13 @@
   #c{display:block;width:100%;height:100%;outline:none;touch-action:none}
   #vignette{position:fixed;inset:0;pointer-events:none;z-index:1;
             background:radial-gradient(ellipse at 42% 50%,rgba(0,0,0,0) 52%,rgba(3,12,20,.36) 100%);transition:opacity .5s}
-  body[data-scene=onshore] #vignette,body[data-scene=kacalka] #vignette{opacity:.48}
+  body[data-scene=onshore] #vignette,body[data-scene=kacalka] #vignette,body[data-scene=refinery] #vignette,body[data-scene=green] #vignette,body[data-scene=terminal] #vignette{opacity:.48}
   body{--ac:#29d3ff;--ac-rgb:41,211,255;--ac-deep:#0085ca}
   body[data-scene=onshore]{--ac:#3fe28a;--ac-rgb:63,226,138;--ac-deep:#009639}
   body[data-scene=kacalka]{--ac:#ffc23d;--ac-rgb:255,194,61;--ac-deep:#d98a12}
+  body[data-scene=refinery]{--ac:#ff7b47;--ac-rgb:255,123,71;--ac-deep:#c94a1d}
+  body[data-scene=green]{--ac:#2ee8b5;--ac-rgb:46,232,181;--ac-deep:#0f9e78}
+  body[data-scene=terminal]{--ac:#5eb8ff;--ac-rgb:94,184,255;--ac-deep:#1a6ec4}
   .glass{background:radial-gradient(circle at 10% 0%,rgba(0,133,202,.20),transparent 55%),linear-gradient(168deg,rgba(10,34,50,.93) 0%,rgba(4,16,26,.96) 100%);
          border:1px solid rgba(118,205,255,.22);
          box-shadow:0 .75rem 2.2rem rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.15)}
@@ -197,20 +200,23 @@
   .world-lbl{display:flex;align-items:center;gap:.65rem;font-size:.62rem;font-weight:800;letter-spacing:.18rem;color:rgba(210,240,255,.78);
              text-transform:uppercase;text-align:left;margin-bottom:.46rem}
   .world-lbl::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(var(--ac-rgb),.38),transparent)}
-  .world-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.58rem;margin-bottom:.86rem}
-  .world-btn{position:relative;border-radius:1.05rem;border:1px solid rgba(255,255,255,.11);
+  .world-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.46rem;margin-bottom:.68rem}
+  .world-btn{position:relative;border-radius:.95rem;border:1px solid rgba(255,255,255,.11);
              background:linear-gradient(170deg,var(--wrest,rgba(18,52,74,.55)),rgba(6,20,31,.82));
-             padding:.74rem .44rem .64rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:.3rem;
+             padding:.52rem .34rem .46rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:.2rem;
              transition:transform .16s,border-color .16s,background .16s;overflow:hidden}
-  .world-btn .w-ico{width:2.5rem;height:2.5rem;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  .world-btn .w-ico{width:2.05rem;height:2.05rem;border-radius:50%;display:flex;align-items:center;justify-content:center;
                     background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);transition:background .16s,border-color .16s,transform .16s}
-  .world-btn svg{width:1.38rem;height:1.38rem;color:#a5d7f0;transition:color .16s}
-  .world-btn b{font-size:.74rem;font-weight:800;line-height:1.15;color:#f1f9ff}
-  .world-btn small{font-size:.54rem;font-weight:800;letter-spacing:.08rem;text-transform:uppercase;opacity:.76;
-                   padding:.12rem .45rem;border-radius:.4rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);transition:background .16s,color .16s,border-color .16s}
+  .world-btn svg{width:1.18rem;height:1.18rem;color:#a5d7f0;transition:color .16s}
+  .world-btn b{font-size:.67rem;font-weight:800;line-height:1.15;color:#f1f9ff}
+  .world-btn small{font-size:.50rem;font-weight:800;letter-spacing:.07rem;text-transform:uppercase;opacity:.76;
+                   padding:.10rem .40rem;border-radius:.38rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);transition:background .16s,color .16s,border-color .16s}
   .world-btn[data-world=offshore]{--wc:#29d3ff;--wbg:rgba(0,133,202,.34);--wrest:rgba(14,56,82,.58)}
   .world-btn[data-world=onshore]{--wc:#3fe28a;--wbg:rgba(0,150,57,.30);--wrest:rgba(14,58,46,.52)}
   .world-btn[data-world=kacalka]{--wc:#ffc23d;--wbg:rgba(217,138,18,.30);--wrest:rgba(66,49,18,.48)}
+  .world-btn[data-world=refinery]{--wc:#ff7b47;--wbg:rgba(201,74,29,.34);--wrest:rgba(68,32,24,.52)}
+  .world-btn[data-world=terminal]{--wc:#5eb8ff;--wbg:rgba(26,110,196,.34);--wrest:rgba(18,46,78,.54)}
+  .world-btn[data-world=green]{--wc:#2ee8b5;--wbg:rgba(15,158,120,.32);--wrest:rgba(14,60,54,.52)}
   .world-btn.on{transform:translateY(-2px);border-color:var(--wc);background:linear-gradient(160deg,var(--wbg),rgba(6,22,34,.92));
                 box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 .45rem 1.2rem rgba(0,0,0,.38)}
   .world-btn.on::before{content:'';position:absolute;left:18%;right:18%;bottom:0;height:2.5px;border-radius:2px 2px 0 0;background:var(--wc);box-shadow:0 0 .6rem var(--wc)}
@@ -981,13 +987,17 @@ const foamTex = (() => {
   return new THREE.CanvasTexture(c);
 })();
 // one group per scene: its base and scene-only surroundings; shared sea/boats/heli stay in `scene`
-const ENV = { platform: new THREE.Group(), offshore: new THREE.Group(), onshore: new THREE.Group(), kacalka: new THREE.Group() };
+const ENV = {
+  platform: new THREE.Group(), offshore: new THREE.Group(), onshore: new THREE.Group(), kacalka: new THREE.Group(),
+  refinery: new THREE.Group(), green: new THREE.Group(), terminal: new THREE.Group(),
+};
 for (const k in ENV) { ENV[k].visible = false; scene.add(ENV[k]); }
 const FOAM_GEO = new THREE.PlaneGeometry(1.6, 1.6).rotateX(-Math.PI / 2);
 const foamSpots = [];
 for (const sx of [-1, 0, 1]) for (const sz of [-1, 1]) foamSpots.push([sx * 4.28, sz * 4.28, 1.0, 'platform']);
 foamSpots.push(...[[1.75, 4.83, 0.65], [3.15, 4.83, 0.65], [5.55, 0.25, 0.85], [-6.5, -4.8, 0.72], [-5.4, -5.9, 0.72]].map(f => [...f, 'platform']));
 for (const sx of [-1, 1]) for (const sz of [-1, 0, 1]) foamSpots.push([sx * 3.6, sz * 3.6, 1.45, 'offshore']);
+for (let fz = -6; fz <= 6; fz += 3) foamSpots.push([5.0, fz, 1.25, 'terminal']);
 const foamItems = [];
 for (const [fx, fz, sc, sid] of foamSpots) for (let k = 0; k < 2; k++) {
   foamItems.push({ x: fx, z: fz, base: sc, sid, phase: k * 0.5 + Math.random() * 0.2 });
@@ -1261,8 +1271,16 @@ const surround = (() => {
   buildSisterPlatform(endX, endZ, theta, false);
   buildSisterPlatform(-13.5, -13.0, 0.42, false);
 
-  // Derrick crown aviation beacons on offshore & onshore scenes
-  for (const [envObj, bx, by, bz] of [[ENV.offshore, -6.1, 5.62, -1.55], [ENV.onshore, -6.1, 5.62, -1.55]]) {
+  // Derrick crown & tower aviation beacons across scenes
+  for (const [envObj, bx, by, bz] of [
+    [ENV.offshore, -6.1, 5.62, -1.55],
+    [ENV.onshore, -6.1, 5.62, -1.55],
+    [ENV.refinery, -5.45, 5.05, -1.35],
+    [ENV.refinery, -6.35, 3.42, -0.55],
+    [ENV.green, -5.65, 5.12, -1.75],
+    [ENV.green, -6.35, 3.82, 1.65],
+    [ENV.terminal, -5.90, 2.34, 2.55],
+  ]) {
     const b = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 6), navBeaconMat);
     b.position.set(bx, by, bz); envObj.add(b);
     const sp = makeGlowSprite(0xff3b2a, 0.85, 0.8); sp.position.copy(b.position); envObj.add(sp);
@@ -1318,12 +1336,18 @@ const surround = (() => {
     new THREE.MeshBasicMaterial({ map: foamTex, color: 0xff7b29, transparent: true, opacity: 0.25, depthWrite: false, blending: THREE.AdditiveBlending }));
   flareGlowWater.position.set(flarePos.x, WATER_Y + 0.08, flarePos.z); ENV.platform.add(flareGlowWater);
 
-  // Onshore flare pit live flame + glow sprite
+  // Onshore flare pit live flame + Refinery elevated flare stack live flame
   const onFlarePos = new THREE.Vector3(5.37, 0.18, -4.82);
   const onFlareCore = new THREE.Mesh(new THREE.ConeGeometry(0.14, 0.52, 8), flareCoreMat);
   onFlareCore.position.set(onFlarePos.x, onFlarePos.y + 0.2, onFlarePos.z); ENV.onshore.add(onFlareCore);
   const onFlareGlow = makeGlowSprite(0xff8e2a, 1.45, 0.58);
   onFlareGlow.position.set(onFlarePos.x, onFlarePos.y + 0.25, onFlarePos.z); ENV.onshore.add(onFlareGlow);
+
+  const rfFlarePos = new THREE.Vector3(-6.75, 5.10, -3.15);
+  const rfFlareCore = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.62, 8), flareCoreMat);
+  rfFlareCore.position.set(rfFlarePos.x, rfFlarePos.y + 0.24, rfFlarePos.z); ENV.refinery.add(rfFlareCore);
+  const rfFlareGlow = makeGlowSprite(0xff8a2b, 1.75, 0.66);
+  rfFlareGlow.position.set(rfFlarePos.x, rfFlarePos.y + 0.30, rfFlarePos.z); ENV.refinery.add(rfFlareGlow);
 
   // Glowing rising gas flare embers
   const EMBER_N = 18;
@@ -1420,6 +1444,12 @@ const surround = (() => {
       onFlareGlow.scale.setScalar((1.2 + 0.22 * fl));
       onFlareGlow.material.opacity = Math.min(0.95, 0.42 + 0.18 * fl);
     }
+    if (ENV.refinery.visible) {
+      rfFlareCore.scale.set(0.9 + 0.14 * Math.sin(time * 9.5), fl, 0.9 + 0.14 * Math.cos(time * 8.5));
+      rfFlareCore.rotation.z = Math.sin(time * 6.0) * 0.12;
+      rfFlareGlow.scale.setScalar(1.35 + 0.28 * fl);
+      rfFlareGlow.material.opacity = Math.min(0.95, 0.46 + 0.20 * fl);
+    }
     if (ENV.platform.visible) {
       flareCore.scale.set(0.9 + 0.12 * Math.sin(time * 9), fl, 0.9 + 0.12 * Math.cos(time * 8));
       flareCore.rotation.z = Math.sin(time * 6.5) * 0.14;
@@ -1448,7 +1478,7 @@ const surround = (() => {
     });
     wings.instanceMatrix.needsUpdate = true;
   }
-  animSurroundings.marineRefs = { sisters, flareBoomWrap, boatWrap, crewWrap, dolphinWrap, buoys, birdMat };
+  animSurroundings.marineRefs = { sisters, flareBoomWrap, boat, boatWrap, crewBoat, crewWrap, dolphinWrap, buoys, birdMat };
   return animSurroundings;
 })();
 
@@ -1583,11 +1613,19 @@ function applyKitPlatform() {
     const copy = base.clone();
     const terr = copy.getObjectByName('onshore_terrain');
     if (terr) terr.traverse(m => { if (m.isMesh) m.userData.noCast = true; });
-    const live = ['pumpjack_beam', 'pumpjack_crank'].map(n => copy.getObjectByName(n)).filter(Boolean);
+    const live = [];
+    copy.traverse(o => {
+      if (o.name === 'pumpjack_beam' || o.name === 'pumpjack_crank' || /^turbine_rotor_\d+$/.test(o.name)) {
+        live.push(o);
+      }
+    });
     for (const o of live) o.parent.remove(o);
     ENV[id].add(bakeStatic(copy));
     if (live.length) {
-      SCENES[id].anim = live.map(o => { ENV[id].add(o); return { o, rest: o.quaternion.clone(), crank: o.name === 'pumpjack_crank' }; });
+      SCENES[id].anim = live.map(o => {
+        ENV[id].add(o);
+        return { o, rest: o.quaternion.clone(), crank: o.name === 'pumpjack_crank', spin: /^turbine_rotor_\d+$/.test(o.name) };
+      });
     }
     const hs = base.getObjectByName('heli_spot');
     if (hs) { base.updateMatrixWorld(true); SCENES[id].heliSpot = hs.getWorldPosition(new THREE.Vector3()); }
@@ -1708,7 +1746,7 @@ function syncHoles() {
 
 // ---------------------------------------------------------------- Blender kit & 3D Thumbnails
 let KIT = null;
-const WORLD_IDS = ['offshore', 'onshore', 'kacalka'];
+const WORLD_IDS = ['offshore', 'onshore', 'kacalka', 'refinery', 'terminal', 'green'];
 const SCENES = {
   offshore: {
     files: ['assets/offshore/base.glb', 'assets/offshore/pieces.glb', 'assets/offshore/buildings.glb'],
@@ -1823,6 +1861,120 @@ const SCENES = {
       V:  { az: 'Mədən operatorlarının gündəlik nəzarət məntəqəsi.', en: 'Local control booth overseeing safe 24/7 field operation.' },
     },
   },
+  refinery: {
+    files: ['assets/refinery/base.glb', 'assets/refinery/pieces.glb', 'assets/refinery/buildings.glb'],
+    land: true, camX: -1.0, camZ: -0.6, camFit: 1.08,
+    atmo: { bg: 0xc88d68, fog: [28, 92], hemi: [0xf7cfb0, 0x3b2824, 1.15], sun: [0xffbc75, 3.15] },
+    label: { az: 'Neft Emalı', en: 'Oil Refinery' },
+    badge: { az: 'NEFT EMALI ZAVODU · HEYDƏR ƏLİYEV ADINA NEZ', en: 'REFINERY & PETROCHEMICALS · BAKU COMPLEX' },
+    sub: { az: 'REFINERY COMPLEX', en: 'REFINERY COMPLEX' },
+    hudTitle: { az: 'EMAL ZAVODUNU BOŞLUQSUZ QURUN!', en: 'ASSEMBLE THE REFINERY UNIT!' },
+    startDesc: { az: 'Neft emalı zavodunun texnoloji modullarını vaxt bitmədən yerləşdirin', en: 'Install all downstream refining units cleanly into the process bay' },
+    winTitle: { az: 'ZAVOD İŞƏ SALINDI!', en: 'REFINERY COMMISSIONED!' },
+    fact: {
+      az: 'Heydər Əliyev adına Bakı Neft Emalı Zavodu Avro-5 standartlı yanacaq istehsal edərək Azərbaycanın enerji təhlükəsizliyini təmin edir.',
+      en: 'The Heydar Aliyev Baku Oil Refinery produces Euro-5 fuels and feeds downstream petrochemical complexes such as SOCAR Polymer.',
+    },
+    sky: { zen: 0x1d3154, hor: 0xe39b6e, gnd: 0x5c473e, cloud: 0xffdfc4, sunCol: 0xffb366 },
+    names: {
+      I3: { az: 'Texnoloji boru estakadası', en: 'Process Pipe Rack' },
+      I4: { az: 'İstilik dəyişdirici xətti', en: 'Heat Exchanger Train' },
+      O:  { az: 'Sferik qaz çəni', en: 'LPG Hortonsphere' },
+      T:  { az: 'Katalitik manifold bloku', en: 'Catalytic Manifold' },
+      L:  { az: 'Rektifikasiya kolonu', en: 'Distillation Column' },
+      J:  { az: 'Sənaye qradirni', en: 'Cooling Tower Cell' },
+      S:  { az: 'Proses nasosları bloku', en: 'Process Pump Skid' },
+      Z:  { az: 'Qızdırıcı soba bloku', en: 'Fired Process Heater' },
+      V:  { az: 'Operator bunkeri', en: 'Blast Control Bunker' },
+    },
+    descs: {
+      I3: { az: 'Müxtəlif emal qurğularını yüksək təzyiqli xətlərlə birləşdirir.', en: 'Carries high-temperature feedstocks and steam across units.' },
+      I4: { az: 'Xam neft axınlarını enerjiyə qənaətlə qızdırır və soyudur.', en: 'Recovers heat between hot distillates and incoming crude.' },
+      O:  { az: 'Mayeləşdirilmiş qazları yüksək təzyiq altında saxlayan sferik çən.', en: 'Stores pressurized LPG and light hydrocarbons safely.' },
+      T:  { az: 'Buxar və maye fraksiyalarını istiqamətləndirən qovşaq.', en: 'Separates flash vapors and routes streams across the unit.' },
+      L:  { az: 'Xam nefti benzin, dizel və kerosin fraksiyalarına ayırır.', en: 'Separates crude oil into gasoline, diesel, and kerosene fractions.' },
+      J:  { az: 'Dövriyyə suyunu güclü ventilyatorlarla soyudan qradirn.', en: 'Cools circulating process water with twin induced-draft fans.' },
+      S:  { az: 'Neft məhsullarını qurğular arasında fasiləsiz nəql edir.', en: 'Drives heavy hydrocarbon streams between process vessels.' },
+      Z:  { az: 'Xam nefti fraksiyalaşdırmadan əvvəl lazımi temperatura qızdırır.', en: 'Heats crude charge before entering the fractionating tower.' },
+      V:  { az: 'Avtomatlaşdırılmış emal proseslərinə nəzarət edən gücləndirilmiş mərkəz.', en: 'Reinforced hub where operators supervise all refinery loops.' },
+    },
+  },
+  terminal: {
+    files: ['assets/terminal/base.glb', 'assets/terminal/pieces.glb', 'assets/terminal/buildings.glb'],
+    deck: [4.5, 8.2], camX: -1.0, camZ: -0.6, camFit: 1.08,
+    atmo: { bg: 0x8fb8d4, fog: [32, 110], hemi: [0xdcf0fc, 0x2f434a, 1.08], sun: [0xfff0d4, 2.95] },
+    label: { az: 'Səngəçal Terminalı', en: 'Export Terminal' },
+    badge: { az: 'SƏNGƏÇAL TERMİNALI · XƏZƏR NEFT-QAZ LİMANI', en: 'SANGACHAL TERMINAL · COASTAL EXPORT JETTY' },
+    sub: { az: 'COASTAL TERMINAL', en: 'COASTAL TERMINAL' },
+    hudTitle: { az: 'İXRAC TERMİNALINI BOŞLUQSUZ QURUN!', en: 'COMPLETE THE EXPORT TERMINAL!' },
+    startDesc: { az: 'Sahil terminalının yükləmə və saxlama modullarını vaxt bitmədən yerləşdirin', en: 'Install coastal storage and tanker loading modules into the quay bay' },
+    winTitle: { az: 'TERMİNAL İŞƏ SALINDI!', en: 'TERMINAL COMMISSIONED!' },
+    fact: {
+      az: 'Səngəçal terminalı Xəzər yataqlarından gələn neft və qazı qəbul edərək Bakı–Tbilisi–Ceyhan və Cənub Qaz Dəhlizi ilə dünya bazarlarına ötürür.',
+      en: 'Sangachal Terminal receives Caspian oil and gas and dispatches it via pipelines like BTC and the Southern Gas Corridor, as well as sea tankers.',
+    },
+    sky: { zen: 0x1d588a, hor: 0x9ec9e6, gnd: 0x3b5862, cloud: 0xf4f9fc, sunCol: 0xffecc2 },
+    names: {
+      I3: { az: 'Kommersiya ölçü qovşağı', en: 'Custody Metering Skid' },
+      I4: { az: 'Dəniz yükləmə manifoldu', en: 'Marine Loading Header' },
+      O:  { az: 'Üzən damlı neft çəni', en: 'Floating-Roof Tank' },
+      T:  { az: 'Təzyiq tənzimləmə qovşağı', en: 'Surge Relief Junction' },
+      L:  { az: 'Buxar tutucu qurğu', en: 'Vapor Recovery Unit' },
+      J:  { az: 'Sahil yanğınsöndürmə bloku', en: 'Coastal Firewater Skid' },
+      S:  { az: 'Magistral nasos stansiyası', en: 'Export Booster Pumps' },
+      Z:  { az: 'Kəmər təmizləmə kamerası', en: 'Pig Launcher / Receiver' },
+      V:  { az: 'Liman dispetçer məntəqəsi', en: 'Berth Dispatch Office' },
+    },
+    descs: {
+      I3: { az: 'Tanker və kəmərə ötürülən neftin dəqiq həcmini ölçür.', en: 'Measures exact crude volume transferred to tankers and pipelines.' },
+      I4: { az: 'İxrac axınlarını sahil estakadasından estakada qollarına paylayır.', en: 'Distributes export lines onto the coastal tanker loading jetty.' },
+      O:  { az: 'Buxarlanmanı minimuma endirən üzən damlı xam neft çəni.', en: 'Large crude tank with floating roof to prevent vapor loss.' },
+      T: { az: 'Yükləmə zamanı hidravlik zərbələri neytrallaşdıran qoruyucu blok.', en: 'Protects jetty pipelines from pressure surges during loading.' },
+      L:  { az: 'Tanker yüklənməsi zamanı ayrılan qaz buxarlarını toplayır.', en: 'Captures hydrocarbon vapors during tanker loading operations.' },
+      J:  { az: 'Dəniz suyunu və köpüyü yanğından mühafizə xəttinə vurur.', en: 'Supplies high-volume firewater and foam to the coastal berth.' },
+      S:  { az: 'Nefti böyük təzyiqlə tankerə və ya əsas kəmərə ötürür.', en: 'Boosts flow rates for rapid coastal tanker loading.' },
+      Z:  { az: 'Dənizaltı və sahil kəmərlərinə diaqnostik cihazlar buraxır.', en: 'Launches and receives inspection pigs along export pipelines.' },
+      V:  { az: 'Liman körpüsünü və gəmi yanalmasını idarə edən radar məntəqəsi.', en: 'Monitors tanker berthing, tide levels, and berth safety.' },
+    },
+  },
+  green: {
+    files: ['assets/green/base.glb', 'assets/green/pieces.glb', 'assets/green/buildings.glb'],
+    land: true, camX: -1.0, camZ: -0.6, camFit: 1.08,
+    atmo: { bg: 0xbfe2e8, fog: [40, 155], hemi: [0xe6f9ff, 0x4b6848, 1.15], sun: [0xfff2d0, 3.00] },
+    label: { az: 'Yaşıl Enerji', en: 'SOCAR Green' },
+    badge: { az: 'SOCAR GREEN · KÜLƏK, GÜNƏŞ VƏ YAŞIL HİDROGEN', en: 'SOCAR GREEN · WIND, SOLAR & GREEN HYDROGEN' },
+    sub: { az: 'SOCAR GREEN PARK', en: 'SOCAR GREEN PARK' },
+    hudTitle: { az: 'YAŞIL ENERJİ PARKINI BOŞLUQSUZ QURUN!', en: 'BUILD THE GREEN ENERGY PARK!' },
+    startDesc: { az: 'Bərpa olunan enerji və yaşıl hidrogen modullarını vaxt bitmədən yerləşdirin', en: 'Install solar, storage, and green hydrogen units cleanly into the eco-grid' },
+    winTitle: { az: 'YAŞIL ENERJİ ŞƏBƏKƏSİ HAZIRDIR!', en: 'GREEN ENERGY PARK ONLINE!' },
+    fact: {
+      az: 'SOCAR Green Azərbaycanda sənaye miqyaslı günəş, külək elektrik stansiyaları və "yaşıl hidrogen" layihələrini inkişaf etdirir.',
+      en: 'SOCAR Green spearheads utility-scale solar, onshore/offshore wind farms, battery storage, and green hydrogen across Azerbaijan.',
+    },
+    sky: { zen: 0x1e6ca8, hor: 0xc2ebf2, gnd: 0x6f7f52, cloud: 0xffffff, sunCol: 0xfff0c4 },
+    names: {
+      I3: { az: 'Günəş izləyici panellər', en: 'Solar PV Tracker Array' },
+      I4: { az: 'BESS batareya bankı', en: 'BESS Battery Bank' },
+      O:  { az: 'Yaşıl hidrogen elektrolizörü', en: 'H₂ Electrolyzer Stack' },
+      T:  { az: 'Yüksək gərginlikli yarımstansiya', en: 'HV Grid Substation' },
+      L:  { az: 'Hidrogen kompressor bloku', en: 'H₂ Compression Skid' },
+      J:  { az: 'Şaquli külək və meteo qülləsi', en: 'Micro-Wind & Met Skid' },
+      S:  { az: 'İkiqat invertor stansiyası', en: 'Dual Solar Inverter' },
+      Z:  { az: 'Su təmizləmə və soyutma bloku', en: 'RO Water & Chiller' },
+      V:  { az: 'Ağıllı şəbəkə SCADA mərkəzi', en: 'Smart Grid SCADA Hub' },
+    },
+    descs: {
+      I3: { az: 'Günəşin hərəkətini izləyərək maksimum təmiz elektrik istehsal edir.', en: 'Tracks the sun to maximize clean photovoltaic power output.' },
+      I4: { az: 'Artıq bərpa olunan enerjini toplayaraq şəbəkəni balanslaşdırır.', en: 'Stores surplus renewable electricity for stable 24/7 dispatch.' },
+      O:  { az: 'Təmiz elektrik enerjisi ilə suyu parçalayıb yaşıl hidrogen alır.', en: 'Splits purified water using renewable power to produce green H₂.' },
+      T:  { az: 'İstehsal olunan enerjini yüksək gərginliklə əsas şəbəkəyə ötürür.', en: 'Steps up renewable voltage for transmission into the national grid.' },
+      L:  { az: 'Alınmış hidrogen qazını yüksək təzyiqlə saxlama balonlarına vurur.', en: 'Compresses and stores clean hydrogen gas in high-pressure tubes.' },
+      J:  { az: 'Küləyin sürətini ölçür və yerli köməkçi enerji istehsal edir.', en: 'Monitors wind shear while generating auxiliary clean electricity.' },
+      S:  { az: 'Günəş panellərinin sabit cərəyanını dəyişən şəbəkə cərəyanına çevirir.', en: 'Converts DC solar output into grid-synchronized AC power.' },
+      Z:  { az: 'Elektroliz prosesi üçün ultra-təmiz su və soyutma təmin edir.', en: 'Supplies ultra-pure demineralized water and cooling for PEM cells.' },
+      V:  { az: 'Külək, günəş və hidrogen axınlarını real vaxtda idarə edir.', en: 'Balances solar, wind, battery, and hydrogen flows in real time.' },
+    },
+  },
   platform: { hidden: true, deck: [3.9, 3.9] },
 };
 const SEA_ATMO = { bg: 0x182b38, fog: [28, 86], hemi: [0xbcd9ee, 0x0c1d28, 1.05], sun: [0xfff0dc, 2.85] };
@@ -1835,6 +1987,13 @@ function setScene(id) {
   for (const k in ENV) ENV[k].visible = k === id;
   const sc = SCENES[id], a = sc.atmo || SEA_ATMO;
   SEA.visible = !sc.land;
+  if (surround.marineRefs) {
+    const mr = surround.marineRefs;
+    const isTerminal = id === 'terminal';
+    if (mr.boat) mr.boat.visible = !isTerminal;
+    if (mr.sisters) for (const s of mr.sisters) s.host.visible = !isTerminal;
+    if (mr.buoys) for (const b of mr.buoys) b.visible = !isTerminal || b.userData.x > 4.6;
+  }
   if (sc.deck) waterUniforms.uDeck.value.set(...sc.deck);
   scene.background.setHex(a.bg); scene.fog.color.setHex(a.bg); scene.fog.near = a.fog[0]; scene.fog.far = a.fog[1];
   waterUniforms.uFogColor.value.setHex(a.bg); waterUniforms.uFogNear.value = a.fog[0]; waterUniforms.uFogFar.value = a.fog[1];
@@ -2484,11 +2643,17 @@ const WORLD_ICONS = {
   offshore: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0"/><path d="M5 14h14"/><path d="M7 14v3M17 14v3M12 14V4l3 4h-6l3-4"/></svg>`,
   onshore: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><path d="M8 20l2-15h4l2 15"/><path d="M9.5 11h5M8.8 15.5h6.4"/><path d="M18 14h3v6"/></svg>`,
   kacalka: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><path d="M12 20V10M9 20l3-10 3 10"/><path d="M5 8l14 4"/><path d="M5 8c-1.5 1.5-1.5 4 0 5"/><path d="M19 12v8"/></svg>`,
+  refinery: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><path d="M6 20V9h3v11M11 20V6h3v14M16 20v-7h3v7"/><path d="M9 12h2M14 14h2"/><path d="M12.5 3c.8 1 .8 2 0 3"/></svg>`,
+  terminal: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 19c2 1 4 1 6 0s4-1 6 0 4 1 6 0"/><path d="M3 15h8V9H3zM11 13h8v2"/><path d="M15 13V8l3 2"/></svg>`,
+  green: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><path d="M12 20V10"/><path d="M12 10L7 6M12 10l5-4M12 10v6"/><circle cx="12" cy="10" r="1.4"/><path d="M17 17h4l-1 3h-2z"/></svg>`,
 };
 const WORLD_MICRO = {
   offshore: { az: 'Dəniz', en: 'Sea' },
   onshore: { az: 'Quru', en: 'Land' },
   kacalka: { az: 'Mədən', en: 'Field' },
+  refinery: { az: 'Zavod', en: 'Plant' },
+  terminal: { az: 'Liman', en: 'Port' },
+  green: { az: 'Yaşıl', en: 'Eco' },
 };
 
 const AUTO_RESTART = 25;
@@ -3682,7 +3847,10 @@ function loop(now) {
   surround(T, status === 'celebrating' ? 1.65 : 1);
   if (SCENES[sceneId].anim) {
     const th = T * 1.6;
-    for (const a of SCENES[sceneId].anim) { a.o.quaternion.copy(a.rest); a.o.rotateZ(a.crank ? -th : -0.2 * Math.sin(th)); }
+    for (const a of SCENES[sceneId].anim) {
+      a.o.quaternion.copy(a.rest);
+      a.o.rotateZ(a.spin ? T * 1.45 : a.crank ? -th : -0.2 * Math.sin(th));
+    }
   }
   if (status === 'play') {
     timeLeft -= dt;

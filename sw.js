@@ -1,4 +1,4 @@
-const CACHE_NAME = 'socar-offshore-v12';
+const CACHE_NAME = 'socar-offshore-v13';
 
 const PRECACHE_URLS = [
   './',
@@ -23,6 +23,15 @@ const PRECACHE_URLS = [
   './assets/kacalka/base.glb',
   './assets/kacalka/buildings.glb',
   './assets/kacalka/pieces.glb',
+  './assets/refinery/base.glb',
+  './assets/refinery/buildings.glb',
+  './assets/refinery/pieces.glb',
+  './assets/green/base.glb',
+  './assets/green/buildings.glb',
+  './assets/green/pieces.glb',
+  './assets/terminal/base.glb',
+  './assets/terminal/buildings.glb',
+  './assets/terminal/pieces.glb',
   './sfx/invalid.wav',
   './sfx/lose.wav',
   './sfx/move.wav',
