@@ -684,7 +684,7 @@ const I18N = {
     loseTitle: 'VAXT BİTDİ',
     loseDesc: 'Sahədə mümkün həllərdən biri göstərilir',
     statFilled: 'doldurulub',
-    retryBtn: 'YENİDƏN CƏHD ET',
+    retryBtn: 'NÖVBƏTİ RAUND',
     autoPrefix: 'Yeni oyun',
     autoMid: 'san sonra avtomatik başlayacaq',
     toastNoFit: 'Bu modul buraya sığmır',
@@ -756,7 +756,7 @@ const I18N = {
     loseTitle: 'TIME IS UP',
     loseDesc: 'One valid module layout is shown on the bay',
     statFilled: 'completed',
-    retryBtn: 'TRY AGAIN',
+    retryBtn: 'NEXT ROUND',
     autoPrefix: 'Next game starts automatically in',
     autoMid: 's',
     toastNoFit: 'Module does not fit here',
@@ -2656,7 +2656,10 @@ function newRound(opt = {}) {
     let next = 'platform';
     if (opt.scene && sceneReady(opt.scene)) next = opt.scene;
     else if (forced && sceneReady(forced)) next = forced;
-    else if (sceneReady(selectedScene)) next = selectedScene;
+    else if (opt.advanceScene && pool.length) {
+      const idx = pool.indexOf(selectedScene);
+      next = pool[(idx + 1) % pool.length];
+    } else if (sceneReady(selectedScene)) next = selectedScene;
     else if (pool.length) next = pool[0];
     selectedScene = next;
     setScene(next);
@@ -3149,6 +3152,7 @@ function place(allowPickup = true) {
   const mesh = makePiece(c.type, cells, 'solid', rot % ROTS[c.type].length);
   mesh.position.copy(cellPos(o.x, o.y));
   mesh.userData.drop = 1;
+  mesh.userData.pid = c.id;
   levelGroup.add(mesh);
   const rec = { id: c.id, type: c.type, rot: rot % ROTS[c.type].length, x: o.x, y: o.y, cells, mesh };
   placed.push(rec);
@@ -3169,6 +3173,7 @@ function restorePiece(prev) {
   const mesh = makePiece(t.type, cells, 'solid', prev.rot);
   mesh.position.copy(cellPos(prev.x, prev.y));
   mesh.userData.drop = 0.35;
+  mesh.userData.pid = t.id;
   levelGroup.add(mesh);
   placed.push({ id: t.id, type: t.type, rot: prev.rot, x: prev.x, y: prev.y, cells, mesh });
   for (const [x, y] of cells) { const i = (prev.y + y) * N + prev.x + x; occ[i] = t.id; holeVis[i] = 0; }
@@ -3177,7 +3182,7 @@ function restorePiece(prev) {
   rot = current() ? (current().rot || 0) : 0;
   rebuildGhost(); renderTray(); checkDeadPockets(); dirtyShadows();
 }
-function pickUp(cellIdx) {
+function pickUp(cellIdx, armGhost = true) {
   const id = occ[cellIdx]; if (id === -1) return null;
   const k = placed.findIndex(p => p.id === id), p = placed[k];
   const prev = { id: p.id, rot: p.rot, x: p.x, y: p.y };
@@ -3186,7 +3191,7 @@ function pickUp(cellIdx) {
   for (const [x, y] of p.cells) { const i = (p.y + y) * N + p.x + x; occ[i] = -1; holeVis[i] = 1; }
   const tr = tray.find(t => t.id === id);
   tr.placed = false; tr.rot = p.rot;
-  selectId(id); ghostArmed = true;
+  selectId(id); ghostArmed = armGhost;
   rebuildGhost(); renderTray(); checkDeadPockets();
   sfx('pickup', () => beep(300, 0.08, 'triangle', 0.1));
   return prev;
@@ -3194,13 +3199,13 @@ function pickUp(cellIdx) {
 function undoLast() {
   if (status !== 'play' || !placed.length) return;
   const p = placed[placed.length - 1];
-  pickUp((p.y + p.cells[0][1]) * N + p.x + p.cells[0][0]);
+  pickUp((p.y + p.cells[0][1]) * N + p.x + p.cells[0][0], false);
 }
 function back() {
   if (status !== 'play') return;
   const i = cursor.y * N + cursor.x;
-  if (occ[i] !== -1) pickUp(i);
-  else if (placed.length) { const p = placed[placed.length - 1]; pickUp((p.y + p.cells[0][1]) * N + p.x + p.cells[0][0]); }
+  if (occ[i] !== -1) pickUp(i, false);
+  else if (placed.length) { const p = placed[placed.length - 1]; pickUp((p.y + p.cells[0][1]) * N + p.x + p.cells[0][0], false); }
 }
 function confirm() {
   ensureAudio();
@@ -3208,7 +3213,7 @@ function confirm() {
   else if (status === 'play') place();
   else if (status === 'celebrating' && celebT > 1.0) { setStatus('win'); }
   else if (status !== 'celebrating' && performance.now() - endTime > 600) {
-    newRound(); setStatus('play'); sfx('start', () => beep(520, 0.1, 'triangle', 0.12));
+    newRound({ advanceScene: true }); setStatus('play'); sfx('start', () => beep(520, 0.1, 'triangle', 0.12));
   }
 }
 function win() {
@@ -3423,13 +3428,23 @@ addEventListener('keydown', e => {
   else if (k === 'Backspace' || k === 'KeyZ') back();
   else if (k === 'KeyQ') cycle(-1);
   else if (k === 'KeyE' || k === 'Tab') cycle(1);
-  else if (k === 'KeyN') newRound();
+  else if (k === 'KeyN') newRound({ advanceScene: true });
   else if (k === 'KeyH' && params0.has('dev') && hintGroup) hintGroup.visible = !hintGroup.visible;
   else if (k === 'KeyV' && params0.has('dev')) window.__game.autoSolve();
 });
 
 // ---------------------------------------------------------------- input: touch / pen / mouse
 const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), hit = new THREE.Vector3();
+function placedPieceAt(cx, cy) {
+  if (!placed.length) return null;
+  ndc.set(cx / innerWidth * 2 - 1, -(cy / innerHeight) * 2 + 1);
+  ray.setFromCamera(ndc, camera);
+  const hits = ray.intersectObjects(placed.map(p => p.mesh), true);
+  if (!hits.length) return null;
+  let o = hits[0].object;
+  while (o && o.userData.pid === undefined) o = o.parent;
+  return o ? (placed.find(p => p.id === o.userData.pid) || null) : null;
+}
 function cellAt(cx, cy) {
   ndc.set(cx / innerWidth * 2 - 1, -(cy / innerHeight) * 2 + 1);
   ray.setFromCamera(ndc, camera);
@@ -3475,9 +3490,11 @@ canvas.addEventListener('pointerdown', e => {
   if (status === 'celebrating') { confirm(); return; }
   if (e.button === 2) { rotate(); return; }
   if (e.button !== 0 || drag || status !== 'play') return;
-  const c = cellAt(e.clientX, e.clientY);
+  const hitP = placedPieceAt(e.clientX, e.clientY);
+  const c = cellAt(e.clientX, e.clientY) || (hitP ? { x: hitP.x + hitP.cells[0][0], y: hitP.y + hitP.cells[0][1] } : null);
   if (!c) return;
-  const i = c.y * N + c.x, base = { pid: e.pointerId, sx: e.clientX, sy: e.clientY, moved: false, over: true, overTray: false, card: false };
+  const i = hitP ? ((hitP.y + hitP.cells[0][1]) * N + hitP.x + hitP.cells[0][0]) : (c.y * N + c.x);
+  const base = { pid: e.pointerId, sx: e.clientX, sy: e.clientY, moved: false, over: true, overTray: false, card: false };
   if (occ[i] !== -1) {
     const prevPlace = pickUp(i);
     cursor = c; snapMode = true; refreshValidity();
@@ -3514,8 +3531,8 @@ function endDrag(e) {
   $('dragIcon').style.display = 'none';
   if (e.type !== 'pointercancel' && status === 'play') {
     if (d.moved) {
-      if (d.picked && d.overTray) {
-        // intentionally returned placed piece to tray
+      if (d.picked && (d.overTray || !d.over)) {
+        ghostArmed = false; refreshValidity(); flyBack(e.clientX, e.clientY);
       } else if (d.over && place(false)) {
         // successfully placed
       } else if (d.picked && d.prevPlace) {
@@ -3523,9 +3540,11 @@ function endDrag(e) {
       } else {
         flyBack(e.clientX, e.clientY);
       }
+    } else if (d.picked) {
+      ghostArmed = false; refreshValidity(); flyBack(e.clientX, e.clientY);
     } else if (d.card) {
       if (d.wasSel) rotate();
-    } else if (!d.picked) {
+    } else {
       place(false);
     }
   } else if (e.type === 'pointercancel' && d.picked && d.prevPlace) {
@@ -3672,7 +3691,7 @@ function pollPad(dt) {
   if (edges[2] || edges[3]) rotate();
   if (edges[4]) cycle(-1);
   if (edges[5]) cycle(1);
-  if (edges[9]) newRound();
+  if (edges[9]) newRound({ advanceScene: true });
   let dx = 0, dy = 0;
   if (pressed(14)) dx = -1; else if (pressed(15)) dx = 1; else if (pressed(12)) dy = -1; else if (pressed(13)) dy = 1;
   if (!dx && !dy) {
@@ -3801,7 +3820,7 @@ $('staff').addEventListener('click', e => {
   resetStaffTimer();
   const a = e.target.dataset && e.target.dataset.a;
   if (e.target.id === 'staff' || a === 'close') { clearTimeout(staffIdleT); $('staff').classList.remove('show'); return; }
-  if (a === 'new') { clearTimeout(staffIdleT); $('staff').classList.remove('show'); newRound(); return; }
+  if (a === 'new') { clearTimeout(staffIdleT); $('staff').classList.remove('show'); newRound({ advanceScene: true }); return; }
   if (a === 'fps') { perf.show = !perf.show; $('fps').style.display = perf.show ? 'block' : 'none'; }
   if (a === 'q') {
     if (!qLocked) { qLocked = true; qLevel = 0; } else if (qLevel < QUALITY.length - 1) qLevel++; else { qLocked = false; qLevel = 0; }
@@ -3988,7 +4007,7 @@ function loop(now) {
     if ($('pwdModal').classList.contains('show') || typing) endTime = now;
     const left = AUTO_RESTART - (now - endTime) / 1000, cd = $('cd');
     if (cd) cd.textContent = Math.max(0, Math.ceil(left));
-    if (left <= 0) newRound();
+    if (left <= 0) newRound({ advanceScene: true });
   }
   if (ghost && current()) {
     const o = ghostOrigin(), target = cellPos(o.x, o.y);

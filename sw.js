@@ -1,4 +1,4 @@
-const CACHE_NAME = 'socar-offshore-v15';
+const CACHE_NAME = 'socar-offshore-v16';
 
 const PRECACHE_URLS = [
   './',
