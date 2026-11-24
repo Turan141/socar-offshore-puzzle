@@ -51,8 +51,8 @@
   #loadPct{font-size:.78rem;font-weight:800;letter-spacing:.12rem;opacity:.75;font-variant-numeric:tabular-nums}
 
   /* floating SOCAR flagship brand badge on start */
-  #worldBadge{position:fixed;left:var(--gap);top:var(--gap);z-index:6;display:none;flex-direction:column;gap:.45rem;
-              padding:.85rem 1.35rem .8rem;border-radius:1.25rem;border-color:rgba(41,211,255,.45);
+  #worldBadge{position:fixed;left:var(--gap);top:var(--gap);z-index:6;display:none;flex-direction:column;justify-content:center;
+              padding:calc(.72rem + 3.5px) 1.35rem .72rem;border-radius:1.25rem;border-color:rgba(41,211,255,.45);
               background:linear-gradient(165deg,rgba(8,29,44,.90),rgba(3,12,21,.94));
               box-shadow:0 .9rem 2.6rem rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.22);
               max-width:calc(100vw - 36rem);pointer-events:none;overflow:hidden}
@@ -60,9 +60,9 @@
     background:linear-gradient(90deg,#0085ca 0%,#29d3ff 35%,#ec1e36 68%,#73bf44 100%)}
   body[data-state=ready] #worldBadge{display:flex;animation:pop .35s cubic-bezier(.2,1.4,.4,1)}
   .wb-top{display:flex;align-items:center;gap:.9rem}
-  .wb-logo{height:3.1rem;width:auto;display:block;flex:none;filter:drop-shadow(0 .2rem .5rem rgba(0,0,0,.45))}
-  .wb-sep{width:1px;height:2.4rem;background:linear-gradient(180deg,transparent,rgba(255,255,255,.32),transparent);flex:none}
-  .wb-id{display:flex;flex-direction:column;gap:.2rem;text-align:left;min-width:0}
+  .wb-logo{height:3.05rem;width:auto;display:block;flex:none;transform:translateY(.08rem);filter:drop-shadow(0 .2rem .5rem rgba(0,0,0,.45))}
+  .wb-sep{width:1px;height:2.35rem;background:linear-gradient(180deg,transparent,rgba(255,255,255,.32),transparent);flex:none}
+  .wb-id{display:flex;flex-direction:column;justify-content:center;gap:.24rem;text-align:left;min-width:0}
   #worldBadgeOrg{font-size:.66rem;font-weight:800;letter-spacing:.12rem;text-transform:uppercase;color:#a8e5ff;line-height:1.2}
   .wb-sub{display:flex;align-items:center;gap:.48rem}
   #worldBadge .dot{width:.54rem;height:.54rem;border-radius:50%;background:var(--cyan);box-shadow:0 0 .7rem var(--cyan);animation:pulse 1.6s infinite;flex:none}
@@ -925,6 +925,7 @@ const WAVES = [
 const waterUniforms = {
   uTime: { value: 0 },
   uDeck: { value: new THREE.Vector2(3.9, 3.9) },
+  uShore: { value: 0 },
   uZenith: skyUniforms.uZenith,
   uHorizon: skyUniforms.uHorizon,
   uSunDir: skyUniforms.uSunDir,
@@ -961,7 +962,7 @@ const waterMat = new THREE.ShaderMaterial({
       gl_Position = projectionMatrix * viewMatrix * wp;
     }`,
   fragmentShader: `
-    uniform float uTime, uFogNear, uFogFar;
+    uniform float uTime, uFogNear, uFogFar, uShore;
     uniform vec2 uDeck;
     uniform vec3 uZenith, uHorizon, uSunDir, uSunCol, uFogColor;
     varying float vCrest;
@@ -971,28 +972,51 @@ const waterMat = new THREE.ShaderMaterial({
     float deckDist(){ return length(max(abs(vWXZ) - uDeck, 0.0)); }
     vec2 ripple(vec2 p, float t){
       vec2 g = vec2(0.0);
-      g += vec2( 0.82, 0.57) * cos(dot(p, vec2( 0.82, 0.57)) * 5.2 + t * 2.3) * 0.58;
-      g += vec2(-0.47, 0.88) * cos(dot(p, vec2(-0.47, 0.88)) * 10.7 + t * 3.5) * 0.38;
+      g += vec2( 0.82, 0.57) * cos(dot(p, vec2( 0.82, 0.57)) * 4.4 + t * 2.1) * 0.65;
+      g += vec2(-0.47, 0.88) * cos(dot(p, vec2(-0.47, 0.88)) * 8.6 + t * 3.1) * 0.45;
+      g += vec2( 0.31,-0.95) * cos(dot(p, vec2( 0.31,-0.95)) * 14.2 - t * 2.7) * 0.25;
       return g;
     }
     void main(){
       float dDeck = deckDist();
       float dDol = length(vWXZ - vec2(-5.95, -5.35));
-      float nearStruct = max(exp(-dDeck * 0.65), exp(-max(dDol - 0.85, 0.0) * 0.9));
-      float streak = 0.5 + 0.5 * sin(vWXZ.x * 1.1 + vWXZ.y * 1.6 + sin(vWXZ.x * 0.45 - uTime * 0.8) * 1.8);
-      vec3 baseCol = mix(vec3(0.012, 0.068, 0.105), vec3(0.042, 0.25, 0.30), smoothstep(-0.30, 0.42, vCrest));
-      baseCol += vec3(0.028, 0.17, 0.20) * nearStruct * 0.52;
-      baseCol = mix(baseCol, vec3(0.75, 0.85, 0.88), smoothstep(0.39, 0.60, vCrest) * (0.48 + 0.22 * streak));
-      baseCol *= mix(0.46, 1.0, smoothstep(0.0, 2.8, dDeck));
+      float nearStruct = max(exp(-dDeck * 0.58), exp(-max(dDol - 0.85, 0.0) * 0.85));
+      float waveLines = 0.5 + 0.5 * sin(vWXZ.x * 1.4 + vWXZ.y * 1.9 + sin(vWXZ.x * 0.55 - uTime * 1.1) * 2.1);
+      float streak = 0.5 + 0.5 * sin(vWXZ.x * 0.9 - vWXZ.y * 1.3 + uTime * 0.9);
+
+      // Rich Caspian azure/turquoise gradient with clearly readable wave troughs & crests
+      vec3 deepCol = vec3(0.015, 0.14, 0.26);
+      vec3 crestCol = vec3(0.05, 0.39, 0.48);
+      vec3 shallowCol = vec3(0.11, 0.52, 0.55);
+      vec3 baseCol = mix(deepCol, crestCol, smoothstep(-0.18, 0.22, vCrest));
+      baseCol = mix(baseCol, shallowCol, nearStruct * 0.48);
+
+      // Visible shoreline shallow turquoise & animated surf foam along terminal coastline
+      float shoreFoam = 0.0;
+      if (uShore > 0.5) {
+        float sx = 4.42 - 7.5 * smoothstep(6.2, 16.0, -vWXZ.z);
+        float dCoast = max(0.0, vWXZ.x - sx);
+        float shallow = exp(-dCoast * 0.42);
+        baseCol = mix(baseCol, shallowCol, shallow * 0.68);
+        float surf = 0.5 + 0.5 * sin(dCoast * 5.2 - uTime * 2.5 + sin(vWXZ.z * 0.9) * 1.4);
+        shoreFoam = smoothstep(0.55, 0.92, surf) * exp(-dCoast * 0.68) * 0.82 + exp(-dCoast * 2.8) * 0.65;
+      }
+
+      // Whitecaps on wave crests + structural edge foam
+      float whitecap = smoothstep(0.11, 0.24, vCrest + 0.04 * waveLines) * (0.45 + 0.45 * streak);
+      float structFoam = exp(-dDeck * 2.6) * (0.35 + 0.35 * waveLines);
+      float foam = clamp(whitecap + structFoam + shoreFoam, 0.0, 0.92);
 
       vec2 rg = ripple(vWXZ, uTime);
-      vec3 N = normalize(vWorldNormal + vec3(rg.x, 0.0, rg.y) * 0.15);
+      vec3 N = normalize(vWorldNormal + vec3(rg.x, 0.0, rg.y) * 0.32);
       vec3 V = normalize(cameraPosition - vWorldPos);
       vec3 R = reflect(-V, N);
-      float fres = 0.04 + 0.92 * pow(1.0 - max(dot(N, V), 0.0), 4.0);
-      vec3 skyRefl = mix(uHorizon, uZenith, clamp(R.y * 1.3, 0.0, 1.0));
-      float spec = pow(max(dot(R, uSunDir), 0.0), 72.0) * 1.25;
-      vec3 col = mix(baseCol, skyRefl, fres * 0.72) + uSunCol * spec * smoothstep(0.0, 2.4, dDeck);
+      float fres = 0.08 + 0.88 * pow(1.0 - max(dot(N, V), 0.0), 3.4);
+      vec3 skyRefl = mix(uHorizon * 0.88 + vec3(0.05, 0.14, 0.20), uZenith * 1.15, clamp(R.y * 1.35, 0.0, 1.0));
+      float spec = pow(max(dot(R, uSunDir), 0.0), 84.0) * 1.65 + pow(max(dot(R, uSunDir), 0.0), 18.0) * 0.18;
+
+      vec3 col = mix(baseCol, skyRefl, fres * 0.68) + uSunCol * spec * smoothstep(0.0, 1.6, dDeck);
+      col = mix(col, vec3(0.88, 0.95, 0.98), foam * 0.78);
 
       float dist = length(cameraPosition - vWorldPos);
       col = mix(col, uFogColor, smoothstep(uFogNear, uFogFar, dist));
@@ -1001,7 +1025,7 @@ const waterMat = new THREE.ShaderMaterial({
       #include <colorspace_fragment>
     }`,
 });
-const waterGeo = new THREE.PlaneGeometry(140, 140, 44, 44);
+const waterGeo = new THREE.PlaneGeometry(140, 140, 96, 96);
 waterGeo.rotateX(-Math.PI / 2);
 const water = new THREE.Mesh(waterGeo, waterMat);
 water.position.y = WATER_Y;
@@ -2037,6 +2061,7 @@ function setScene(id) {
     if (mr.buoys) for (const b of mr.buoys) b.visible = !isTerminal || b.userData.x > 4.6;
   }
   if (sc.deck) waterUniforms.uDeck.value.set(...sc.deck);
+  waterUniforms.uShore.value = id === 'terminal' ? 1.0 : 0.0;
   scene.background.setHex(a.bg); scene.fog.color.setHex(a.bg); scene.fog.near = a.fog[0]; scene.fog.far = a.fog[1];
   waterUniforms.uFogColor.value.setHex(a.bg); waterUniforms.uFogNear.value = a.fog[0]; waterUniforms.uFogFar.value = a.fog[1];
   hemi.color.setHex(a.hemi[0]); hemi.groundColor.setHex(a.hemi[1]); hemi.intensity = a.hemi[2];
