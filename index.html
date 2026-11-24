@@ -50,12 +50,24 @@
   #loadBar{width:8%;height:100%;border-radius:1rem;background:linear-gradient(90deg,var(--socar-blue),var(--cyan),#3fe28a);transition:width .22s ease}
   #loadPct{font-size:.78rem;font-weight:800;letter-spacing:.12rem;opacity:.75;font-variant-numeric:tabular-nums}
 
-  /* floating world badge on start */
-  #worldBadge{position:fixed;left:var(--gap);top:var(--gap);z-index:6;display:none;align-items:center;gap:.65rem;
-              padding:.58rem 1.2rem;border-radius:2rem;border-color:rgba(41,211,255,.42);pointer-events:none}
+  /* floating SOCAR flagship brand badge on start */
+  #worldBadge{position:fixed;left:var(--gap);top:var(--gap);z-index:6;display:none;flex-direction:column;gap:.45rem;
+              padding:.85rem 1.35rem .8rem;border-radius:1.25rem;border-color:rgba(41,211,255,.45);
+              background:linear-gradient(165deg,rgba(8,29,44,.90),rgba(3,12,21,.94));
+              box-shadow:0 .9rem 2.6rem rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.22);
+              max-width:calc(100vw - 36rem);pointer-events:none;overflow:hidden}
+  #worldBadge::before{content:'';position:absolute;left:0;right:0;top:0;height:3.5px;
+    background:linear-gradient(90deg,#0085ca 0%,#29d3ff 35%,#ec1e36 68%,#73bf44 100%)}
   body[data-state=ready] #worldBadge{display:flex;animation:pop .35s cubic-bezier(.2,1.4,.4,1)}
-  #worldBadge .dot{width:.58rem;height:.58rem;border-radius:50%;background:var(--cyan);box-shadow:0 0 .7rem var(--cyan);animation:pulse 1.6s infinite}
-  #worldBadge span{font-size:.76rem;font-weight:800;letter-spacing:.13rem;text-transform:uppercase;color:#eefaff}
+  .wb-top{display:flex;align-items:center;gap:.9rem}
+  .wb-logo{height:3.1rem;width:auto;display:block;flex:none;filter:drop-shadow(0 .2rem .5rem rgba(0,0,0,.45))}
+  .wb-sep{width:1px;height:2.4rem;background:linear-gradient(180deg,transparent,rgba(255,255,255,.32),transparent);flex:none}
+  .wb-id{display:flex;flex-direction:column;gap:.2rem;text-align:left;min-width:0}
+  #worldBadgeOrg{font-size:.66rem;font-weight:800;letter-spacing:.12rem;text-transform:uppercase;color:#a8e5ff;line-height:1.2}
+  .wb-sub{display:flex;align-items:center;gap:.48rem}
+  #worldBadge .dot{width:.54rem;height:.54rem;border-radius:50%;background:var(--cyan);box-shadow:0 0 .7rem var(--cyan);animation:pulse 1.6s infinite;flex:none}
+  #worldBadgeTxt{font-size:.82rem;font-weight:900;letter-spacing:.1rem;text-transform:uppercase;color:#ffffff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  @media (max-width:1180px){.wb-logo{height:2.45rem}#worldBadge{padding:.68rem 1.05rem}#worldBadgeOrg{font-size:.58rem}}
 
   /* top celebration banner */
   #celebBanner{position:fixed;left:50%;top:1.5rem;transform:translateX(-50%);z-index:9;display:none;align-items:center;gap:.8rem;
@@ -183,12 +195,12 @@
   .panel{position:relative;overflow:hidden;width:44rem;max-width:94vw;box-sizing:border-box;padding:1.75rem 2.2rem 1.55rem;border-radius:1.6rem;text-align:center;
          animation:pop .35s cubic-bezier(.2,1.4,.4,1)}
   @keyframes pop{from{transform:scale(.94);opacity:0}}
-  .panel-top{display:flex;align-items:center;justify-content:space-between;padding-bottom:.78rem;margin-bottom:.78rem;border-bottom:1px solid rgba(255,255,255,.10)}
-  .panel-brand{display:flex;align-items:center;gap:.65rem}
-  .panel-brand svg{height:2.2rem;width:auto;display:block}
-  .brand-sep{width:1px;height:1.45rem;background:linear-gradient(180deg,transparent,rgba(255,255,255,.28),transparent)}
-  .brand-tag{font-size:.58rem;font-weight:800;letter-spacing:.16rem;color:var(--ac);padding:.22rem .56rem;border-radius:.5rem;
-             background:rgba(var(--ac-rgb),.12);border:1px solid rgba(var(--ac-rgb),.30);text-transform:uppercase;white-space:nowrap}
+  .panel-top{display:flex;align-items:center;justify-content:space-between;padding-bottom:.82rem;margin-bottom:.78rem;border-bottom:1px solid rgba(255,255,255,.12)}
+  .panel-brand{display:flex;align-items:center;gap:.75rem}
+  .panel-brand svg{height:2.75rem;width:auto;display:block;filter:drop-shadow(0 .15rem .4rem rgba(0,0,0,.4))}
+  .brand-sep{width:1px;height:1.85rem;background:linear-gradient(180deg,transparent,rgba(255,255,255,.32),transparent)}
+  .brand-tag{font-size:.60rem;font-weight:900;letter-spacing:.14rem;color:#eefaff;padding:.28rem .64rem;border-radius:.55rem;
+             background:linear-gradient(135deg,rgba(0,133,202,.32),rgba(236,30,54,.22));border:1px solid rgba(41,211,255,.38);text-transform:uppercase;white-space:nowrap}
   .eyebrow-pill{display:inline-flex;align-items:center;gap:.48rem;margin:0 auto .45rem;padding:.26rem .88rem;border-radius:2rem;
                 background:rgba(var(--ac-rgb),.11);border:1px solid rgba(var(--ac-rgb),.32);font-size:.6rem;font-weight:800;letter-spacing:.16rem;color:#dff7ff;text-transform:uppercase}
   .eyebrow-pill i{width:.44rem;height:.44rem;border-radius:50%;background:var(--ac);box-shadow:0 0 .5rem var(--ac);display:block}
@@ -402,7 +414,16 @@
   <div class="l-track"><div id="loadBar"></div></div>
   <div id="loadPct">8%</div>
 </div>
-<div id="worldBadge" class="glass"><i class="dot"></i><span id="worldBadgeTxt">XƏZƏR DƏNİZİ · DƏNİZ PLATFORMASI</span></div>
+<div id="worldBadge" class="glass">
+  <div class="wb-top">
+    <svg class="wb-logo" role="img" aria-label="SOCAR" xmlns="http://www.w3.org/2000/svg" viewBox="282.81 255.11 277.33 87.07"><path transform="matrix(1,0,0,-1,306.1897,267.1157)" d="M0 0C0-12.623-3.484-17.502-10.452-27.175-17.314-36.65-22.381-50.719-14.041-60.591-12.141-62.945-10.135-64.166-6.757-64.931-7.179-59.258-8.023-56.79-3.906-51.088-1.373-47.571 1.9-44.989 4.856-41.784 10.979-35.146 16.997-26.948 16.997-17.388 16.997-9.9 16.258-3.064 10.874 2.752 7.812 6.042 2.745 10.609-2.111 11.006-1.373 9.332 0 2.638 0 0" fill="#ec1e36" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,520.1811,338.0889)" d="M0 0H10.24V14.892C19.214 14.892 15.413 15.914 20.375 7.744 21.959 5.191 23.12 2.383 24.703 0H36.105C35.789 1.05 35.577 1.333 35.05 2.184L26.815 16.68C38.955 19.488 38.85 41.16 21.22 41.16H0ZM19.742 22.722H10.24V33.359C19.425 33.359 24.703 34.863 24.703 27.686 24.703 24.565 22.909 22.722 19.742 22.722" fill="#ffffff" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,392.1241,315.3674)" d="M0 0C0-7.234 .528-12.396 6.123-18.041 13.83-25.814 27.237-25.587 34.944-18.041 42.756-10.325 43.284 3.943 35.683 13.077 28.187 21.984 12.457 21.389 5.595 13.559 2.956 10.581 0 5.418 0 0M20.481-14.921C6.546-14.921 7.39 10.638 19.108 10.638H21.22C33.994 10.638 34.205-14.921 20.481-14.921" fill="#ffffff" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,353.1686,308.2755)" d="M0 0C0-3.433 0-6.61 3.167-9.304 7.284-12.765 12.458-12.964 17.736-13.843 21.642-14.495 24.492-14.666 24.492-17.758 24.492-22.098 16.68-23.601 10.451-20.793 3.906-17.871 7.918-15.602 .95-19.772-.211-20.481-1.901-21.701-3.167-22.012-2.745-23.686-1.161-24.452 .105-25.474 7.918-31.969 21.431-32.622 29.137-27.402 35.366-23.204 39.378-9.531 25.02-5.475 18.686-3.688 10.346-4.284 10.346 0 10.346 4.595 18.053 4.851 22.803 2.241 24.915 1.078 25.337 0 26.921-1.078 28.293-.17 29.243 .624 30.615 1.617 31.777 2.411 33.677 3.971 34.733 4.255 31.566 8.879 23.859 12.424 18.475 12.424H14.885C7.495 12.424 0 7.346 0 0" fill="#ffffff" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,476.2639,338.0889)" d="M0 0C11.507 0 9.712-.823 10.979 2.865 11.402 4.226 11.718 5.304 12.035 6.751H26.92L29.032 0H40.011C39.906 1.362 38.85 3.716 38.322 5.078L24.809 41.16H13.83L-.422 2.156C-.739 1.191-1.478 0 0 0M19.108 30.154 24.492 14.552H14.569L18.052 25.955C18.369 27.147 19.003 28.934 19.108 30.154" fill="#ffffff" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,457.8946,339.1668)" d="M0 0C5.173 0 11.19 2.893 14.041 6.553 14.991 7.886 16.469 9.134 16.68 11.006 14.78 11.46 11.085 13.956 8.551 14.552 3.695 5.532-9.924 6.609-9.924 22.353-9.924 37.983 6.229 36.82 8.129 28.395L16.575 32.423C16.152 34.551 12.669 38.408 10.979 39.713 3.061 45.642-9.713 44.337-15.624 36.309-26.393 21.899-18.053 0 0 0" fill="#ffffff" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,304.7118,328.5011)" d="M0 0C0-4.964 3.167-8.538 7.073-10.666 7.073-5.985 7.179-5.078 12.457-1.503 20.375 3.886 31.882 10.439 31.882 23.062 31.882 29.756 31.46 33.671 27.237 39.345 26.392 40.479 25.548 41.813 24.07 42.21 23.965 38.522 21.747 32.423 20.269 29.672 19.319 27.657 18.58 26.239 17.313 24.537 13.408 19.176 10.135 15.885 5.384 11.262 2.85 8.737 0 4.908 0 0" fill="#73bf44" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,292.6766,267.1157)" d="M0 0C0-10.609-7.073-8.964-7.073-20.594-7.073-23.431-4.223-27.459-2.112-28.026-.528-21.502 2.956-19.715 6.44-12.793 8.657-8.255 8.974-3.29 5.595 .624 5.068 1.276 3.589 2.411 2.85 2.837 1.795 3.518 .739 3.915-1.056 3.915-.633 2.383 0 1.957 0 0" fill="#16a3dd" fill-rule="evenodd"/></svg>
+    <span class="wb-sep"></span>
+    <div class="wb-id">
+      <span id="worldBadgeOrg">AZƏRBAYCAN RESPUBLİKASININ DÖVLƏT NEFT ŞİRKƏTİ</span>
+      <div class="wb-sub"><i class="dot"></i><span id="worldBadgeTxt">XƏZƏR DƏNİZİ · DƏNİZ PLATFORMASI</span></div>
+    </div>
+  </div>
+</div>
 <div id="celebBanner" class="glass"><i>★</i><b id="celebTxt">OBYEKT İŞƏ SALINDI!</b><i>★</i></div>
 <div id="spinHint" class="glass"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9"/><path d="M21 3v6h-6"/></svg><span id="lblSpinHint">360° Fırladın</span></div>
 <div class="hud-top">
@@ -628,7 +649,9 @@ const I18N = {
     rotBtn: 'Döndər',
     backBtn: 'Geri al',
     portrait: 'Planşeti üfüqi vəziyyətə çevirin',
-    eyebrowReady: 'SOCAR · İNTERAKTİV 3D SİMULYATOR',
+    eyebrowReady: 'AZƏRBAYCAN RESPUBLİKASININ DÖVLƏT NEFT ŞİRKƏTİ',
+    orgName: 'AZƏRBAYCAN RESPUBLİKASININ DÖVLƏT NEFT ŞİRKƏTİ',
+    brandTag: 'SOCAR 3D EXPO',
     worldSelectLbl: 'OBYEKTİ SEÇİN',
     startTitle: 'ENERJİ OBYEKTİNİ YIĞIN',
     startDesc: 'Bütün sənaye modullarını işıqlanan montaj zonasına vaxt bitmədən boşluqsuz yerləşdirin',
@@ -698,7 +721,9 @@ const I18N = {
     rotBtn: 'Rotate',
     backBtn: 'Undo',
     portrait: 'Please rotate tablet to landscape',
-    eyebrowReady: 'SOCAR · INTERACTIVE 3D SIMULATOR',
+    eyebrowReady: 'STATE OIL COMPANY OF AZERBAIJAN REPUBLIC',
+    orgName: 'STATE OIL COMPANY OF AZERBAIJAN REPUBLIC',
+    brandTag: 'SOCAR 3D EXPO',
     worldSelectLbl: 'CHOOSE FACILITY',
     startTitle: 'ASSEMBLE THE FACILITY',
     startDesc: 'Install all industrial modules into the glowing bay before the timer runs out',
@@ -2678,7 +2703,7 @@ function renderScreen() {
     const desc = (curSc.startDesc && curSc.startDesc[lang]) || t.startDesc;
     sc.innerHTML = `<div class="panel glass">
       <div class="panel-top">
-        <div class="panel-brand">${logoSvg}<span class="brand-sep"></span><span class="brand-tag">3D EXPO</span></div>
+        <div class="panel-brand">${logoSvg}<span class="brand-sep"></span><span class="brand-tag">${t.brandTag || 'SOCAR 3D EXPO'}</span></div>
         <div class="panel-top-r"><button type="button" class="full-btn" title="Fullscreen">${fsIco()}</button><div class="lang-pill"><button type="button" data-lang="az" class="${lang === 'az' ? 'on' : ''}">AZ</button><button type="button" data-lang="en" class="${lang === 'en' ? 'on' : ''}">EN</button></div></div>
       </div>
       <div class="eyebrow-pill"><i></i><span>${t.eyebrowReady}</span></div>
@@ -2757,6 +2782,7 @@ function applyLangUI() {
   const t = TR();
   document.documentElement.lang = lang;
   $('loadSub').textContent = t.loadSub;
+  if ($('worldBadgeOrg') && t.orgName) $('worldBadgeOrg').textContent = t.orgName;
   $('lblModules').textContent = t.modules;
   $('lblHintBtn').textContent = t.hintBtn;
   $('lblBtnRot').textContent = t.rotBtn;
