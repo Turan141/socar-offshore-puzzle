@@ -59,10 +59,10 @@
   #worldBadge::before{content:'';position:absolute;left:0;right:0;top:0;height:3.5px;
     background:linear-gradient(90deg,#0085ca 0%,#29d3ff 35%,#ec1e36 68%,#73bf44 100%)}
   body[data-state=ready] #worldBadge{display:flex;animation:pop .35s cubic-bezier(.2,1.4,.4,1)}
-  .wb-top{display:flex;align-items:center;gap:.9rem}
-  .wb-logo{height:3.05rem;width:auto;display:block;flex:none;transform:translateY(.08rem);filter:drop-shadow(0 .2rem .5rem rgba(0,0,0,.45))}
-  .wb-sep{width:1px;height:2.35rem;background:linear-gradient(180deg,transparent,rgba(255,255,255,.32),transparent);flex:none}
-  .wb-id{display:flex;flex-direction:column;justify-content:center;gap:.24rem;text-align:left;min-width:0}
+  .wb-top{display:flex;align-items:center;gap:1.05rem}
+  .wb-logo{height:2.75rem;width:auto;display:block;flex:none;transform:translateY(-.10rem);filter:drop-shadow(0 .2rem .5rem rgba(0,0,0,.45))}
+  .wb-sep{width:1px;height:2.25rem;background:linear-gradient(180deg,transparent,rgba(255,255,255,.32),transparent);flex:none}
+  .wb-id{display:flex;flex-direction:column;justify-content:center;gap:.26rem;text-align:left;min-width:0}
   #worldBadgeOrg{font-size:.66rem;font-weight:800;letter-spacing:.12rem;text-transform:uppercase;color:#a8e5ff;line-height:1.2}
   .wb-sub{display:flex;align-items:center;gap:.48rem}
   #worldBadge .dot{width:.54rem;height:.54rem;border-radius:50%;background:var(--cyan);box-shadow:0 0 .7rem var(--cyan);animation:pulse 1.6s infinite;flex:none}
@@ -985,20 +985,20 @@ const waterMat = new THREE.ShaderMaterial({
       float streak = 0.5 + 0.5 * sin(vWXZ.x * 0.9 - vWXZ.y * 1.3 + uTime * 0.9);
 
       // Rich Caspian azure/turquoise gradient with clearly readable wave troughs & crests
-      vec3 deepCol = vec3(0.015, 0.14, 0.26);
-      vec3 crestCol = vec3(0.05, 0.39, 0.48);
-      vec3 shallowCol = vec3(0.11, 0.52, 0.55);
+      vec3 deepCol = vec3(0.035, 0.22, 0.38);
+      vec3 crestCol = vec3(0.08, 0.48, 0.58);
+      vec3 shallowCol = vec3(0.16, 0.62, 0.64);
       vec3 baseCol = mix(deepCol, crestCol, smoothstep(-0.18, 0.22, vCrest));
       baseCol = mix(baseCol, shallowCol, nearStruct * 0.48);
 
       // Visible shoreline shallow turquoise & animated surf foam along terminal coastline
       float shoreFoam = 0.0;
       if (uShore > 0.5) {
-        float sx = 4.42 - 7.5 * smoothstep(6.2, 16.0, -vWXZ.z);
+        float sx = 4.42 - 7.5 * smoothstep(6.2, 16.0, -vWXZ.y);
         float dCoast = max(0.0, vWXZ.x - sx);
         float shallow = exp(-dCoast * 0.42);
         baseCol = mix(baseCol, shallowCol, shallow * 0.68);
-        float surf = 0.5 + 0.5 * sin(dCoast * 5.2 - uTime * 2.5 + sin(vWXZ.z * 0.9) * 1.4);
+        float surf = 0.5 + 0.5 * sin(dCoast * 5.2 - uTime * 2.5 + sin(vWXZ.y * 0.9) * 1.4);
         shoreFoam = smoothstep(0.55, 0.92, surf) * exp(-dCoast * 0.68) * 0.82 + exp(-dCoast * 2.8) * 0.65;
       }
 
@@ -1011,9 +1011,11 @@ const waterMat = new THREE.ShaderMaterial({
       vec3 N = normalize(vWorldNormal + vec3(rg.x, 0.0, rg.y) * 0.32);
       vec3 V = normalize(cameraPosition - vWorldPos);
       vec3 R = reflect(-V, N);
-      float fres = 0.08 + 0.88 * pow(1.0 - max(dot(N, V), 0.0), 3.4);
+      float ndv = clamp(dot(N, V), 0.0, 0.999);
+      float fres = 0.08 + 0.88 * pow(1.0 - ndv, 3.4);
       vec3 skyRefl = mix(uHorizon * 0.88 + vec3(0.05, 0.14, 0.20), uZenith * 1.15, clamp(R.y * 1.35, 0.0, 1.0));
-      float spec = pow(max(dot(R, uSunDir), 0.0), 84.0) * 1.65 + pow(max(dot(R, uSunDir), 0.0), 18.0) * 0.18;
+      float rds = max(dot(R, uSunDir), 0.0001);
+      float spec = pow(rds, 84.0) * 1.65 + pow(rds, 18.0) * 0.18;
 
       vec3 col = mix(baseCol, skyRefl, fres * 0.68) + uSunCol * spec * smoothstep(0.0, 1.6, dDeck);
       col = mix(col, vec3(0.88, 0.95, 0.98), foam * 0.78);
