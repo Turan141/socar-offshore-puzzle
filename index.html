@@ -475,8 +475,20 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
-if ('serviceWorker' in navigator && !/^(localhost|127\.|\[::1\])/.test(location.hostname)) {   // no offline cache while developing
-  navigator.serviceWorker.register('./sw.js').catch(() => {});
+if ('serviceWorker' in navigator) {
+  if (/^(localhost|127\.|\[::1\])/.test(location.hostname)) {   // clear any stale SW/caches while developing locally
+    Promise.all([
+      navigator.serviceWorker.getRegistrations().then(rs => Promise.all(rs.map(r => r.unregister()))),
+      'caches' in window ? caches.keys().then(ks => Promise.all(ks.map(k => caches.delete(k)))) : Promise.resolve([]),
+    ]).then(([unreg]) => {
+      if (unreg.some(Boolean) && !sessionStorage.getItem('sw_cleared')) {
+        sessionStorage.setItem('sw_cleared', '1');
+        location.reload();
+      }
+    }).catch(() => {});
+  } else {
+    navigator.serviceWorker.register('./sw.js?v=15').then(r => r.update().catch(() => {})).catch(() => {});
+  }
 }
 
 // GEN-START  (pure logic, no DOM/three — tested by test-generator.mjs)
@@ -2087,7 +2099,7 @@ async function loadKit() {
     const loader2 = new GLTFLoader();
     await Promise.all(sceneEntries.map(async ([id, sc]) => {
       const own = Object.create(null);
-      await Promise.all(sc.files.map(url => loader2.loadAsync(url + '?v=1').then(g => { addAll(g.scene, own); step(); }).catch(() => { step(); })));
+      await Promise.all(sc.files.map(url => loader2.loadAsync(url + '?v=15').then(g => { addAll(g.scene, own); step(); }).catch(() => { step(); })));
       const look = Object.create(null);
       const hasPieces = Object.keys(own).some(n => n.startsWith('piece_')), hasBld = Object.keys(own).some(n => n.startsWith('bld_'));
       for (const n in KIT) {
@@ -2568,7 +2580,7 @@ let level, tray, placed, occ, sel, rot, cursor, timeLeft, status, ghost, ghostVa
 let currentHeliPos = null, lastSavedTs = 0, lastElapsed = 0, lastStars = 0;
 let selectedScene = params0.get('scene') || 'offshore';
 let ghostSpin = 0, ghostPop = 0, camPunch = 0, combo = 0, lastPlaceTs = 0, lastDeadToast = 0;
-let celebT = 0, celebCamMix = 0, attractTimer = 0, bootReadyAt = 0;
+let celebT = 0, celebCamMix = 0, readyCamMix = 1, attractTimer = 0, bootReadyAt = 0;
 const CELEB_DUR = 2.6, ATTRACT_CYCLE = 24;
 
 function loadSeen() { try { return JSON.parse(localStorage.getItem('pf_seen') || '[]'); } catch (e) { return []; } }
@@ -2776,6 +2788,9 @@ function setStatus(s) {
   renderScreen();
   endTime = performance.now();
   updateTimer();
+  lastCamOffset = -1;
+  applyCamViewOffset();
+  placeCamera();
 }
 
 function applyLangUI() {
@@ -3774,14 +3789,19 @@ $('staff').addEventListener('click', e => {
 // ---------------------------------------------------------------- loop
 let camOrbit = 0, viewAspect = 1, lastCamOffset = -1;
 function sidePx() {
+  const pad = 2 * parseFloat(getComputedStyle(document.documentElement).fontSize) * 1.2;
+  if (status === 'ready') {
+    const p = document.querySelector('#screen.side .panel');
+    if (p && p.offsetWidth) return p.offsetWidth + pad;
+  }
   const t = $('tray');
-  return t ? t.offsetWidth + 2 * parseFloat(getComputedStyle(document.documentElement).fontSize) * 1.2 : 0;
+  return t ? t.offsetWidth + pad : 0;
 }
 function placeCamera() {
   const fit = Math.max(1.04, 1.4 / viewAspect), s = Math.sin(camOrbit), c = Math.cos(camOrbit);
   const sc = (typeof SCENES !== 'undefined' && SCENES[sceneId]) || {};
-  const f = fit * (sc.camFit || 1) * (1 - 0.14 * celebCamMix), dx = sc.camX || 0, dz = sc.camZ || 0;
-  camera.position.set(s * 7.4 * f + dx, (12.4 - 2.4 * celebCamMix) * f + camPunch, c * 7.4 * f + dz);
+  const f = fit * (sc.camFit || 1) * (1 - 0.14 * celebCamMix) * (1 + 0.22 * readyCamMix), dx = sc.camX || 0, dz = sc.camZ || 0;
+  camera.position.set(s * (7.4 + 0.6 * readyCamMix) * f + dx, (12.4 - 2.4 * celebCamMix) * f + camPunch, c * (7.4 + 0.6 * readyCamMix) * f + dz);
   camera.lookAt(s * 0.25 + dx, -0.6 + 0.35 * celebCamMix, c * 0.25 + dz);
 }
 function applyCamViewOffset() {
@@ -3892,8 +3912,10 @@ function loop(now) {
     if (celebT >= CELEB_DUR) setStatus('win');
   }
   const targetMix = status === 'celebrating' ? 1 : 0;
-  if (Math.abs(celebCamMix - targetMix) > 0.001) {
+  const targetReady = status === 'ready' ? 1 : 0;
+  if (Math.abs(celebCamMix - targetMix) > 0.001 || Math.abs(readyCamMix - targetReady) > 0.001) {
     celebCamMix += (targetMix - celebCamMix) * Math.min(1, dt * 4.5);
+    readyCamMix += (targetReady - readyCamMix) * Math.min(1, dt * 5.0);
     applyCamViewOffset();
     placeCamera();
   }
