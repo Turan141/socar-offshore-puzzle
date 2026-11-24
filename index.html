@@ -717,7 +717,7 @@ const I18N = {
     statLeft: 'time left',
     newRoundBtn: 'NEW ROUND',
     loseTitle: 'TIME IS UP',
-    loseDesc: 'One valid topside layout is shown on the bay',
+    loseDesc: 'One valid module layout is shown on the bay',
     statFilled: 'completed',
     retryBtn: 'TRY AGAIN',
     autoPrefix: 'Next game starts automatically in',
@@ -997,7 +997,7 @@ const foamSpots = [];
 for (const sx of [-1, 0, 1]) for (const sz of [-1, 1]) foamSpots.push([sx * 4.28, sz * 4.28, 1.0, 'platform']);
 foamSpots.push(...[[1.75, 4.83, 0.65], [3.15, 4.83, 0.65], [5.55, 0.25, 0.85], [-6.5, -4.8, 0.72], [-5.4, -5.9, 0.72]].map(f => [...f, 'platform']));
 for (const sx of [-1, 1]) for (const sz of [-1, 0, 1]) foamSpots.push([sx * 3.6, sz * 3.6, 1.45, 'offshore']);
-for (let fz = -6; fz <= 6; fz += 3) foamSpots.push([5.0, fz, 1.25, 'terminal']);
+for (const fz of [-6, -3, 3, 6]) foamSpots.push([5.0, fz, 1.25, 'terminal']);
 const foamItems = [];
 for (const [fx, fz, sc, sid] of foamSpots) for (let k = 0; k < 2; k++) {
   foamItems.push({ x: fx, z: fz, base: sc, sid, phase: k * 0.5 + Math.random() * 0.2 });
@@ -1275,11 +1275,12 @@ const surround = (() => {
   for (const [envObj, bx, by, bz] of [
     [ENV.offshore, -6.1, 5.62, -1.55],
     [ENV.onshore, -6.1, 5.62, -1.55],
-    [ENV.refinery, -5.45, 5.05, -1.35],
-    [ENV.refinery, -6.35, 3.42, -0.55],
-    [ENV.green, -5.65, 5.12, -1.75],
-    [ENV.green, -6.35, 3.82, 1.65],
-    [ENV.terminal, -5.90, 2.34, 2.55],
+    [ENV.refinery, -5.45, 5.02, -1.35],
+    [ENV.refinery, -6.35, 3.42, 0.55],
+    [ENV.green, -5.51, 5.20, -2.07],
+    [ENV.green, -6.16, 3.90, 1.33],
+    [ENV.terminal, -5.80, 2.30, 2.52],
+    [ENV.terminal, 7.75, 1.05, -10.16],
   ]) {
     const b = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 6), navBeaconMat);
     b.position.set(bx, by, bz); envObj.add(b);
@@ -1991,6 +1992,10 @@ function setScene(id) {
     const mr = surround.marineRefs;
     const isTerminal = id === 'terminal';
     if (mr.boat) mr.boat.visible = !isTerminal;
+    if (mr.crewBoat) {
+      mr.crewBoat.userData.x = isTerminal ? 6.1 : 6.05;
+      mr.crewBoat.userData.z = isTerminal ? 3.25 : 1.35;
+    }
     if (mr.sisters) for (const s of mr.sisters) s.host.visible = !isTerminal;
     if (mr.buoys) for (const b of mr.buoys) b.visible = !isTerminal || b.userData.x > 4.6;
   }
