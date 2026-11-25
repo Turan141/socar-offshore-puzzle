@@ -3077,7 +3077,7 @@ const SEAM_Z = new THREE.BoxGeometry(0.84, 0.04, 0.07); SEAM_Z.userData.shared =
 const POWER_LEAD = 0.35, POWER_STEP = 0.38;
 let power = null;
 // ---- attract demo: on the idle screen the bay assembles itself, then powers on (silent). ?nodemo turns it off.
-const DEMO_START = 3.0, DEMO_STEP = 1.1;
+const DEMO_START = 2.0, DEMO_STEP = 0.9, DEMO_HOLD = 2.5;   // hold = seconds the lit facility stays before the next world
 let demoT = 0, demoPowerT = -1;
 function demoReset() { demoT = 0; demoPowerT = -1; }
 function demoPlace(s, k) {
@@ -3098,6 +3098,7 @@ function tickDemo(dt) {
   if (n && placed.length === n) {
     if (demoPowerT < 0) { buildPower(); demoPowerT = 0; }
     demoPowerT += dt; updatePower(demoPowerT, false, true);
+    if (power && demoPowerT > power.end + DEMO_HOLD) attractTimer = ATTRACT_CYCLE;   // move on to the next world now
   }
 }
 function clearPower() {
