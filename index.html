@@ -20,7 +20,7 @@
     --cyan:#29d3ff;--line:rgba(255,255,255,.14);--good:#3fe28a;--bad:#ff5a4e;--gold:#ffc23d;
     --side:27.5rem;--gap:1.2rem;
   }
-  html{font-size:min(calc(100vh / 54),calc(100vw / 96))}
+  html{font-size:min(calc(100vh / 54),max(calc(100vw / 96),14px))} /* 14px floor: tablet text stays readable */
   html,body{margin:0;height:100%;overflow:hidden;background:#0d2330;font-family:Montserrat,"Segoe UI",Arial,sans-serif;color:#fff;
             user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;touch-action:none;overscroll-behavior:none}
   button{font-family:inherit;color:inherit;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
@@ -110,7 +110,7 @@
   .brand-txt{display:flex;flex-direction:column;line-height:1}
   .brand-txt small{font-size:.72rem;font-weight:700;letter-spacing:.06rem;color:rgba(255,255,255,.6);margin-top:.22rem}
   .lang-pill{display:inline-flex;background:rgba(4,16,25,.65);border:1px solid rgba(118,205,255,.22);border-radius:1.6rem;padding:.2rem;gap:.16rem}
-  .lang-pill button{border:0;background:transparent;font-size:.74rem;font-weight:800;letter-spacing:.08rem;padding:.34rem .68rem;border-radius:1.3rem;cursor:pointer;opacity:.68;transition:background .15s,opacity .15s,color .15s}
+  .lang-pill button{border:0;background:transparent;font-size:.74rem;font-weight:800;letter-spacing:.08rem;padding:.34rem .68rem;min-width:max(2.6rem,46px);min-height:max(1.9rem,38px);border-radius:1.3rem;cursor:pointer;opacity:.68;transition:background .15s,opacity .15s,color .15s}
   .lang-pill button.on{background:linear-gradient(135deg,#1ab4f2,#0078b8);color:#fff;opacity:1;box-shadow:0 .15rem .45rem rgba(0,133,202,.42)}
 
   .side-head{display:flex;align-items:center;justify-content:space-between;padding:0 .2rem}
@@ -154,6 +154,8 @@
   .act:active{transform:translateY(.2rem)}
   .act.rot{background:linear-gradient(155deg,#129be0,#006ba4);border-color:rgba(41,211,255,.55)}
   .act:disabled{opacity:.35}
+  body.norot #btnRot{display:none}
+  body.norot .actions{grid-template-columns:1fr}
 
   #info{position:fixed;left:var(--gap);bottom:var(--gap);font-size:.55rem;opacity:.45;pointer-events:none;display:none}
   #fps{position:fixed;left:.5rem;bottom:2.8rem;font:600 11px/1.4 Consolas,monospace;background:rgba(0,0,0,.72);padding:4px 8px;border-radius:6px;display:none;z-index:12}
@@ -366,8 +368,10 @@
   .ab-copy{flex:1;min-width:0;text-align:left}
   .ab-copy h1{margin:0 0 .35rem;font-size:2.3rem;font-weight:900;line-height:1.06;color:#fff;letter-spacing:0}
   .ab-copy p{margin:0;font-size:1.02rem;line-height:1.4;color:rgba(225,240,250,.82);max-width:48rem}
-  .ab-rec{margin-top:.6rem;padding:0;border:0;background:none;font-size:.86rem;font-weight:700;color:#ffe49b;font-variant-numeric:tabular-nums;cursor:pointer;text-align:left}
+  .ab-rec{margin-top:.6rem;padding:0;border:0;background:none;font-size:1.05rem;font-weight:700;color:#ffe49b;font-variant-numeric:tabular-nums;cursor:pointer;text-align:left}
   .ab-rec span{color:rgba(255,255,255,.62);font-weight:600}
+  .ab-rec b{font-size:1.6rem;font-weight:900;color:#ffd35a;margin:0 .15rem}
+  .ab-rec i{font-style:normal;font-weight:900;color:#fff;margin-left:.5rem;letter-spacing:.05rem}
   .ab-side{display:flex;flex-direction:column;gap:.6rem;flex:none;width:20rem}
   .ab-side .btn-main{height:4.3rem;font-size:1.3rem}
   .ab-tools{display:flex;align-items:center;gap:.5rem}
@@ -657,7 +661,7 @@ const I18N = {
     hudTitle: 'PLATFORMANI BOŞLUQSUZ DOLDURUN!',
     modules: 'MODULLAR',
     selBadge: 'SEÇİLİB',
-    sideHint: 'Modulu montaj zonasına sürüşdürün. Seçilmiş karta toxunsanız, dönəcək.',
+    sideHint: 'Modulu işıqlanan xanalara sürüşdürün.',
     modPickHint: 'Sürüşdürüb boş xanalara yerləşdirin',
     hintBtn: 'KÖMƏK',
     rotBtn: 'Döndər',
@@ -669,7 +673,7 @@ const I18N = {
     worldSelectLbl: 'OBYEKTİ SEÇİN',
     startTitle: 'Obyekti {s} saniyədə yığın',
     otherWorlds: 'Digər obyektlər',
-    recLabel: 'Stend rekordu',
+    recLabel: 'Stend rekordu', beatIt: 'Rekordu qırın!',
     startDesc: 'Bütün sənaye modullarını işıqlanan montaj zonasına vaxt bitmədən boşluqsuz yerləşdirin',
     step1b: 'Seç', step1s: 'sağ paneldən modulu',
     step2b: 'Döndər', step2s: '«Döndər» düyməsi ilə',
@@ -731,7 +735,7 @@ const I18N = {
     hudTitle: 'COMPLETE THE OFFSHORE DECK WITHOUT GAPS!',
     modules: 'MODULES',
     selBadge: 'ACTIVE',
-    sideHint: 'Drag a module onto the bay. Tap a selected card to rotate it.',
+    sideHint: 'Drag a module onto the glowing cells.',
     modPickHint: 'Drag onto the glowing grid cells',
     hintBtn: 'HINT',
     rotBtn: 'Rotate',
@@ -743,7 +747,7 @@ const I18N = {
     worldSelectLbl: 'CHOOSE FACILITY',
     startTitle: 'Assemble the facility in {s} seconds',
     otherWorlds: 'Other facilities',
-    recLabel: 'Stand record',
+    recLabel: 'Stand record', beatIt: 'Beat it!',
     startDesc: 'Install all industrial modules into the glowing bay before the timer runs out',
     step1b: 'Select', step1s: 'a module card',
     step2b: 'Rotate', step2s: 'with «Rotate»',
@@ -842,6 +846,9 @@ scene.fog = new THREE.Fog(0x182b38, 28, 86);
 const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 220);
 
 const params0 = new URLSearchParams(location.search);
+// Stand mode: pieces arrive already turned the way the solution needs them (no Rotate step). ?rotate restores free rotation.
+const LOCK_ROT = !params0.has('rotate');
+if (LOCK_ROT) document.body.classList.add('norot');
 const IS_TOUCH = matchMedia('(pointer: coarse)').matches;
 const QUALITY = IS_TOUCH ? [
   { maxPixels: 1.45e6, prCap: 1.5, shadows: true, shadowSize: 1024 },
@@ -1150,8 +1157,8 @@ function addMesh(parent, geo, material, x, y, z, shadow = true) {
 // Zero-texture analytic industrial accent for deck plate seams and grating bars only
 function applyIndustrialPBR(material, kind) {
   if (!material || material.userData.indKind === kind) return material;
-  if (kind !== 'grating' && kind !== 'deck') return material;
-  const mode = kind === 'grating' ? 1 : 2;
+  if (kind !== 'grating' && kind !== 'deck' && kind !== 'solar') return material;
+  const mode = kind === 'grating' ? 1 : kind === 'deck' ? 2 : 3;
   material.userData.indKind = kind;
   material.customProgramCacheKey = () => 'ind-lite-v3-' + kind;
   material.onBeforeCompile = sh => {
@@ -1172,6 +1179,11 @@ function applyIndustrialPBR(material, kind) {
             float sx = smoothstep(0.478, 0.494, abs(fract(vIndP.x + 0.5) - 0.5));
             float sz = smoothstep(0.478, 0.494, abs(fract(vIndP.z + 0.5) - 0.5));
             diffuseColor.rgb *= 1.0 - max(sx, sz) * 0.22;
+          } else if (${mode} == 3 && an.y > 0.4) {
+            // PV module: silver cell gaps on the dark glass (world space; panels are axis-aligned rows)
+            float cx = step(0.455, abs(fract(vIndP.x * 6.5) - 0.5));
+            float cz = step(0.440, abs(fract(vIndP.z * 7.5) - 0.5));
+            diffuseColor.rgb *= mix(1.0, 2.3, max(cx, cz));
           }
         }`);
   };
@@ -1183,7 +1195,70 @@ function indKindForName(name) {
   if (!name) return null;
   if (/^(grating|pf_grating|b2_grating)$/.test(name)) return 'grating';
   if (name === 'pf_deck') return 'deck';
+  if (name === 'gr_solar') return 'solar';
   return null;
+}
+
+// Land-world ground detail: world-space macro patches, mid mottling and fine grit from one tiling noise texture
+// (3 fetches, no extra geometry or draw calls). Only outer-terrain materials: the 8x8 pad keeps its own material.
+// amp = [macro, mid, grit, patch-tint mix], tint = colour multiplier of the patches.
+const GROUND_DETAIL = {
+  kc_earth:   { amp: [0.11, 0.07, 0.05, 0.55], tint: [0.80, 0.70, 0.56] },   // Absheron: compacted brown vs pale limestone dust
+  on_wheat:   { amp: [0.09, 0.06, 0.04, 0.40], tint: [1.10, 1.03, 0.72] },   // ripening patches
+  on_stubble: { amp: [0.08, 0.05, 0.05, 0.35], tint: [0.90, 0.84, 0.72] },
+  on_soil:    { amp: [0.09, 0.06, 0.06, 0.35], tint: [0.86, 0.80, 0.70] },
+  gr_earth:   { amp: [0.10, 0.07, 0.05, 0.50], tint: [1.12, 1.05, 0.74] },   // Gobustan steppe: sun-dried golden patches
+  rf_earth:   { amp: [0.10, 0.07, 0.06, 0.45], tint: [0.80, 0.74, 0.68] },   // oil-darkened refinery yard soil
+  tm_sand:    { amp: [0.07, 0.05, 0.06, 0.40], tint: [0.92, 0.88, 0.80] },   // wet / dry beach sand
+  tm_earth:   { amp: [0.09, 0.06, 0.05, 0.40], tint: [0.86, 0.82, 0.72] },
+};
+const GND_TEX = (() => {
+  const S = 256, data = new Uint8Array(S * S * 4);
+  // tileable value noise: lattice of `cells` per tile, smoothstep interpolation, wraps at the tile edge
+  const chan = (cells, seed, ch) => {
+    const L = new Float32Array(cells * cells);
+    let s = seed >>> 0;
+    for (let i = 0; i < L.length; i++) { s = (s * 1664525 + 1013904223) >>> 0; L[i] = s / 4294967296; }
+    for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) {
+      const fx = x / S * cells, fy = y / S * cells, x0 = fx | 0, y0 = fy | 0, x1 = (x0 + 1) % cells, y1 = (y0 + 1) % cells;
+      let tx = fx - x0, ty = fy - y0; tx = tx * tx * (3 - 2 * tx); ty = ty * ty * (3 - 2 * ty);
+      const a = L[y0 * cells + x0] + (L[y0 * cells + x1] - L[y0 * cells + x0]) * tx;
+      const b = L[y1 * cells + x0] + (L[y1 * cells + x1] - L[y1 * cells + x0]) * tx;
+      data[(y * S + x) * 4 + ch] = Math.round((a + (b - a) * ty) * 255);
+    }
+  };
+  chan(4, 11, 0); chan(16, 23, 1); chan(64, 37, 2);
+  for (let i = 3; i < data.length; i += 4) data[i] = 255;
+  const t = new THREE.DataTexture(data, S, S, THREE.RGBAFormat);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  t.magFilter = THREE.LinearFilter; t.minFilter = THREE.LinearMipmapLinearFilter; t.generateMipmaps = true;
+  t.needsUpdate = true;
+  return t;
+})();
+function applyGroundDetail(material, spec) {
+  if (!material || material.userData.gndDetail) return material;
+  material.userData.gndDetail = true;
+  const uAmp = { value: new THREE.Vector4(...spec.amp) }, uTint = { value: new THREE.Vector3(...spec.tint) };
+  material.customProgramCacheKey = () => 'gnd-detail-v1';
+  material.onBeforeCompile = sh => {
+    sh.uniforms.uGndTex = { value: GND_TEX }; sh.uniforms.uGndAmp = uAmp; sh.uniforms.uGndTint = uTint;
+    sh.vertexShader = sh.vertexShader
+      .replace('#include <common>', '#include <common>\nvarying vec2 vGndW;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvGndW = (modelMatrix * vec4(transformed, 1.0)).xz;');
+    sh.fragmentShader = sh.fragmentShader
+      .replace('#include <common>', '#include <common>\nvarying vec2 vGndW;\nuniform sampler2D uGndTex;\nuniform vec4 uGndAmp;\nuniform vec3 uGndTint;')
+      .replace('#include <color_fragment>', `#include <color_fragment>
+        {
+          float n1 = texture2D(uGndTex, vGndW * 0.031).r;          // ~8 m patches
+          float n2 = texture2D(uGndTex, vGndW * 0.052 + 0.37).g;   // ~1.2 m mottling
+          float n3 = texture2D(uGndTex, vGndW * 0.104 + 0.71).b;   // ~15 cm grit
+          diffuseColor.rgb *= 1.0 + uGndAmp.x * (n1 * 2.0 - 1.0) + uGndAmp.y * (n2 * 2.0 - 1.0) + uGndAmp.z * (n3 * 2.0 - 1.0);
+          float gPatch = smoothstep(0.48, 0.72, n1 * 0.75 + n2 * 0.25);
+          diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * uGndTint, gPatch * uGndAmp.w);
+        }`);
+  };
+  material.needsUpdate = true;
+  return material;
 }
 
 const optMatCache = new Map();
@@ -1214,6 +1289,7 @@ function optimizeMaterial(mt, hasVC = false) {
   }
   const ik = mt.userData.indKind || indKindForName(mt.name);
   if (ik) applyIndustrialPBR(out, ik);
+  else if (GROUND_DETAIL[mt.name]) applyGroundDetail(out, GROUND_DETAIL[mt.name]);
   optMatCache.set(k, out);
   return out;
 }
@@ -1484,6 +1560,7 @@ const surround = (() => {
   const birdMat = new THREE.MeshLambertMaterial({ color: 0xf2f2ee, side: THREE.DoubleSide });
   const wings = new THREE.InstancedMesh(wingGeo, birdMat, GULLS.length * 2);
   wings.frustumCulled = false; scene.add(wings);
+  wings.visible = false;   // two flat planes read as black sticks from a distance (TV mirror); off for the stand
   const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), p = new THREE.Vector3(), sc = new THREE.Vector3();
 
   function animSurroundings(time, boost = 1) {
@@ -1689,7 +1766,9 @@ function applyKitPlatform() {
     if (terr) terr.traverse(m => { if (m.isMesh) m.userData.noCast = true; });
     const live = [];
     copy.traverse(o => {
-      if (o.name === 'pumpjack_beam' || o.name === 'pumpjack_crank' || /^turbine_rotor_\d+$/.test(o.name)) {
+      // direct children of the base root only: GLTFLoader names a multi-material node's primitive meshes
+      // `<mesh>_0`, `_1`..., which would otherwise match `pumpjack_beam_N` and be torn out of their node
+      if (o.parent === copy && (/^pumpjack_(beam|crank)(_\d+)?$/.test(o.name) || /^turbine_rotor_\d+$/.test(o.name))) {
         live.push(o);
       }
     });
@@ -1698,7 +1777,8 @@ function applyKitPlatform() {
     if (live.length) {
       SCENES[id].anim = live.map(o => {
         ENV[id].add(o);
-        return { o, rest: o.quaternion.clone(), crank: o.name === 'pumpjack_crank', spin: /^turbine_rotor_\d+$/.test(o.name) };
+        const k = +(o.name.match(/_(\d+)$/) || [0, 1])[1];   // beam_N and crank_N share a phase; units nod out of sync
+        return { o, rest: o.quaternion.clone(), crank: /^pumpjack_crank/.test(o.name), spin: /^turbine_rotor_\d+$/.test(o.name), ph: (k - 1) * 2.3 };
       });
     }
     const hs = base.getObjectByName('heli_spot');
@@ -2139,7 +2219,7 @@ async function loadKit() {
     const loader2 = new GLTFLoader();
     await Promise.all(sceneEntries.map(async ([id, sc]) => {
       const own = Object.create(null);
-      await Promise.all(sc.files.map(url => loader2.loadAsync(url + '?v=15').then(g => { addAll(g.scene, own); step(); }).catch(() => { step(); })));
+      await Promise.all(sc.files.map(url => loader2.loadAsync(url + '?v=16').then(g => { addAll(g.scene, own); step(); }).catch(() => { step(); })));
       const look = Object.create(null);
       const hasPieces = Object.keys(own).some(n => n.startsWith('piece_')), hasBld = Object.keys(own).some(n => n.startsWith('bld_'));
       for (const n in KIT) {
@@ -2622,7 +2702,7 @@ let currentHeliPos = null, lastSavedTs = 0, lastElapsed = 0, lastStars = 0;
 let selectedScene = params0.get('scene') || 'offshore';
 let ghostSpin = 0, ghostPop = 0, camPunch = 0, combo = 0, lastPlaceTs = 0, lastDeadToast = 0;
 let celebT = 0, celebCamMix = 0, readyCamMix = 1, attractTimer = 0, bootReadyAt = 0;
-const CELEB_DUR = 2.6, ATTRACT_CYCLE = 24;
+const CELEB_DUR = 2.6, ATTRACT_CYCLE = 18;
 let celebDur = CELEB_DUR;
 
 function loadSeen() { try { return JSON.parse(localStorage.getItem('pf_seen') || '[]'); } catch (e) { return []; } }
@@ -2659,7 +2739,7 @@ function updateRecBadge() {
 
 function newRound(opt = {}) {
   if (!opt.keepScreen && lbModalOpen()) closeLbModal();
-  clearPower();
+  clearPower(); demoReset();
   disposeGroup(levelGroup);
   if (ghost) { scene.remove(ghost); ghost = null; }
   heli.visible = false; heli.userData.active = false;
@@ -2699,9 +2779,9 @@ function newRound(opt = {}) {
     p.position.copy(cellPos(s.x, s.y)); p.userData.body.position.y = 0.02;
     hintGroup.add(p);
   }
-  tray = level.tray.map(t => ({ ...t, placed: false, rot: 0 }));
+  tray = level.tray.map(t => ({ ...t, placed: false, rot: LOCK_ROT ? level.solution[t.id].rot : 0 }));
   placed = []; occ = new Int16Array(N * N).fill(-1);
-  sel = 0; rot = 0; ghostArmed = false; hintUsed = false; hintTimer = 0; ghostSpin = 0; ghostPop = 0;
+  sel = 0; rot = tray[0] ? tray[0].rot : 0; ghostArmed = false; hintUsed = false; hintTimer = 0; ghostSpin = 0; ghostPop = 0;
   let best = 0, bd = 1e9;
   for (let i = 0; i < N * N; i++) if (level.hole[i]) { const d = Math.abs(i % N - 3.5) + Math.abs(((i / N) | 0) - 3.5); if (d < bd) { bd = d; best = i; } }
   cursor = { x: best % N, y: (best / N) | 0 };
@@ -2776,7 +2856,7 @@ function renderScreen() {
     const desc = (curSc.startDesc && curSc.startDesc[lang]) || t.startDesc;
     const lb = loadLeaderboard()[activeTier] || [];
     const rec = lb.length
-      ? `<button type="button" class="ab-rec" data-lb-all>${t.recLabel}: ${lb[0].elapsed.toFixed(1)}s <span>· ${escHtml(lb[0].name || lb[0].tag || '—')}</span></button>` : '';
+      ? `<button type="button" class="ab-rec" data-lb-all>${t.recLabel} <b>${lb[0].elapsed.toFixed(1)}s</b> <span>· ${escHtml(lb[0].name || lb[0].tag || '—')}</span><i>${t.beatIt}</i></button>` : '';
     sc.innerHTML = `<div class="attract-bar glass${enter ? ' enter' : ''}">
       ${pickOpen && pool.length > 1 ? `<div class="world-row" style="--wn:${pool.length}">${worldBtns}</div>` : ''}
       <div class="ab-main">
@@ -2996,6 +3076,30 @@ const SEAM_X = new THREE.BoxGeometry(0.07, 0.04, 0.84); SEAM_X.userData.shared =
 const SEAM_Z = new THREE.BoxGeometry(0.84, 0.04, 0.07); SEAM_Z.userData.shared = true;   // boundary between y and y+1
 const POWER_LEAD = 0.35, POWER_STEP = 0.38;
 let power = null;
+// ---- attract demo: on the idle screen the bay assembles itself, then powers on (silent). ?nodemo turns it off.
+const DEMO_START = 3.0, DEMO_STEP = 1.1;
+let demoT = 0, demoPowerT = -1;
+function demoReset() { demoT = 0; demoPowerT = -1; }
+function demoPlace(s, k) {
+  const cells = ROTS[s.type][s.rot];
+  const mesh = makePiece(s.type, cells, 'solid', s.rot);
+  mesh.position.copy(cellPos(s.x, s.y)); mesh.userData.drop = 1; mesh.userData.pid = k;
+  levelGroup.add(mesh);
+  placed.push({ id: k, type: s.type, rot: s.rot, x: s.x, y: s.y, cells, mesh, demo: true });
+  for (const [x, y] of cells) { const i = (s.y + y) * N + s.x + x; occ[i] = k; holeVis[i] = 0; }
+  syncHoles(); burstCells(cells, s.x, s.y);
+}
+function tickDemo(dt) {
+  if (status !== 'ready' || !level || params0.has('nodemo') || lbModalOpen()) return;
+  demoT += dt;
+  const n = level.solution.length;
+  const want = Math.min(n, Math.max(0, Math.floor((demoT - DEMO_START) / DEMO_STEP) + 1));
+  while (placed.length < want) { const k = placed.length; demoPlace(level.solution[k], k); }
+  if (n && placed.length === n) {
+    if (demoPowerT < 0) { buildPower(); demoPowerT = 0; }
+    demoPowerT += dt; updatePower(demoPowerT, false, true);
+  }
+}
 function clearPower() {
   if (!power) return;
   for (const s of power.seams) { if (s.m.parent) s.m.parent.remove(s.m); s.m.material.dispose(); }
@@ -3029,7 +3133,7 @@ function buildPower() {
   });
   power = { t, done: placed.map(() => false), seams, end: POWER_LEAD + step * POWER_STEP + 1.0 };
 }
-function updatePower(time, silent = false) {
+function updatePower(time, silent = false, mute = false) {
   if (!power) return;
   placed.forEach((p, k) => {
     if (power.done[k] || time < power.t[k]) return;
@@ -3041,7 +3145,7 @@ function updatePower(time, silent = false) {
     ud.bounce = 0;
     burstCells(p.cells, p.x, p.y, 0x3fe28a);
     const n = power.done.filter(Boolean).length;
-    sfx('place', () => beep(480 + n * 80, 0.07, 'triangle', 0.1), 1 + n * 0.08);
+    if (!mute) sfx('place', () => beep(480 + n * 80, 0.07, 'triangle', 0.1), 1 + n * 0.08);
   });
   for (const s of power.seams) {
     const a = time - s.t;
@@ -3091,13 +3195,14 @@ function anchorOf(cells) {
 }
 
 let snapMode = false;
+// Magnetic snap: if the spot under the finger does not fit, take the nearest fitting spot
+// at most one cell away (straight neighbours before diagonals), so a slightly-off drop still lands.
 function snapOrigin(cx, cy, cells, a) {
   let best = null, bd = 1e9;
-  for (const c of cells) {
-    if (Math.abs(c[0] - a[0]) + Math.abs(c[1] - a[1]) > 1) continue;
-    const ox = cx - c[0], oy = cy - c[1];
+  for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+    const ox = cx - a[0] + dx, oy = cy - a[1] + dy;
     if (!canPlace(cells, ox, oy)) continue;
-    const d = (c[0] - a[0]) ** 2 + (c[1] - a[1]) ** 2;
+    const d = dx * dx + dy * dy;
     if (d < bd) { bd = d; best = { x: ox, y: oy }; }
   }
   return best;
@@ -3195,7 +3300,7 @@ function move(dx, dy) {
 }
 function rotate() {
   const c = current();
-  if (status !== 'play' || !c) return;
+  if (status !== 'play' || !c || LOCK_ROT) return;
   rot = c.rot = (rot + 1) % ROTS[c.type].length;
   ghostSpin = Math.PI / 2;
   ghostPop = 1;
@@ -3291,7 +3396,9 @@ function back() {
 }
 function confirm() {
   ensureAudio();
-  if (status === 'ready') { setStatus('play'); sfx('start', () => beep(520, 0.1, 'triangle', 0.12)); }
+  if (status === 'ready') {
+    if (placed.length) newRound({ scene: sceneId, keepScreen: true, keepOrbit: true });
+    setStatus('play'); sfx('start', () => beep(520, 0.1, 'triangle', 0.12)); }
   else if (status === 'play') place();
   else if (status === 'celebrating' && celebT > 1.0) { setStatus('win'); }
   else if (status !== 'celebrating' && performance.now() - endTime > 600) {
@@ -3938,7 +4045,7 @@ function placeCamera() {
   const fit = Math.max(1.04, 1.4 / viewAspect), s = Math.sin(camOrbit), c = Math.cos(camOrbit);
   const sc = (typeof SCENES !== 'undefined' && SCENES[sceneId]) || {};
   const f = fit * (sc.camFit || 1) * (1 - 0.14 * celebCamMix) * (1 + (0.04 + camBotFrac) * readyCamMix), dx = sc.camX || 0, dz = sc.camZ || 0;
-  camera.position.set(s * (7.4 + 0.6 * readyCamMix) * f + dx, (12.4 - 2.4 * celebCamMix) * f + camPunch, c * (7.4 + 0.6 * readyCamMix) * f + dz);
+  camera.position.set(s * (7.4 + 2.6 * readyCamMix) * f + dx, (12.4 - 3.4 * readyCamMix - 2.4 * celebCamMix) * f + camPunch, c * (7.4 + 2.6 * readyCamMix) * f + dz);
   camera.lookAt(s * 0.25 + dx, -0.6 + 0.35 * celebCamMix, c * 0.25 + dz);
 }
 function bottomPx() {
@@ -4035,7 +4142,7 @@ addEventListener('keydown', e => {
   if (e.code === 'KeyF') { perf.show = !perf.show; $('fps').style.display = perf.show ? 'block' : 'none'; }
 });
 
-let last = performance.now(), T = 0, steamAccum = 0;
+let last = performance.now(), T = 0, steamAccum = 0, orbitHold = null;   // orbitHold: debug camera freeze (screenshots)
 function loop(now) {
   renderer.info.reset();
   const rawMs = now - last;
@@ -4048,7 +4155,7 @@ function loop(now) {
     const th = T * 1.6;
     for (const a of SCENES[sceneId].anim) {
       a.o.quaternion.copy(a.rest);
-      a.o.rotateZ(a.spin ? T * 1.45 : a.crank ? -th : -0.2 * Math.sin(th));
+      a.o.rotateZ(a.spin ? T * 1.45 + a.ph : a.crank ? -(th + a.ph) : -0.2 * Math.sin(th + a.ph));
     }
   }
   if (status === 'play') {
@@ -4064,7 +4171,7 @@ function loop(now) {
   const targetReady = status === 'ready' ? 1 : 0;
   if (Math.abs(celebCamMix - targetMix) > 0.001 || Math.abs(readyCamMix - targetReady) > 0.001) {
     celebCamMix += (targetMix - celebCamMix) * Math.min(1, dt * 4.5);
-    readyCamMix += (targetReady - readyCamMix) * Math.min(1, dt * 5.0);
+    readyCamMix += (targetReady - readyCamMix) * Math.min(1, dt * (targetReady ? 5.0 : 2.0));   // slow lift-off on START
     placeCamera();
   }
   if (applyCamViewOffset(dt)) placeCamera();
@@ -4089,7 +4196,7 @@ function loop(now) {
 
   if (status === 'celebrating') { camOrbit += dt * 0.30; placeCamera(); }
   else if (status === 'win' && !orbitDrag) { camOrbit += dt * 0.075; placeCamera(); }
-  else if (status === 'ready' && !orbitDrag) { camOrbit += dt * 0.042; placeCamera(); }
+  else if (status === 'ready' && !orbitDrag && orbitHold === null) { camOrbit += dt * 0.042; placeCamera(); }
 
   if (heli.visible && heli.userData.active) {
     const hd = heli.userData;
@@ -4102,7 +4209,7 @@ function loop(now) {
     hd.rotor.rotation.y += dt * 26;
     hd.tailRot.rotation.x += dt * 36;
   }
-  tickExpo(now, dt);
+  tickExpo(now, dt); tickDemo(dt);
   if (status === 'lose') hintMat.opacity = 0.35 + 0.2 * Math.sin(T * 4);
   if (status === 'win' && power) updatePower(1e6, true);   // finish instantly if the sequence was skipped; keep seams pulsing
   if (status === 'win' || status === 'lose') {
@@ -4150,7 +4257,7 @@ function loop(now) {
 window.__game = {
   get status() { return status; }, get level() { return level; }, get placed() { return placed.length; },
   get tier() { return activeTier; }, get lang() { return lang; }, get sceneId() { return sceneId; },
-  start() { if (status === 'ready') setStatus('play'); },
+  start() { if (status === 'ready') confirm(); },
   setTier(k) { if (TIERS[k]) { activeTier = k; newRound({ keepScreen: status === 'ready' }); } },
   setLang,
   pickWorld,
@@ -4166,7 +4273,8 @@ window.__game = {
     }
   },
   newRound, setTime(v) { timeLeft = v; },
-  dbg: { THREE, ROTS, scene, renderer, camera, waterMat, sfxBuf, THUMB_CACHE, heli },
+  dbg: { THREE, ROTS, scene, renderer, camera, waterMat, sfxBuf, THUMB_CACHE, heli, perf,
+    holdOrbit(v) { orbitHold = v; if (v !== null) { camOrbit = v; placeCamera(); } } },
 };
 
 await loadKit();
