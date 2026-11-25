@@ -4288,7 +4288,8 @@ function sidePx() {
 function placeCamera() {
   const fit = Math.max(1.04, 1.4 / viewAspect), s = Math.sin(camOrbit), c = Math.cos(camOrbit);
   const sc = (typeof SCENES !== 'undefined' && SCENES[sceneId]) || {};
-  const f = fit * (sc.camFit || 1) * (1 - 0.14 * celebCamMix) * (1 + camBotFrac + 0.04 * readyCamMix), dx = sc.camX || 0, dz = sc.camZ || 0;
+  const playZoom = 1 - 0.15 * (1 - readyCamMix) * (1 - celebCamMix);   // in the round the board reads ~18 % larger
+  const f = fit * (sc.camFit || 1) * playZoom * (1 - 0.14 * celebCamMix) * (1 + camBotFrac + 0.04 * readyCamMix), dx = sc.camX || 0, dz = sc.camZ || 0;
   camera.position.set(s * (7.4 + 2.6 * readyCamMix) * f + dx, (12.4 - 3.4 * readyCamMix - 2.4 * celebCamMix) * f + camPunch, c * (7.4 + 2.6 * readyCamMix) * f + dz);
   camera.lookAt(s * 0.25 + dx, -0.6 + 0.35 * celebCamMix, c * 0.25 + dz);
 }
