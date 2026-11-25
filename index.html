@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="az">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
@@ -35,9 +35,7 @@
   body[data-scene=refinery]{--ac:#ff7b47;--ac-rgb:255,123,71;--ac-deep:#c94a1d}
   body[data-scene=green]{--ac:#2ee8b5;--ac-rgb:46,232,181;--ac-deep:#0f9e78}
   body[data-scene=terminal]{--ac:#5eb8ff;--ac-rgb:94,184,255;--ac-deep:#1a6ec4}
-  .glass{background:radial-gradient(circle at 10% 0%,rgba(0,133,202,.20),transparent 55%),linear-gradient(168deg,rgba(10,34,50,.93) 0%,rgba(4,16,26,.96) 100%);
-         border:1px solid rgba(118,205,255,.22);
-         box-shadow:0 .75rem 2.2rem rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.15)}
+  .glass{background:rgba(7,19,28,.94);border:1px solid rgba(255,255,255,.12);box-shadow:0 .6rem 1.8rem rgba(0,0,0,.42)}
 
   /* branded loading overlay */
   #loader{position:fixed;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.1rem;
@@ -52,31 +50,25 @@
 
   /* floating SOCAR flagship brand badge on start */
   #worldBadge{position:fixed;left:var(--gap);top:var(--gap);z-index:6;display:none;flex-direction:column;justify-content:center;
-              padding:calc(.72rem + 3.5px) 1.35rem .72rem;border-radius:1.25rem;border-color:rgba(41,211,255,.45);
-              background:linear-gradient(165deg,rgba(8,29,44,.90),rgba(3,12,21,.94));
-              box-shadow:0 .9rem 2.6rem rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.22);
+              padding:.8rem 1.35rem;border-radius:.9rem;
               max-width:calc(100vw - 36rem);pointer-events:none;overflow:hidden}
-  #worldBadge::before{content:'';position:absolute;left:0;right:0;top:0;height:3.5px;
-    background:linear-gradient(90deg,#0085ca 0%,#29d3ff 35%,#ec1e36 68%,#73bf44 100%)}
-  body[data-state=ready] #worldBadge{display:flex;animation:pop .35s cubic-bezier(.2,1.4,.4,1)}
+  body[data-state=ready] #worldBadge{display:flex}
   .wb-top{display:flex;align-items:center;gap:1.05rem}
   .wb-logo{height:2.75rem;width:auto;display:block;flex:none;transform:translateY(-.10rem);filter:drop-shadow(0 .2rem .5rem rgba(0,0,0,.45))}
   .wb-sep{width:1px;height:2.25rem;background:linear-gradient(180deg,transparent,rgba(255,255,255,.32),transparent);flex:none}
   .wb-id{display:flex;flex-direction:column;justify-content:center;gap:.26rem;text-align:left;min-width:0}
-  #worldBadgeOrg{font-size:.66rem;font-weight:800;letter-spacing:.12rem;text-transform:uppercase;color:#a8e5ff;line-height:1.2}
+  #worldBadgeOrg{font-size:.7rem;font-weight:700;letter-spacing:.04rem;text-transform:uppercase;color:rgba(255,255,255,.62);line-height:1.2}
   .wb-sub{display:flex;align-items:center;gap:.48rem}
-  #worldBadge .dot{width:.54rem;height:.54rem;border-radius:50%;background:var(--cyan);box-shadow:0 0 .7rem var(--cyan);animation:pulse 1.6s infinite;flex:none}
-  #worldBadgeTxt{font-size:.82rem;font-weight:900;letter-spacing:.1rem;text-transform:uppercase;color:#ffffff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  @media (max-width:1180px){.wb-logo{height:2.45rem}#worldBadge{padding:.68rem 1.05rem}#worldBadgeOrg{font-size:.58rem}}
+  #worldBadgeTxt{font-size:.9rem;font-weight:800;letter-spacing:.03rem;text-transform:uppercase;color:#ffffff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  @media (max-width:1180px){.wb-logo{height:2.45rem}#worldBadge{padding:.68rem 1.05rem}}
 
   /* top celebration banner */
   #celebBanner{position:fixed;left:50%;top:1.5rem;transform:translateX(-50%);z-index:9;display:none;align-items:center;gap:.8rem;
-               padding:.75rem 1.8rem;border-radius:3rem;border-color:rgba(63,226,138,.65);
-               background:linear-gradient(170deg,rgba(10,48,38,.92),rgba(5,22,20,.94));
-               box-shadow:0 .6rem 2.4rem rgba(63,226,138,.35),0 0 0 1px rgba(63,226,138,.25);pointer-events:none}
-  body[data-state=celebrating] #celebBanner{display:flex;animation:pop .4s cubic-bezier(.2,1.5,.4,1)}
+               padding:.7rem 1.6rem;border-radius:.7rem;border-color:rgba(63,226,138,.55);pointer-events:none}
+  body[data-state=celebrating] #celebBanner{display:flex;animation:fadeDown .35s ease-out}
+  @keyframes fadeDown{from{opacity:0;transform:translate(-50%,-.6rem)}}
   #celebBanner i{font-style:normal;font-size:1.5rem;color:var(--gold)}
-  #celebBanner b{font-size:1.35rem;font-weight:900;letter-spacing:.14rem;color:#eafff3}
+  #celebBanner b{font-size:1.3rem;font-weight:800;letter-spacing:.06rem;color:#eafff3}
 
   /* 360 spin pill during win inspection */
   #spinHint{position:fixed;left:var(--gap);bottom:var(--gap);z-index:6;display:none;align-items:center;gap:.5rem;
@@ -111,20 +103,18 @@
   /* side tray */
   #tray{position:fixed;top:var(--gap);right:var(--gap);bottom:var(--gap);width:var(--side);box-sizing:border-box;border-radius:1.45rem;overflow:hidden;
         display:flex;flex-direction:column;padding:1.1rem 1.05rem 1.05rem;gap:.65rem;transition:opacity .38s,transform .38s;z-index:4}
-  #tray::before,.panel.glass::before{content:'';position:absolute;left:0;right:0;top:0;height:3px;
-    background:linear-gradient(90deg,#0085ca 0%,#29d3ff 36%,#e4002b 70%,#009639 100%);pointer-events:none;z-index:2}
   body:not([data-state=play]) #tray{opacity:0;transform:translateX(2.4rem);pointer-events:none}
   .brand{display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.1rem .15rem .65rem;border-bottom:1px solid rgba(255,255,255,.11)}
   .brand-id{display:flex;align-items:center;gap:.6rem}
   .brand-logo{height:2.45rem;width:auto;display:block}
   .brand-txt{display:flex;flex-direction:column;line-height:1}
-  .brand-txt small{font-size:.55rem;font-weight:800;letter-spacing:.18rem;color:var(--cyan);opacity:.9;margin-top:.22rem}
+  .brand-txt small{font-size:.72rem;font-weight:700;letter-spacing:.06rem;color:rgba(255,255,255,.6);margin-top:.22rem}
   .lang-pill{display:inline-flex;background:rgba(4,16,25,.65);border:1px solid rgba(118,205,255,.22);border-radius:1.6rem;padding:.2rem;gap:.16rem}
-  .lang-pill button{border:0;background:transparent;font-size:.68rem;font-weight:800;letter-spacing:.08rem;padding:.34rem .68rem;border-radius:1.3rem;cursor:pointer;opacity:.68;transition:background .15s,opacity .15s,color .15s}
+  .lang-pill button{border:0;background:transparent;font-size:.74rem;font-weight:800;letter-spacing:.08rem;padding:.34rem .68rem;border-radius:1.3rem;cursor:pointer;opacity:.68;transition:background .15s,opacity .15s,color .15s}
   .lang-pill button.on{background:linear-gradient(135deg,#1ab4f2,#0078b8);color:#fff;opacity:1;box-shadow:0 .15rem .45rem rgba(0,133,202,.42)}
 
   .side-head{display:flex;align-items:center;justify-content:space-between;padding:0 .2rem}
-  .side-head span{font-size:.76rem;font-weight:800;letter-spacing:.18rem;opacity:.82}
+  .side-head span{font-size:.76rem;font-weight:800;letter-spacing:.06rem;opacity:.82}
   #dots{display:flex;gap:.32rem}
   #dots i{width:1.25rem;height:.38rem;border-radius:.2rem;background:rgba(255,255,255,.18);transition:background .3s}
   #dots i.on{background:var(--cyan)}
@@ -133,17 +123,17 @@
         background:linear-gradient(165deg,rgba(14,45,66,.86),rgba(5,19,30,.92));border:.1rem solid rgba(118,185,224,.22);
         display:flex;flex-direction:column;align-items:center;justify-content:center;transition:transform .15s,border-color .15s,opacity .15s}
   .card canvas.thumb{width:min(8.1rem,76%);aspect-ratio:1;pointer-events:none}
-  .card span.cname{font-size:.70rem;font-weight:700;margin-top:.06rem;opacity:.94;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;text-align:center}
+  .card span.cname{font-size:.78rem;font-weight:700;margin-top:.06rem;opacity:.94;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;text-align:center}
   .card-mini{position:absolute;top:.42rem;left:.44rem;display:grid;gap:2px;pointer-events:none;opacity:.96;
              background:rgba(4,16,24,.78);padding:3.5px;border-radius:.34rem;border:1px solid rgba(255,255,255,.16);z-index:1}
   .card-mini i{display:block;width:.52rem;height:.52rem;border-radius:2px;box-sizing:border-box}
-  .card-code{position:absolute;top:.42rem;right:.46rem;font-size:.64rem;font-weight:900;letter-spacing:.04rem;
+  .card-code{position:absolute;top:.42rem;right:.46rem;font-size:.72rem;font-weight:900;letter-spacing:.04rem;
              padding:.1rem .38rem;border-radius:.32rem;background:rgba(4,16,24,.72);border:1px solid rgba(255,255,255,.18);
              color:#e9f6ff;pointer-events:none;z-index:1}
   .card.sel{border-color:var(--cyan);background:linear-gradient(160deg,rgba(0,133,202,.36),rgba(41,211,255,.09));
             box-shadow:0 0 0 .16rem rgba(41,211,255,.24),inset 0 1px 0 rgba(255,255,255,.2)}
   .card.sel::after{content:attr(data-sel-label);position:absolute;top:-.55rem;left:50%;transform:translateX(-50%);background:var(--cyan);color:#04202d;
-            font-size:.54rem;font-weight:900;letter-spacing:.06rem;padding:.12rem .55rem;border-radius:.6rem;white-space:nowrap}
+            font-size:.64rem;font-weight:900;letter-spacing:.03rem;padding:.12rem .55rem;border-radius:.3rem;white-space:nowrap}
   .card.lifted{opacity:.32;transform:scale(.94)}
   .card:active{transform:scale(.96)}
 
@@ -153,8 +143,8 @@
   #modInfo i{font-style:normal;flex:none;width:1.35rem;height:1.35rem;border-radius:.4rem;background:rgba(41,211,255,.2);
              color:var(--cyan);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.76rem;margin-top:.05rem}
   #modInfo .mi-txt{display:flex;flex-direction:column;gap:.12rem;min-width:0}
-  #modInfo b{font-size:.74rem;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  #modInfo span{font-size:.7rem;font-weight:500;opacity:.86}
+  #modInfo b{font-size:.8rem;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #modInfo span{font-size:.76rem;font-weight:500;opacity:.86}
 
   .actions{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
   .act{height:4.2rem;border-radius:1rem;border:.1rem solid rgba(255,255,255,.18);cursor:pointer;
@@ -182,18 +172,10 @@
   #screen.side{justify-content:flex-end;padding:var(--gap);pointer-events:none;box-sizing:border-box}
   #screen.side .panel{pointer-events:auto;width:33rem;max-height:calc(100vh - var(--gap) * 2);overflow-y:auto;padding:1.35rem 1.52rem 1.25rem;
                       border-radius:1.65rem;display:flex;flex-direction:column}
-  .panel.glass{
-    background:
-      radial-gradient(circle at 12% 0%,rgba(var(--ac-rgb),.22),transparent 52%),
-      radial-gradient(circle at 88% 100%,rgba(0,133,202,.18),transparent 55%),
-      repeating-linear-gradient(0deg,rgba(255,255,255,.022) 0 1px,transparent 1px 22px),
-      repeating-linear-gradient(90deg,rgba(255,255,255,.022) 0 1px,transparent 1px 22px),
-      linear-gradient(168deg,rgba(8,29,44,.95) 0%,rgba(3,12,21,.98) 100%);
-    border-color:rgba(var(--ac-rgb),.28);
-    box-shadow:0 1.4rem 3.8rem rgba(0,0,0,.62),inset 0 1px 0 rgba(255,255,255,.22),inset 0 0 0 1px rgba(255,255,255,.04);
-  }
-  .panel{position:relative;overflow:hidden;width:44rem;max-width:94vw;box-sizing:border-box;padding:1.75rem 2.2rem 1.55rem;border-radius:1.6rem;text-align:center;
-         animation:pop .35s cubic-bezier(.2,1.4,.4,1)}
+  .panel.glass{background:rgba(7,19,28,.95);border-color:rgba(255,255,255,.12);box-shadow:0 1rem 2.6rem rgba(0,0,0,.5)}
+  .panel{position:relative;overflow:hidden;width:44rem;max-width:94vw;box-sizing:border-box;padding:1.75rem 2.2rem 1.55rem;border-radius:1.1rem;text-align:center;
+         animation:fadeUp .3s ease-out}
+  @keyframes fadeUp{from{transform:translateY(.6rem);opacity:0}}
   @keyframes pop{from{transform:scale(.94);opacity:0}}
   .panel-top{display:flex;align-items:center;justify-content:space-between;padding-bottom:.82rem;margin-bottom:.78rem;border-bottom:1px solid rgba(255,255,255,.12)}
   .panel-brand{display:flex;align-items:center;gap:.75rem}
@@ -204,9 +186,8 @@
   .eyebrow-pill{display:inline-flex;align-items:center;gap:.48rem;margin:0 auto .45rem;padding:.26rem .88rem;border-radius:2rem;
                 background:rgba(var(--ac-rgb),.11);border:1px solid rgba(var(--ac-rgb),.32);font-size:.6rem;font-weight:800;letter-spacing:.16rem;color:#dff7ff;text-transform:uppercase}
   .eyebrow-pill i{width:.44rem;height:.44rem;border-radius:50%;background:var(--ac);box-shadow:0 0 .5rem var(--ac);display:block}
-  .panel h1{margin:0 0 .38rem;font-size:1.9rem;font-weight:900;letter-spacing:.035rem;line-height:1.12;
-            background:linear-gradient(180deg,#ffffff 28%,#cceeff 100%);-webkit-background-clip:text;color:transparent}
-  .panel p{margin:0 auto .88rem;max-width:28.5rem;font-size:.82rem;font-weight:500;color:rgba(220,242,255,.80);line-height:1.42}
+  .panel h1{margin:0 0 .38rem;font-size:1.9rem;font-weight:900;letter-spacing:.01rem;line-height:1.12;color:#fff}
+  .panel p{margin:0 auto .88rem;max-width:28.5rem;font-size:.9rem;font-weight:500;color:rgba(220,242,255,.80);line-height:1.42}
 
   /* themed 3-world showcase selector */
   .world-lbl{display:flex;align-items:center;gap:.65rem;font-size:.62rem;font-weight:800;letter-spacing:.18rem;color:rgba(210,240,255,.78);
@@ -251,22 +232,22 @@
 
   /* SOCAR fact card & rank pill on win */
   .rank-pill{display:inline-flex;align-items:center;gap:.38rem;margin:0 auto .42rem;padding:.24rem .88rem;border-radius:1.4rem;
-             background:rgba(255,194,61,.14);border:1px solid rgba(255,194,61,.45);color:#ffe49b;font-size:.68rem;font-weight:900;letter-spacing:.1rem;text-transform:uppercase}
+             color:#ffe49b;font-size:.8rem;font-weight:800;letter-spacing:.04rem;text-transform:uppercase}
   .fact-box{margin:0 0 .7rem;padding:.56rem .76rem;border-radius:.85rem;background:rgba(0,133,202,.15);border:1px solid rgba(41,211,255,.28);
-            text-align:left;font-size:.71rem;line-height:1.34;color:#dcf4ff}
-  .fact-box b{display:block;font-size:.58rem;letter-spacing:.14rem;text-transform:uppercase;color:var(--cyan);margin-bottom:.16rem}
+            text-align:left;font-size:.8rem;line-height:1.38;color:#dcf4ff}
+  .fact-box b{display:block;font-size:.72rem;letter-spacing:.05rem;text-transform:uppercase;color:var(--cyan);margin-bottom:.16rem}
 
   /* VIP stand leaderboard */
   .lb-box{margin:0 0 .84rem;padding:.62rem .82rem;border-radius:1.02rem;
           background:linear-gradient(180deg,rgba(4,16,26,.78),rgba(2,10,17,.88));border:1px solid rgba(255,255,255,.10);
           box-shadow:inset 0 1px 0 rgba(255,255,255,.07);text-align:left}
-  .lb-head{display:flex;align-items:center;justify-content:space-between;gap:.45rem;font-size:.61rem;font-weight:800;letter-spacing:.14rem;color:var(--ac);margin-bottom:.4rem;text-transform:uppercase}
+  .lb-head{display:flex;align-items:center;justify-content:space-between;gap:.45rem;font-size:.7rem;font-weight:800;letter-spacing:.05rem;color:var(--ac);margin-bottom:.4rem;text-transform:uppercase}
   .lb-head-l{display:flex;align-items:center;gap:.4rem}
   .lb-clear-btn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);color:rgba(255,180,172,.78);border-radius:.45rem;padding:.18rem .46rem;
                 font-size:.55rem;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:.24rem;text-transform:uppercase;letter-spacing:.06rem;transition:background .15s,border-color .15s,color .15s}
   .lb-clear-btn:hover{background:rgba(255,90,78,.20);border-color:rgba(255,90,78,.55);color:#ffb4ad}
   .lb-list{display:flex;flex-direction:column;gap:.24rem}
-  .lb-row{display:flex;align-items:center;justify-content:space-between;gap:.5rem;font-size:.74rem;font-weight:700;padding:.26rem .52rem;border-radius:.52rem;background:rgba(255,255,255,.035)}
+  .lb-row{display:flex;align-items:center;justify-content:space-between;gap:.5rem;font-size:.8rem;font-weight:700;padding:.26rem .52rem;border-radius:.52rem;background:rgba(255,255,255,.035)}
   .lb-row.me{background:rgba(41,211,255,.18);border:1px solid rgba(41,211,255,.45)}
   .lb-row .lb-r{display:flex;align-items:center;gap:.5rem;min-width:0}
   .lb-row .lb-rank{width:1.25rem;height:1.25rem;flex:none;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
@@ -278,35 +259,31 @@
   .lb-row.r2 .lb-rank{background:rgba(203,213,225,.22);color:#e2e8f0}
   .lb-row.r3 .lb-rank{background:rgba(217,138,74,.24);color:#f0ab72}
   .lb-row .lb-tag{letter-spacing:.02rem;font-weight:700;max-width:11.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .lb-row .lb-time{flex:none;font-variant-numeric:tabular-nums;color:var(--good);background:rgba(63,226,138,.10);border:1px solid rgba(63,226,138,.20);padding:.12rem .45rem;border-radius:.42rem;font-size:.70rem}
-  .lb-empty{display:flex;align-items:center;justify-content:center;gap:.45rem;font-size:.72rem;opacity:.58;padding:.26rem 0}
+  .lb-row .lb-time{flex:none;font-variant-numeric:tabular-nums;color:var(--good);background:rgba(63,226,138,.10);border:1px solid rgba(63,226,138,.20);padding:.12rem .45rem;border-radius:.42rem;font-size:.76rem}
+  .lb-empty{display:flex;align-items:center;justify-content:center;gap:.45rem;font-size:.78rem;opacity:.58;padding:.26rem 0}
 
   /* player name entry */
   .tag-entry{display:flex;flex-direction:column;align-items:center;gap:.42rem;margin-bottom:.72rem;padding:.58rem .68rem;border-radius:.95rem;
              background:rgba(255,255,255,.05);border:1px solid var(--line)}
-  .tag-entry-lbl{font-size:.6rem;font-weight:800;letter-spacing:.13rem;opacity:.82;text-transform:uppercase}
+  .tag-entry-lbl{font-size:.7rem;font-weight:800;letter-spacing:.05rem;opacity:.82;text-transform:uppercase}
   .name-form{display:flex;align-items:center;gap:.45rem;width:100%}
   .name-input{flex:1;min-width:0;height:2.25rem;padding:0 .72rem;border-radius:.62rem;border:1px solid rgba(41,211,255,.45);
               background:#071b27;color:#fff;font-size:.82rem;font-weight:700;outline:none;box-sizing:border-box}
   .name-input:focus{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(41,211,255,.22)}
   .name-input::placeholder{color:rgba(190,224,242,.48);font-weight:500}
   .name-input:disabled{opacity:.65}
-  .save-btn{height:2.25rem;flex:none;padding:0 .88rem;border-radius:.62rem;border:0;background:linear-gradient(#3fe28a,#1db964);color:#042414;font-weight:900;font-size:.72rem;letter-spacing:.07rem;cursor:pointer}
+  .save-btn{height:2.25rem;flex:none;padding:0 .88rem;border-radius:.62rem;border:0;background:#2fcf7a;color:#042414;font-weight:900;font-size:.76rem;letter-spacing:.07rem;cursor:pointer}
   .save-btn:disabled{opacity:.45;cursor:default}
 
   /* flagship tactile CTA button with GPU-only glass sheen */
   .btn-main{position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:.7rem;width:100%;height:3.8rem;
-            padding:0 1.6rem;border-radius:1.18rem;border:0;cursor:pointer;font-size:1.06rem;font-weight:900;letter-spacing:.16rem;color:#fff;
-            background:linear-gradient(135deg,#2bd4ff 0%,#008ad1 48%,#005b96 100%);
-            box-shadow:0 .3rem 0 #003a5e,0 .75rem 1.8rem rgba(0,133,202,.46),inset 0 1px 0 rgba(255,255,255,.42);transition:transform .08s}
-  .btn-play-ico{width:2rem;height:2rem;border-radius:50%;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.32);
+            padding:0 1.6rem;border-radius:.8rem;border:0;cursor:pointer;font-size:1.1rem;font-weight:900;letter-spacing:.08rem;color:#fff;
+            background:#0085ca;box-shadow:0 .25rem 0 #004f7a;transition:transform .08s,background .15s}
+  .btn-main:hover{background:#0094e0}
+  .btn-play-ico{width:2rem;height:2rem;border-radius:50%;background:rgba(255,255,255,.16);
                 display:inline-flex;align-items:center;justify-content:center;flex:none}
   .btn-play-ico svg,.btn-main svg{width:1.05rem;height:1.05rem;flex:none}
   .btn-main:active{transform:translateY(.22rem)}
-  .btn-main.pulse::after{content:'';position:absolute;top:-20%;bottom:-20%;left:-35%;width:35%;
-    background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);
-    transform:translateX(0) skewX(-22deg);animation:sheen 3.2s ease-in-out infinite;pointer-events:none}
-  @keyframes sheen{0%,55%{transform:translateX(-120%) skewX(-22deg)}100%{transform:translateX(460%) skewX(-22deg)}}
 
   .badge{width:3.6rem;height:3.6rem;margin:0 auto .45rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.7rem;font-weight:900}
   .badge.win{background:radial-gradient(circle at 35% 30%,#7dffbf,#16b866);box-shadow:0 0 0 .35rem rgba(63,226,138,.20)}
@@ -319,8 +296,8 @@
   .stats{display:flex;gap:.5rem;margin-bottom:.68rem}
   .stats div{flex:1;padding:.5rem .35rem;border-radius:.8rem;background:rgba(255,255,255,.06);border:1px solid var(--line)}
   .stats b{display:block;font-size:1.25rem;font-weight:900;font-variant-numeric:tabular-nums}
-  .stats span{font-size:.54rem;font-weight:600;opacity:.68;text-transform:uppercase;letter-spacing:.05rem}
-  .auto{margin-top:.5rem;font-size:.66rem;opacity:.58}
+  .stats span{font-size:.72rem;font-weight:600;opacity:.68;text-transform:uppercase;letter-spacing:.03rem}
+  .auto{margin-top:.5rem;font-size:.72rem;opacity:.58}
   .panel.small h1{font-size:1.38rem}
   .panel.small p{margin-bottom:.75rem;font-size:.82rem}
   .panel.small .stats{margin-bottom:.75rem}.panel.small .stats b{font-size:1.18rem}
@@ -380,6 +357,31 @@
             background:rgba(4,16,25,.65);border:1px solid rgba(118,205,255,.22);color:inherit;padding:0}
   .full-btn svg,#btnFull svg{width:1.15rem;height:1.15rem}
   .panel-top-r{display:flex;align-items:center;gap:.5rem}
+  /* idle screen: the scene keeps the full width, one bar at the bottom */
+  #screen.attract{align-items:flex-end;justify-content:center;padding:var(--gap);pointer-events:none;box-sizing:border-box}
+  .attract-bar{pointer-events:auto;width:min(82rem,100%);box-sizing:border-box;padding:1.3rem 1.5rem;border-radius:1rem;
+               display:flex;flex-direction:column;gap:1.1rem}
+  .attract-bar.enter{animation:fadeUp .3s ease-out}
+  .ab-main{display:flex;align-items:center;gap:1.8rem}
+  .ab-copy{flex:1;min-width:0;text-align:left}
+  .ab-copy h1{margin:0 0 .35rem;font-size:2.3rem;font-weight:900;line-height:1.06;color:#fff;letter-spacing:0}
+  .ab-copy p{margin:0;font-size:1.02rem;line-height:1.4;color:rgba(225,240,250,.82);max-width:48rem}
+  .ab-rec{margin-top:.6rem;padding:0;border:0;background:none;font-size:.86rem;font-weight:700;color:#ffe49b;font-variant-numeric:tabular-nums;cursor:pointer;text-align:left}
+  .ab-rec span{color:rgba(255,255,255,.62);font-weight:600}
+  .ab-side{display:flex;flex-direction:column;gap:.6rem;flex:none;width:20rem}
+  .ab-side .btn-main{height:4.3rem;font-size:1.3rem}
+  .ab-tools{display:flex;align-items:center;gap:.5rem}
+  .ab-more{flex:1;height:2.55rem;border-radius:.6rem;border:1px solid rgba(255,255,255,.2);background:transparent;font-size:.84rem;font-weight:700;cursor:pointer}
+  .ab-more.on{border-color:#fff;background:rgba(255,255,255,.08)}
+  .world-row{display:grid;grid-template-columns:repeat(var(--wn,3),1fr);gap:.6rem}
+  .world-row .world-btn{flex-direction:row;justify-content:flex-start;gap:.75rem;padding:.8rem .95rem;text-align:left;border-radius:.7rem}
+  .world-row .world-btn.on{transform:none}
+  .world-row .world-btn.on::before,.world-row .world-btn.on::after{display:none}
+  .world-row .world-btn b{font-size:.92rem}
+  .world-row .world-btn small{font-size:.74rem;background:none;border:0;padding:0;letter-spacing:.02rem;text-transform:none;opacity:.7}
+  .world-row .w-txt{display:flex;flex-direction:column;gap:.12rem;min-width:0}
+  .credit{display:flex;align-items:center;gap:.65rem;margin-top:.7rem;font-size:.76rem;line-height:1.3;color:rgba(255,255,255,.7);text-align:left}
+  .credit img{width:4.4rem;height:4.4rem;flex:none;border-radius:.3rem;background:#fff;padding:.2rem;box-sizing:border-box}
   html.no-fs .full-btn,html.no-fs #btnFull{display:none}
   /* password modal for clearing leaderboard */
   #pwdModal{position:fixed;inset:0;z-index:26;display:none;align-items:center;justify-content:center;background:rgba(2,10,16,.74)}
@@ -410,7 +412,7 @@
 <div id="vignette"></div>
 <div id="loader">
   <svg class="l-logo" role="img" aria-label="SOCAR" xmlns="http://www.w3.org/2000/svg" viewBox="282.81 255.11 277.33 87.07"><path transform="matrix(1,0,0,-1,306.1897,267.1157)" d="M0 0C0-12.623-3.484-17.502-10.452-27.175-17.314-36.65-22.381-50.719-14.041-60.591-12.141-62.945-10.135-64.166-6.757-64.931-7.179-59.258-8.023-56.79-3.906-51.088-1.373-47.571 1.9-44.989 4.856-41.784 10.979-35.146 16.997-26.948 16.997-17.388 16.997-9.9 16.258-3.064 10.874 2.752 7.812 6.042 2.745 10.609-2.111 11.006-1.373 9.332 0 2.638 0 0" fill="#ec1e36" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,520.1811,338.0889)" d="M0 0H10.24V14.892C19.214 14.892 15.413 15.914 20.375 7.744 21.959 5.191 23.12 2.383 24.703 0H36.105C35.789 1.05 35.577 1.333 35.05 2.184L26.815 16.68C38.955 19.488 38.85 41.16 21.22 41.16H0ZM19.742 22.722H10.24V33.359C19.425 33.359 24.703 34.863 24.703 27.686 24.703 24.565 22.909 22.722 19.742 22.722" fill="#ffffff" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,392.1241,315.3674)" d="M0 0C0-7.234 .528-12.396 6.123-18.041 13.83-25.814 27.237-25.587 34.944-18.041 42.756-10.325 43.284 3.943 35.683 13.077 28.187 21.984 12.457 21.389 5.595 13.559 2.956 10.581 0 5.418 0 0M20.481-14.921C6.546-14.921 7.39 10.638 19.108 10.638H21.22C33.994 10.638 34.205-14.921 20.481-14.921" fill="#ffffff" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,353.1686,308.2755)" d="M0 0C0-3.433 0-6.61 3.167-9.304 7.284-12.765 12.458-12.964 17.736-13.843 21.642-14.495 24.492-14.666 24.492-17.758 24.492-22.098 16.68-23.601 10.451-20.793 3.906-17.871 7.918-15.602 .95-19.772-.211-20.481-1.901-21.701-3.167-22.012-2.745-23.686-1.161-24.452 .105-25.474 7.918-31.969 21.431-32.622 29.137-27.402 35.366-23.204 39.378-9.531 25.02-5.475 18.686-3.688 10.346-4.284 10.346 0 10.346 4.595 18.053 4.851 22.803 2.241 24.915 1.078 25.337 0 26.921-1.078 28.293-.17 29.243 .624 30.615 1.617 31.777 2.411 33.677 3.971 34.733 4.255 31.566 8.879 23.859 12.424 18.475 12.424H14.885C7.495 12.424 0 7.346 0 0" fill="#ffffff" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,476.2639,338.0889)" d="M0 0C11.507 0 9.712-.823 10.979 2.865 11.402 4.226 11.718 5.304 12.035 6.751H26.92L29.032 0H40.011C39.906 1.362 38.85 3.716 38.322 5.078L24.809 41.16H13.83L-.422 2.156C-.739 1.191-1.478 0 0 0M19.108 30.154 24.492 14.552H14.569L18.052 25.955C18.369 27.147 19.003 28.934 19.108 30.154" fill="#ffffff" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,457.8946,339.1668)" d="M0 0C5.173 0 11.19 2.893 14.041 6.553 14.991 7.886 16.469 9.134 16.68 11.006 14.78 11.46 11.085 13.956 8.551 14.552 3.695 5.532-9.924 6.609-9.924 22.353-9.924 37.983 6.229 36.82 8.129 28.395L16.575 32.423C16.152 34.551 12.669 38.408 10.979 39.713 3.061 45.642-9.713 44.337-15.624 36.309-26.393 21.899-18.053 0 0 0" fill="#ffffff" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,304.7118,328.5011)" d="M0 0C0-4.964 3.167-8.538 7.073-10.666 7.073-5.985 7.179-5.078 12.457-1.503 20.375 3.886 31.882 10.439 31.882 23.062 31.882 29.756 31.46 33.671 27.237 39.345 26.392 40.479 25.548 41.813 24.07 42.21 23.965 38.522 21.747 32.423 20.269 29.672 19.319 27.657 18.58 26.239 17.313 24.537 13.408 19.176 10.135 15.885 5.384 11.262 2.85 8.737 0 4.908 0 0" fill="#73bf44" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,292.6766,267.1157)" d="M0 0C0-10.609-7.073-8.964-7.073-20.594-7.073-23.431-4.223-27.459-2.112-28.026-.528-21.502 2.956-19.715 6.44-12.793 8.657-8.255 8.974-3.29 5.595 .624 5.068 1.276 3.589 2.411 2.85 2.837 1.795 3.518 .739 3.915-1.056 3.915-.633 2.383 0 1.957 0 0" fill="#16a3dd" fill-rule="evenodd"/></svg>
-  <div class="l-sub" id="loadSub">İNTERAKTİV SİMULYATOR</div>
+  <div class="l-sub" id="loadSub">INTERACTIVE 3D SIMULATOR</div>
   <div class="l-track"><div id="loadBar"></div></div>
   <div id="loadPct">8%</div>
 </div>
@@ -419,20 +421,20 @@
     <svg class="wb-logo" role="img" aria-label="SOCAR" xmlns="http://www.w3.org/2000/svg" viewBox="282.81 255.11 277.33 87.07"><path transform="matrix(1,0,0,-1,306.1897,267.1157)" d="M0 0C0-12.623-3.484-17.502-10.452-27.175-17.314-36.65-22.381-50.719-14.041-60.591-12.141-62.945-10.135-64.166-6.757-64.931-7.179-59.258-8.023-56.79-3.906-51.088-1.373-47.571 1.9-44.989 4.856-41.784 10.979-35.146 16.997-26.948 16.997-17.388 16.997-9.9 16.258-3.064 10.874 2.752 7.812 6.042 2.745 10.609-2.111 11.006-1.373 9.332 0 2.638 0 0" fill="#ec1e36" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,520.1811,338.0889)" d="M0 0H10.24V14.892C19.214 14.892 15.413 15.914 20.375 7.744 21.959 5.191 23.12 2.383 24.703 0H36.105C35.789 1.05 35.577 1.333 35.05 2.184L26.815 16.68C38.955 19.488 38.85 41.16 21.22 41.16H0ZM19.742 22.722H10.24V33.359C19.425 33.359 24.703 34.863 24.703 27.686 24.703 24.565 22.909 22.722 19.742 22.722" fill="#ffffff" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,392.1241,315.3674)" d="M0 0C0-7.234 .528-12.396 6.123-18.041 13.83-25.814 27.237-25.587 34.944-18.041 42.756-10.325 43.284 3.943 35.683 13.077 28.187 21.984 12.457 21.389 5.595 13.559 2.956 10.581 0 5.418 0 0M20.481-14.921C6.546-14.921 7.39 10.638 19.108 10.638H21.22C33.994 10.638 34.205-14.921 20.481-14.921" fill="#ffffff" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,353.1686,308.2755)" d="M0 0C0-3.433 0-6.61 3.167-9.304 7.284-12.765 12.458-12.964 17.736-13.843 21.642-14.495 24.492-14.666 24.492-17.758 24.492-22.098 16.68-23.601 10.451-20.793 3.906-17.871 7.918-15.602 .95-19.772-.211-20.481-1.901-21.701-3.167-22.012-2.745-23.686-1.161-24.452 .105-25.474 7.918-31.969 21.431-32.622 29.137-27.402 35.366-23.204 39.378-9.531 25.02-5.475 18.686-3.688 10.346-4.284 10.346 0 10.346 4.595 18.053 4.851 22.803 2.241 24.915 1.078 25.337 0 26.921-1.078 28.293-.17 29.243 .624 30.615 1.617 31.777 2.411 33.677 3.971 34.733 4.255 31.566 8.879 23.859 12.424 18.475 12.424H14.885C7.495 12.424 0 7.346 0 0" fill="#ffffff" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,476.2639,338.0889)" d="M0 0C11.507 0 9.712-.823 10.979 2.865 11.402 4.226 11.718 5.304 12.035 6.751H26.92L29.032 0H40.011C39.906 1.362 38.85 3.716 38.322 5.078L24.809 41.16H13.83L-.422 2.156C-.739 1.191-1.478 0 0 0M19.108 30.154 24.492 14.552H14.569L18.052 25.955C18.369 27.147 19.003 28.934 19.108 30.154" fill="#ffffff" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,457.8946,339.1668)" d="M0 0C5.173 0 11.19 2.893 14.041 6.553 14.991 7.886 16.469 9.134 16.68 11.006 14.78 11.46 11.085 13.956 8.551 14.552 3.695 5.532-9.924 6.609-9.924 22.353-9.924 37.983 6.229 36.82 8.129 28.395L16.575 32.423C16.152 34.551 12.669 38.408 10.979 39.713 3.061 45.642-9.713 44.337-15.624 36.309-26.393 21.899-18.053 0 0 0" fill="#ffffff" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,304.7118,328.5011)" d="M0 0C0-4.964 3.167-8.538 7.073-10.666 7.073-5.985 7.179-5.078 12.457-1.503 20.375 3.886 31.882 10.439 31.882 23.062 31.882 29.756 31.46 33.671 27.237 39.345 26.392 40.479 25.548 41.813 24.07 42.21 23.965 38.522 21.747 32.423 20.269 29.672 19.319 27.657 18.58 26.239 17.313 24.537 13.408 19.176 10.135 15.885 5.384 11.262 2.85 8.737 0 4.908 0 0" fill="#73bf44" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,292.6766,267.1157)" d="M0 0C0-10.609-7.073-8.964-7.073-20.594-7.073-23.431-4.223-27.459-2.112-28.026-.528-21.502 2.956-19.715 6.44-12.793 8.657-8.255 8.974-3.29 5.595 .624 5.068 1.276 3.589 2.411 2.85 2.837 1.795 3.518 .739 3.915-1.056 3.915-.633 2.383 0 1.957 0 0" fill="#16a3dd" fill-rule="evenodd"/></svg>
     <span class="wb-sep"></span>
     <div class="wb-id">
-      <span id="worldBadgeOrg">AZƏRBAYCAN RESPUBLİKASININ DÖVLƏT NEFT ŞİRKƏTİ</span>
-      <div class="wb-sub"><i class="dot"></i><span id="worldBadgeTxt">XƏZƏR DƏNİZİ · DƏNİZ PLATFORMASI</span></div>
+      <span id="worldBadgeOrg">STATE OIL COMPANY OF AZERBAIJAN REPUBLIC</span>
+      <div class="wb-sub"><span id="worldBadgeTxt">CASPIAN SEA · SEMI-SUBMERSIBLE RIG</span></div>
     </div>
   </div>
 </div>
-<div id="celebBanner" class="glass"><i>★</i><b id="celebTxt">OBYEKT İŞƏ SALINDI!</b><i>★</i></div>
-<div id="spinHint" class="glass"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9"/><path d="M21 3v6h-6"/></svg><span id="lblSpinHint">360° Fırladın</span></div>
+<div id="celebBanner" class="glass"><b id="celebTxt">FACILITY COMMISSIONED</b></div>
+<div id="spinHint" class="glass"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9"/><path d="M21 3v6h-6"/></svg><span id="lblSpinHint">Drag to Spin 360°</span></div>
 <div class="hud-top">
   <button type="button" class="hud-btn glass" id="btnHome" title="Worlds"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 10v10h14V10"/></svg></button>
   <div class="timer glass" id="timerBox">
     <svg viewBox="0 0 44 44"><circle class="trk" cx="22" cy="22" r="19"/><circle id="ring" class="ring" cx="22" cy="22" r="19"/></svg>
     <span id="timer">01:00</span>
   </div>
-  <div id="title">PLATFORMANI BOŞLUQSUZ DOLDURUN!</div>
+  <div id="title">COMPLETE THE OFFSHORE DECK</div>
   <div id="recBadge" class="glass">🏆 <b id="recVal">—</b></div>
   <button type="button" class="hud-btn glass" id="btnFull" title="Fullscreen"></button>
   <button type="button" class="hud-btn glass" id="btnMute" title="Sound"><svg id="icoSound" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg></button>
@@ -443,17 +445,17 @@
       <div class="brand-txt"><svg class="brand-logo" role="img" aria-label="SOCAR" xmlns="http://www.w3.org/2000/svg" viewBox="282.81 255.11 277.33 87.07"><path transform="matrix(1,0,0,-1,306.1897,267.1157)" d="M0 0C0-12.623-3.484-17.502-10.452-27.175-17.314-36.65-22.381-50.719-14.041-60.591-12.141-62.945-10.135-64.166-6.757-64.931-7.179-59.258-8.023-56.79-3.906-51.088-1.373-47.571 1.9-44.989 4.856-41.784 10.979-35.146 16.997-26.948 16.997-17.388 16.997-9.9 16.258-3.064 10.874 2.752 7.812 6.042 2.745 10.609-2.111 11.006-1.373 9.332 0 2.638 0 0" fill="#ec1e36" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,520.1811,338.0889)" d="M0 0H10.24V14.892C19.214 14.892 15.413 15.914 20.375 7.744 21.959 5.191 23.12 2.383 24.703 0H36.105C35.789 1.05 35.577 1.333 35.05 2.184L26.815 16.68C38.955 19.488 38.85 41.16 21.22 41.16H0ZM19.742 22.722H10.24V33.359C19.425 33.359 24.703 34.863 24.703 27.686 24.703 24.565 22.909 22.722 19.742 22.722" fill="#ffffff" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,392.1241,315.3674)" d="M0 0C0-7.234 .528-12.396 6.123-18.041 13.83-25.814 27.237-25.587 34.944-18.041 42.756-10.325 43.284 3.943 35.683 13.077 28.187 21.984 12.457 21.389 5.595 13.559 2.956 10.581 0 5.418 0 0M20.481-14.921C6.546-14.921 7.39 10.638 19.108 10.638H21.22C33.994 10.638 34.205-14.921 20.481-14.921" fill="#ffffff" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,353.1686,308.2755)" d="M0 0C0-3.433 0-6.61 3.167-9.304 7.284-12.765 12.458-12.964 17.736-13.843 21.642-14.495 24.492-14.666 24.492-17.758 24.492-22.098 16.68-23.601 10.451-20.793 3.906-17.871 7.918-15.602 .95-19.772-.211-20.481-1.901-21.701-3.167-22.012-2.745-23.686-1.161-24.452 .105-25.474 7.918-31.969 21.431-32.622 29.137-27.402 35.366-23.204 39.378-9.531 25.02-5.475 18.686-3.688 10.346-4.284 10.346 0 10.346 4.595 18.053 4.851 22.803 2.241 24.915 1.078 25.337 0 26.921-1.078 28.293-.17 29.243 .624 30.615 1.617 31.777 2.411 33.677 3.971 34.733 4.255 31.566 8.879 23.859 12.424 18.475 12.424H14.885C7.495 12.424 0 7.346 0 0" fill="#ffffff" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,476.2639,338.0889)" d="M0 0C11.507 0 9.712-.823 10.979 2.865 11.402 4.226 11.718 5.304 12.035 6.751H26.92L29.032 0H40.011C39.906 1.362 38.85 3.716 38.322 5.078L24.809 41.16H13.83L-.422 2.156C-.739 1.191-1.478 0 0 0M19.108 30.154 24.492 14.552H14.569L18.052 25.955C18.369 27.147 19.003 28.934 19.108 30.154" fill="#ffffff" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,457.8946,339.1668)" d="M0 0C5.173 0 11.19 2.893 14.041 6.553 14.991 7.886 16.469 9.134 16.68 11.006 14.78 11.46 11.085 13.956 8.551 14.552 3.695 5.532-9.924 6.609-9.924 22.353-9.924 37.983 6.229 36.82 8.129 28.395L16.575 32.423C16.152 34.551 12.669 38.408 10.979 39.713 3.061 45.642-9.713 44.337-15.624 36.309-26.393 21.899-18.053 0 0 0" fill="#ffffff" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,304.7118,328.5011)" d="M0 0C0-4.964 3.167-8.538 7.073-10.666 7.073-5.985 7.179-5.078 12.457-1.503 20.375 3.886 31.882 10.439 31.882 23.062 31.882 29.756 31.46 33.671 27.237 39.345 26.392 40.479 25.548 41.813 24.07 42.21 23.965 38.522 21.747 32.423 20.269 29.672 19.319 27.657 18.58 26.239 17.313 24.537 13.408 19.176 10.135 15.885 5.384 11.262 2.85 8.737 0 4.908 0 0" fill="#73bf44" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,292.6766,267.1157)" d="M0 0C0-10.609-7.073-8.964-7.073-20.594-7.073-23.431-4.223-27.459-2.112-28.026-.528-21.502 2.956-19.715 6.44-12.793 8.657-8.255 8.974-3.29 5.595 .624 5.068 1.276 3.589 2.411 2.85 2.837 1.795 3.518 .739 3.915-1.056 3.915-.633 2.383 0 1.957 0 0" fill="#16a3dd" fill-rule="evenodd"/></svg><small id="brandSub">CASPIAN OFFSHORE</small></div>
     </div>
     <div class="lang-pill" id="trayLang">
-      <button type="button" data-lang="az" class="on">AZ</button>
-      <button type="button" data-lang="en">EN</button>
+      <button type="button" data-lang="az">AZ</button>
+      <button type="button" data-lang="en" class="on">EN</button>
     </div>
   </div>
-  <div class="side-head"><span id="lblModules">MODULLAR</span><div id="dots"></div></div>
+  <div class="side-head"><span id="lblModules">MODULES</span><div id="dots"></div></div>
   <div id="cards"></div>
   <div id="modInfo"><i>i</i><div class="mi-txt"><b id="modInfoTitle">—</b><span id="modInfoDesc">—</span></div></div>
-  <button id="hintBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.4 1 1.1 1 1.8V16h5v-.3c0-.7.4-1.4 1-1.8A6 6 0 0 0 12 3z"/></svg><span id="lblHintBtn">KÖMƏK</span></button>
+  <button id="hintBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.4 1 1.1 1 1.8V16h5v-.3c0-.7.4-1.4 1-1.8A6 6 0 0 0 12 3z"/></svg><span id="lblHintBtn">HINT</span></button>
   <div class="actions">
-    <button class="act rot" id="btnRot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v5h-5"/></svg><span id="lblBtnRot">Döndər</span></button>
-    <button class="act" id="btnBack"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg><span id="lblBtnBack">Geri al</span></button>
+    <button class="act rot" id="btnRot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v5h-5"/></svg><span id="lblBtnRot">Rotate</span></button>
+    <button class="act" id="btnBack"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg><span id="lblBtnBack">Undo</span></button>
   </div>
 </aside>
 <div id="info"></div>
@@ -468,7 +470,7 @@
 <div id="pwdModal"></div>
 <div id="portrait">
   <svg viewBox="0 0 24 24" fill="none" stroke="#29d3ff" stroke-width="1.5" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18.5h2"/></svg>
-  <span id="lblPortrait">Planşeti üfüqi vəziyyətə çevirin</span>
+  <span id="lblPortrait">Please rotate the screen to landscape</span>
 </div>
 
 <script type="module">
@@ -487,7 +489,7 @@ if ('serviceWorker' in navigator) {
       }
     }).catch(() => {});
   } else {
-    navigator.serviceWorker.register('./sw.js?v=15').then(r => r.update().catch(() => {})).catch(() => {});
+    navigator.serviceWorker.register('./sw.js?v=16').then(r => r.update().catch(() => {})).catch(() => {});
   }
 }
 
@@ -665,13 +667,15 @@ const I18N = {
     orgName: 'AZƏRBAYCAN RESPUBLİKASININ DÖVLƏT NEFT ŞİRKƏTİ',
     brandTag: 'SOCAR 3D EXPO',
     worldSelectLbl: 'OBYEKTİ SEÇİN',
-    startTitle: 'ENERJİ OBYEKTİNİ YIĞIN',
+    startTitle: 'Obyekti {s} saniyədə yığın',
+    otherWorlds: 'Digər obyektlər',
+    recLabel: 'Stend rekordu',
     startDesc: 'Bütün sənaye modullarını işıqlanan montaj zonasına vaxt bitmədən boşluqsuz yerləşdirin',
     step1b: 'Seç', step1s: 'sağ paneldən modulu',
     step2b: 'Döndər', step2s: '«Döndər» düyməsi ilə',
     step3b: 'Yerləşdir', step3s: 'boş montaj xanalarına',
     startBtn: 'BAŞLA',
-    celebBanner: 'OBYEKT İŞƏ SALINDI!',
+    celebBanner: 'OBYEKT İŞƏ SALINDI',
     spinHint: '360° Fırladın',
     winEye: 'İŞƏ SALINDI!',
     winTitle: 'OBYEKT TAM HAZIRDIR!',
@@ -680,13 +684,13 @@ const I18N = {
     statElapsed: 'sərf olunan vaxt',
     statMods: 'modul',
     statLeft: 'qalan vaxt',
-    newRoundBtn: 'YENİ RAUND',
+    newRoundBtn: 'NÖVBƏTİ İŞTİRAKÇI',
     loseTitle: 'VAXT BİTDİ',
     loseDesc: 'Sahədə mümkün həllərdən biri göstərilir',
     statFilled: 'doldurulub',
-    retryBtn: 'NÖVBƏTİ RAUND',
-    autoPrefix: 'Yeni oyun',
-    autoMid: 'san sonra avtomatik başlayacaq',
+    retryBtn: 'NÖVBƏTİ İŞTİRAKÇI',
+    autoPrefix: 'Başlanğıc ekranı',
+    autoMid: 'san sonra',
     toastNoFit: 'Bu modul buraya sığmır',
     toastDeadPocket: 'Kiçik boşluq qaldı — modulu başqa cür yerləşdirin',
     toastWrongPlaced: 'Hansısa modul səhv yerdədir, onu götürün',
@@ -737,13 +741,15 @@ const I18N = {
     orgName: 'STATE OIL COMPANY OF AZERBAIJAN REPUBLIC',
     brandTag: 'SOCAR 3D EXPO',
     worldSelectLbl: 'CHOOSE FACILITY',
-    startTitle: 'ASSEMBLE THE FACILITY',
+    startTitle: 'Assemble the facility in {s} seconds',
+    otherWorlds: 'Other facilities',
+    recLabel: 'Stand record',
     startDesc: 'Install all industrial modules into the glowing bay before the timer runs out',
     step1b: 'Select', step1s: 'a module card',
     step2b: 'Rotate', step2s: 'with «Rotate»',
     step3b: 'Install', step3s: 'onto open cells',
     startBtn: 'START',
-    celebBanner: 'FACILITY COMMISSIONED!',
+    celebBanner: 'FACILITY COMMISSIONED',
     spinHint: 'Drag to Spin 360°',
     winEye: 'COMMISSIONED!',
     winTitle: 'FACILITY READY FOR OPERATION!',
@@ -752,12 +758,12 @@ const I18N = {
     statElapsed: 'elapsed time',
     statMods: 'modules',
     statLeft: 'time left',
-    newRoundBtn: 'NEW ROUND',
+    newRoundBtn: 'NEXT PLAYER',
     loseTitle: 'TIME IS UP',
     loseDesc: 'One valid module layout is shown on the bay',
     statFilled: 'completed',
-    retryBtn: 'NEXT ROUND',
-    autoPrefix: 'Next game starts automatically in',
+    retryBtn: 'NEXT PLAYER',
+    autoPrefix: 'Back to start in',
     autoMid: 's',
     toastNoFit: 'Module does not fit here',
     toastDeadPocket: 'Unreachable gap left — adjust a placed module',
@@ -796,7 +802,10 @@ const I18N = {
   },
 };
 
-let lang = (() => { try { const v = localStorage.getItem('pf_lang'); return v === 'en' ? 'en' : 'az'; } catch { return 'az'; } })();
+// Kiosk default is English for international visitors; AZ is a per-visitor choice and is NOT persisted
+// (tickExpo falls back to DEFAULT_LANG once the stand goes idle).
+const DEFAULT_LANG = 'en';
+let lang = DEFAULT_LANG;
 let activeTier = 'engineer';
 const TR = () => I18N[lang];
 const roundDuration = () => TIERS[activeTier].time;
@@ -1715,6 +1724,7 @@ const ghostLineMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent:
 const footMat = new THREE.MeshBasicMaterial({ color: 0x46ff7a, transparent: true, opacity: 0.48, depthWrite: false });
 const beamMat = new THREE.MeshBasicMaterial({ color: 0x46ff7a, transparent: true, opacity: 0.52, depthWrite: false });
 const ledMat = new THREE.MeshBasicMaterial({ color: 0x4bff9c });
+const ledStandbyMat = new THREE.MeshBasicMaterial({ color: 0xffb02e });   // installed, not yet commissioned
 const hintMat = new THREE.MeshLambertMaterial({ color: 0x29d3ff, emissive: 0x0b5a70, transparent: true, opacity: 0.45 });
 
 const pieceMats = {};
@@ -1812,6 +1822,8 @@ function syncHoles() {
 // ---------------------------------------------------------------- Blender kit & 3D Thumbnails
 let KIT = null;
 const WORLD_IDS = ['offshore', 'onshore', 'kacalka', 'refinery', 'terminal', 'green'];
+// Worlds shown on the stand (selector, idle rotation, next-round). Others stay reachable via ?scene=<id>.
+const FEATURED_WORLDS = ['offshore', 'onshore', 'kacalka', 'refinery', 'terminal', 'green'];
 const SCENES = {
   offshore: {
     files: ['assets/offshore/base.glb', 'assets/offshore/pieces.glb', 'assets/offshore/buildings.glb'],
@@ -1823,8 +1835,8 @@ const SCENES = {
     startDesc: { az: 'Dəniz platformasının göyərtəsində sənaye modullarını vaxt bitmədən yerləşdirin', en: 'Install all offshore topside modules into the glowing bay before the timer expires' },
     winTitle: { az: 'PLATFORMA İŞƏ SALINDI!', en: 'OFFSHORE RIG COMMISSIONED!' },
     fact: {
-      az: 'Xəzərdəki SOCAR yarımbatıq qurğuları 1000 metrədək dərinlikdə işləyərək Azəri–Çıraq–Günəşli və Şahdəniz yataqlarına xidmət edir.',
-      en: 'SOCAR semi-submersible rigs in the Caspian operate in water depths up to 1,000 m, supporting major fields like Azeri-Chirag-Gunashli and Shah Deniz.',
+      az: 'SOCAR-ın «Heydər Əliyev» yarımbatıq qazma qurğusu Xəzərdə 1000 m dərinlikdə 12 000 m-lik quyular qazmaq üçün nəzərdə tutulub.',
+      en: 'SOCAR’s Heydar Aliyev semi-submersible rig is built to drill 12,000 m deep wells in 1,000 m of Caspian water.',
     },
     sky: { zen: 0x164468, hor: 0x6ea6c6, gnd: 0x0b2330, cloud: 0xf0f6fa, sunCol: 0xffe4b0 },
     names: {
@@ -1892,15 +1904,15 @@ const SCENES = {
     files: ['assets/kacalka/base.glb', 'assets/kacalka/pieces.glb', 'assets/kacalka/buildings.glb'],
     land: true, camX: -1.0, camZ: -0.6, camFit: 1.08,
     atmo: { bg: 0xdccaa6, fog: [26, 80], hemi: [0xf2e0be, 0x624b2c, 1.12], sun: [0xffd594, 3.15] },
-    label: { az: 'Abşeron Mədəni', en: 'Absheron Field' },
-    badge: { az: 'ABŞERON MƏDƏNİ · TARİXİ NEFT SAHƏSİ', en: 'ABSHERON OILFIELD · HERITAGE PAD' },
+    label: { az: 'Abşeron Mədəni', en: 'Absheron Heritage' },
+    badge: { az: 'ABŞERON MƏDƏNİ · TARİXİ NEFT SAHƏSİ', en: 'ABSHERON PENINSULA · HERITAGE OILFIELD' },
     sub: { az: 'ABSHERON HERITAGE', en: 'ABSHERON HERITAGE' },
     hudTitle: { az: 'NEFT MƏDƏNİNİ BOŞLUQSUZ TAMAMLAYIN!', en: 'COMPLETE THE OILFIELD PAD!' },
     startDesc: { az: 'Abşeron mədəninin istehsalat modullarını vaxt bitmədən yerləşdirin', en: 'Install all Absheron production units into the field layout before time runs out' },
     winTitle: { az: 'MƏDƏN İŞƏ SALINDI!', en: 'OILFIELD PAD COMMISSIONED!' },
     fact: {
-      az: '1846-cı ildə Bakının Bibiheybət sahəsində dünyanın ilk sənaye üsulu ilə qazılmış neft quyusu istismara verilib.',
-      en: 'In 1846, the world’s first industrially drilled oil well was completed right in Baku’s Bibi-Heybat field on the Absheron Peninsula.',
+      az: '1846-cı ildə Bakının Bibiheybət sahəsində dünyada ilk dəfə mexaniki üsulla neft quyusu qazılıb.',
+      en: 'In 1846, the world’s first mechanically drilled oil well was sunk at Bibi-Heybat near Baku, 13 years before Pennsylvania’s Drake well.',
     },
     sky: { zen: 0x3b6d96, hor: 0xead4ae, gnd: 0x8b714a, cloud: 0xfff5e4, sunCol: 0xffcf87 },
     names: {
@@ -1931,14 +1943,14 @@ const SCENES = {
     land: true, camX: -1.0, camZ: -0.6, camFit: 1.08,
     atmo: { bg: 0xc88d68, fog: [28, 92], hemi: [0xf7cfb0, 0x3b2824, 1.15], sun: [0xffbc75, 3.15] },
     label: { az: 'Neft Emalı', en: 'Oil Refinery' },
-    badge: { az: 'NEFT EMALI ZAVODU · HEYDƏR ƏLİYEV ADINA NEZ', en: 'REFINERY & PETROCHEMICALS · BAKU COMPLEX' },
+    badge: { az: 'NEFT EMALI ZAVODU · HEYDƏR ƏLİYEV ADINA NEZ', en: 'OIL REFINERY · HEYDAR ALIYEV BAKU REFINERY' },
     sub: { az: 'REFINERY COMPLEX', en: 'REFINERY COMPLEX' },
     hudTitle: { az: 'EMAL ZAVODUNU BOŞLUQSUZ QURUN!', en: 'ASSEMBLE THE REFINERY UNIT!' },
     startDesc: { az: 'Neft emalı zavodunun texnoloji modullarını vaxt bitmədən yerləşdirin', en: 'Install all downstream refining units cleanly into the process bay' },
     winTitle: { az: 'ZAVOD İŞƏ SALINDI!', en: 'REFINERY COMMISSIONED!' },
     fact: {
-      az: 'Heydər Əliyev adına Bakı Neft Emalı Zavodu Avro-5 standartlı yanacaq istehsal edərək Azərbaycanın enerji təhlükəsizliyini təmin edir.',
-      en: 'The Heydar Aliyev Baku Oil Refinery produces Euro-5 fuels and feeds downstream petrochemical complexes such as SOCAR Polymer.',
+      az: 'Modernləşdirilmiş Heydər Əliyev adına Bakı Neft Emalı Zavodu 2023-cü ildən Avro-5 standartlı dizel yanacağı istehsal edir.',
+      en: 'After modernization, the Heydar Aliyev Baku Oil Refinery began producing Euro-5 diesel in 2023.',
     },
     sky: { zen: 0x1d3154, hor: 0xe39b6e, gnd: 0x5c473e, cloud: 0xffdfc4, sunCol: 0xffb366 },
     names: {
@@ -1968,15 +1980,15 @@ const SCENES = {
     files: ['assets/terminal/base.glb', 'assets/terminal/pieces.glb', 'assets/terminal/buildings.glb'],
     deck: [4.5, 8.2], camX: -1.0, camZ: -0.6, camFit: 1.08,
     atmo: { bg: 0x8fb8d4, fog: [32, 110], hemi: [0xdcf0fc, 0x2f434a, 1.08], sun: [0xfff0d4, 2.95] },
-    label: { az: 'Səngəçal Terminalı', en: 'Export Terminal' },
-    badge: { az: 'SƏNGƏÇAL TERMİNALI · XƏZƏR NEFT-QAZ LİMANI', en: 'SANGACHAL TERMINAL · COASTAL EXPORT JETTY' },
+    label: { az: 'İxrac Terminalı', en: 'Export Terminal' },
+    badge: { az: 'NEFT İXRAC TERMİNALI · TANKER KÖRPÜSÜ', en: 'OIL EXPORT TERMINAL · TANKER JETTY' },
     sub: { az: 'COASTAL TERMINAL', en: 'COASTAL TERMINAL' },
     hudTitle: { az: 'İXRAC TERMİNALINI BOŞLUQSUZ QURUN!', en: 'COMPLETE THE EXPORT TERMINAL!' },
     startDesc: { az: 'Sahil terminalının yükləmə və saxlama modullarını vaxt bitmədən yerləşdirin', en: 'Install coastal storage and tanker loading modules into the quay bay' },
     winTitle: { az: 'TERMİNAL İŞƏ SALINDI!', en: 'TERMINAL COMMISSIONED!' },
     fact: {
-      az: 'Səngəçal terminalı Xəzər yataqlarından gələn neft və qazı qəbul edərək Bakı–Tbilisi–Ceyhan və Cənub Qaz Dəhlizi ilə dünya bazarlarına ötürür.',
-      en: 'Sangachal Terminal receives Caspian oil and gas and dispatches it via pipelines like BTC and the Southern Gas Corridor, as well as sea tankers.',
+      az: 'Xəzər nefti 1768 km uzunluğunda Bakı–Tbilisi–Ceyhan kəməri ilə Aralıq dənizindəki Ceyhan terminalına çatır və orada tankerlərə yüklənir.',
+      en: 'Caspian crude travels 1,768 km through the Baku–Tbilisi–Ceyhan pipeline to Ceyhan on the Mediterranean, where tankers load it.',
     },
     sky: { zen: 0x1d588a, hor: 0x9ec9e6, gnd: 0x3b5862, cloud: 0xf4f9fc, sunCol: 0xffecc2 },
     names: {
@@ -2007,14 +2019,14 @@ const SCENES = {
     land: true, camX: -1.0, camZ: -0.6, camFit: 1.08,
     atmo: { bg: 0xbfe2e8, fog: [40, 155], hemi: [0xe6f9ff, 0x4b6848, 1.15], sun: [0xfff2d0, 3.00] },
     label: { az: 'Yaşıl Enerji', en: 'SOCAR Green' },
-    badge: { az: 'SOCAR GREEN · KÜLƏK, GÜNƏŞ VƏ YAŞIL HİDROGEN', en: 'SOCAR GREEN · WIND, SOLAR & GREEN HYDROGEN' },
+    badge: { az: 'SOCAR GREEN · GÜNƏŞ VƏ KÜLƏK ENERJİSİ', en: 'SOCAR GREEN · SOLAR & WIND ENERGY' },
     sub: { az: 'SOCAR GREEN PARK', en: 'SOCAR GREEN PARK' },
     hudTitle: { az: 'YAŞIL ENERJİ PARKINI BOŞLUQSUZ QURUN!', en: 'BUILD THE GREEN ENERGY PARK!' },
-    startDesc: { az: 'Bərpa olunan enerji və yaşıl hidrogen modullarını vaxt bitmədən yerləşdirin', en: 'Install solar, storage, and green hydrogen units cleanly into the eco-grid' },
+    startDesc: { az: 'Bərpa olunan enerji modullarını vaxt bitmədən yerləşdirin', en: 'Install solar, wind and storage units into the eco-grid' },
     winTitle: { az: 'YAŞIL ENERJİ ŞƏBƏKƏSİ HAZIRDIR!', en: 'GREEN ENERGY PARK ONLINE!' },
     fact: {
-      az: 'SOCAR Green Azərbaycanda sənaye miqyaslı günəş, külək elektrik stansiyaları və "yaşıl hidrogen" layihələrini inkişaf etdirir.',
-      en: 'SOCAR Green spearheads utility-scale solar, onshore/offshore wind farms, battery storage, and green hydrogen across Azerbaijan.',
+      az: '2024-cü ildə yaradılan SOCAR Green Masdar ilə birlikdə Azərbaycanda 760 MW günəş və 240 MW külək elektrik stansiyaları qurur.',
+      en: 'SOCAR Green, founded in 2024, is building 760 MW of solar parks and a 240 MW wind farm in Azerbaijan with Masdar.',
     },
     sky: { zen: 0x1e6ca8, hor: 0xc2ebf2, gnd: 0x6f7f52, cloud: 0xffffff, sunCol: 0xfff0c4 },
     names: {
@@ -2311,10 +2323,11 @@ function makePiece(type, cells, kind, r = 0) {
     for (const l of lines) body.add(l);
     // Live green operational status beacon on the module
     const [lx, ly] = cells[0];
-    const led = new THREE.Mesh(LED_GEO, ledMat);
+    const powerFx = WIN_FX === 'power';
+    const led = new THREE.Mesh(LED_GEO, powerFx ? ledStandbyMat : ledMat);
     led.position.set(lx + 0.34, 0.62, ly - 0.34);
     body.add(led);
-    const lGlow = makeGlowSprite(0x3fe28a, 0.34, 0.55);
+    const lGlow = makeGlowSprite(powerFx ? 0xffb02e : 0x3fe28a, 0.34, 0.55);
     lGlow.position.copy(led.position);
     body.add(lGlow);
     g.userData.led = led;
@@ -2568,7 +2581,7 @@ function renderLeaderboardHtml(tier, highlightTs = 0) {
       + (meIdx >= 5 ? `<div class="lb-gap">⋯</div>` + lbRowHtml(all[meIdx], meIdx, highlightTs) : '')
       + (all.length > 5 ? `<button type="button" class="lb-more" data-lb-all>${t.lbAll} · ${all.length}</button>` : '')
     : `<div class="lb-empty"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" opacity=".7"><path d="M8 21h8M12 17v4M7 4h10v6a5 5 0 0 1-10 0V4z"/><path d="M7 6H4a1 1 0 0 0-1 1v1a3 3 0 0 0 3 3h1M17 6h3a1 1 0 0 1 1 1v1a3 3 0 0 1-3 3h-1"/></svg><span>${t.lbEmpty}</span></div>`;
-  return `<div class="lb-box"><div class="lb-head"><span class="lb-head-l"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 21h8M12 17v4M7 4h10v6a5 5 0 0 1-10 0V4z"/></svg><span>${t.lbTitle}</span></span><button type="button" class="lb-clear-btn" data-clear-lb title="${t.staffResetLb}"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/></svg><span>${t.lbClearBtn}</span></button></div><div class="lb-list">${rows}</div></div>`;
+  return `<div class="lb-box"><div class="lb-head"><span class="lb-head-l"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 21h8M12 17v4M7 4h10v6a5 5 0 0 1-10 0V4z"/></svg><span>${t.lbTitle}</span></span></div><div class="lb-list">${rows}</div></div>`;
 }
 
 function openLbModal() {
@@ -2610,6 +2623,7 @@ let selectedScene = params0.get('scene') || 'offshore';
 let ghostSpin = 0, ghostPop = 0, camPunch = 0, combo = 0, lastPlaceTs = 0, lastDeadToast = 0;
 let celebT = 0, celebCamMix = 0, readyCamMix = 1, attractTimer = 0, bootReadyAt = 0;
 const CELEB_DUR = 2.6, ATTRACT_CYCLE = 24;
+let celebDur = CELEB_DUR;
 
 function loadSeen() { try { return JSON.parse(localStorage.getItem('pf_seen') || '[]'); } catch (e) { return []; } }
 function saveSeen(list) { try { localStorage.setItem('pf_seen', JSON.stringify(list.slice(-500))); } catch (e) { } }
@@ -2645,6 +2659,7 @@ function updateRecBadge() {
 
 function newRound(opt = {}) {
   if (!opt.keepScreen && lbModalOpen()) closeLbModal();
+  clearPower();
   disposeGroup(levelGroup);
   if (ghost) { scene.remove(ghost); ghost = null; }
   heli.visible = false; heli.userData.active = false;
@@ -2652,7 +2667,7 @@ function newRound(opt = {}) {
   tagSaved = false; playerName = ''; lastSavedTs = 0; combo = 0; lastPlaceTs = 0;
   {
     const forced = params0.get('scene');
-    const pool = WORLD_IDS.filter(id => sceneReady(id));
+    const pool = worldPool();
     let next = 'platform';
     if (opt.scene && sceneReady(opt.scene)) next = opt.scene;
     else if (forced && sceneReady(forced)) next = forced;
@@ -2730,39 +2745,51 @@ const WORLD_MICRO = {
 };
 
 const AUTO_RESTART = 25;
+// Author credit: empty = hidden. Fill only after SOCAR agrees. qr = path to a PNG, e.g. 'assets/brand/credit-qr.png'.
+const CREDIT = { line: '', qr: '' };
+function creditHtml() {
+  if (!CREDIT.line) return '';
+  return `<div class="credit">${CREDIT.qr ? `<img src="${CREDIT.qr}" alt="">` : ''}<span>${escHtml(CREDIT.line)}</span></div>`;
+}
+let pickOpen = false;   // idle screen: world chooser expanded
+function worldPool() {
+  const ready = WORLD_IDS.filter(id => sceneReady(id));
+  const feat = ready.filter(id => FEATURED_WORLDS.includes(id));
+  return feat.length ? feat : ready;
+}
 function renderScreen() {
   const sc = $('screen'), t = TR(), curSc = SCENES[sceneId] || SCENES.offshore;
   if (status === 'play' || status === 'celebrating') { sc.className = 'hidden'; sc.innerHTML = ''; return; }
   const autoLine = `<div class="auto">${t.autoPrefix} <b id="cd">${AUTO_RESTART}</b> ${t.autoMid}</div>`;
   const logoSvg = `<svg role="img" aria-label="SOCAR" xmlns="http://www.w3.org/2000/svg" viewBox="282.81 255.11 277.33 87.07"><path transform="matrix(1,0,0,-1,306.1897,267.1157)" d="M0 0C0-12.623-3.484-17.502-10.452-27.175-17.314-36.65-22.381-50.719-14.041-60.591-12.141-62.945-10.135-64.166-6.757-64.931-7.179-59.258-8.023-56.79-3.906-51.088-1.373-47.571 1.9-44.989 4.856-41.784 10.979-35.146 16.997-26.948 16.997-17.388 16.997-9.9 16.258-3.064 10.874 2.752 7.812 6.042 2.745 10.609-2.111 11.006-1.373 9.332 0 2.638 0 0" fill="#ec1e36" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,520.1811,338.0889)" d="M0 0H10.24V14.892C19.214 14.892 15.413 15.914 20.375 7.744 21.959 5.191 23.12 2.383 24.703 0H36.105C35.789 1.05 35.577 1.333 35.05 2.184L26.815 16.68C38.955 19.488 38.85 41.16 21.22 41.16H0ZM19.742 22.722H10.24V33.359C19.425 33.359 24.703 34.863 24.703 27.686 24.703 24.565 22.909 22.722 19.742 22.722" fill="#ffffff" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,392.1241,315.3674)" d="M0 0C0-7.234 .528-12.396 6.123-18.041 13.83-25.814 27.237-25.587 34.944-18.041 42.756-10.325 43.284 3.943 35.683 13.077 28.187 21.984 12.457 21.389 5.595 13.559 2.956 10.581 0 5.418 0 0M20.481-14.921C6.546-14.921 7.39 10.638 19.108 10.638H21.22C33.994 10.638 34.205-14.921 20.481-14.921" fill="#ffffff" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,353.1686,308.2755)" d="M0 0C0-3.433 0-6.61 3.167-9.304 7.284-12.765 12.458-12.964 17.736-13.843 21.642-14.495 24.492-14.666 24.492-17.758 24.492-22.098 16.68-23.601 10.451-20.793 3.906-17.871 7.918-15.602 .95-19.772-.211-20.481-1.901-21.701-3.167-22.012-2.745-23.686-1.161-24.452 .105-25.474 7.918-31.969 21.431-32.622 29.137-27.402 35.366-23.204 39.378-9.531 25.02-5.475 18.686-3.688 10.346-4.284 10.346 0 10.346 4.595 18.053 4.851 22.803 2.241 24.915 1.078 25.337 0 26.921-1.078 28.293-.17 29.243 .624 30.615 1.617 31.777 2.411 33.677 3.971 34.733 4.255 31.566 8.879 23.859 12.424 18.475 12.424H14.885C7.495 12.424 0 7.346 0 0" fill="#ffffff" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,476.2639,338.0889)" d="M0 0C11.507 0 9.712-.823 10.979 2.865 11.402 4.226 11.718 5.304 12.035 6.751H26.92L29.032 0H40.011C39.906 1.362 38.85 3.716 38.322 5.078L24.809 41.16H13.83L-.422 2.156C-.739 1.191-1.478 0 0 0M19.108 30.154 24.492 14.552H14.569L18.052 25.955C18.369 27.147 19.003 28.934 19.108 30.154" fill="#ffffff" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,457.8946,339.1668)" d="M0 0C5.173 0 11.19 2.893 14.041 6.553 14.991 7.886 16.469 9.134 16.68 11.006 14.78 11.46 11.085 13.956 8.551 14.552 3.695 5.532-9.924 6.609-9.924 22.353-9.924 37.983 6.229 36.82 8.129 28.395L16.575 32.423C16.152 34.551 12.669 38.408 10.979 39.713 3.061 45.642-9.713 44.337-15.624 36.309-26.393 21.899-18.053 0 0 0" fill="#ffffff" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,304.7118,328.5011)" d="M0 0C0-4.964 3.167-8.538 7.073-10.666 7.073-5.985 7.179-5.078 12.457-1.503 20.375 3.886 31.882 10.439 31.882 23.062 31.882 29.756 31.46 33.671 27.237 39.345 26.392 40.479 25.548 41.813 24.07 42.21 23.965 38.522 21.747 32.423 20.269 29.672 19.319 27.657 18.58 26.239 17.313 24.537 13.408 19.176 10.135 15.885 5.384 11.262 2.85 8.737 0 4.908 0 0" fill="#73bf44" fill-rule="evenodd"/><path transform="matrix(1,0,0,-1,292.6766,267.1157)" d="M0 0C0-10.609-7.073-8.964-7.073-20.594-7.073-23.431-4.223-27.459-2.112-28.026-.528-21.502 2.956-19.715 6.44-12.793 8.657-8.255 8.974-3.29 5.595 .624 5.068 1.276 3.589 2.411 2.85 2.837 1.795 3.518 .739 3.915-1.056 3.915-.633 2.383 0 1.957 0 0" fill="#16a3dd" fill-rule="evenodd"/></svg>`;
   if (status === 'ready') {
-    sc.className = 'side';
-    const worldBtns = WORLD_IDS.filter(id => sceneReady(id)).map(id => {
+    // Idle screen: the scene, one line, one button. World choice is one tap away ("Other facilities").
+    const enter = sc.className !== 'attract';   // animate only when the bar first appears
+    sc.className = 'attract';
+    const pool = worldPool();
+    const worldBtns = pool.map(id => {
       const w = SCENES[id], mic = (WORLD_MICRO[id] && WORLD_MICRO[id][lang]) || '';
       return `<button type="button" class="world-btn${id === sceneId ? ' on' : ''}" data-world="${id}">
-        <div class="w-ico">${WORLD_ICONS[id]}</div><b>${w.label[lang]}</b><small>${mic}</small>
+        <div class="w-ico">${WORLD_ICONS[id]}</div><div class="w-txt"><b>${w.label[lang]}</b><small>${mic}</small></div>
       </button>`;
     }).join('');
     const desc = (curSc.startDesc && curSc.startDesc[lang]) || t.startDesc;
-    sc.innerHTML = `<div class="panel glass">
-      <div class="panel-top">
-        <div class="panel-brand">${logoSvg}<span class="brand-sep"></span><span class="brand-tag">${t.brandTag || 'SOCAR 3D EXPO'}</span></div>
-        <div class="panel-top-r"><button type="button" class="full-btn" title="Fullscreen">${fsIco()}</button><div class="lang-pill"><button type="button" data-lang="az" class="${lang === 'az' ? 'on' : ''}">AZ</button><button type="button" data-lang="en" class="${lang === 'en' ? 'on' : ''}">EN</button></div></div>
+    const lb = loadLeaderboard()[activeTier] || [];
+    const rec = lb.length
+      ? `<button type="button" class="ab-rec" data-lb-all>${t.recLabel}: ${lb[0].elapsed.toFixed(1)}s <span>· ${escHtml(lb[0].name || lb[0].tag || '—')}</span></button>` : '';
+    sc.innerHTML = `<div class="attract-bar glass${enter ? ' enter' : ''}">
+      ${pickOpen && pool.length > 1 ? `<div class="world-row" style="--wn:${pool.length}">${worldBtns}</div>` : ''}
+      <div class="ab-main">
+        <div class="ab-copy"><h1>${t.startTitle.replace('{s}', roundDuration())}</h1><p>${desc}</p>${rec}${creditHtml()}</div>
+        <div class="ab-side">
+          <button type="button" class="btn-main" data-go><span>${t.startBtn}</span><span class="btn-play-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 6.5v11l9-5.5z"/></svg></span></button>
+          <div class="ab-tools">
+            ${pool.length > 1 ? `<button type="button" class="ab-more${pickOpen ? ' on' : ''}" data-pick>${t.otherWorlds}</button>` : ''}
+            <div class="lang-pill"><button type="button" data-lang="az" class="${lang === 'az' ? 'on' : ''}">AZ</button><button type="button" data-lang="en" class="${lang === 'en' ? 'on' : ''}">EN</button></div>
+            <button type="button" class="full-btn" title="Fullscreen">${fsIco()}</button>
+          </div>
+        </div>
       </div>
-      <div class="eyebrow-pill"><i></i><span>${t.eyebrowReady}</span></div>
-      <h1>${t.startTitle}</h1>
-      <p>${desc}</p>
-      <div class="world-lbl">${t.worldSelectLbl}</div>
-      <div class="world-grid">${worldBtns}</div>
-      <div class="steps-bar">
-        <div class="step-item"><i>01</i><b>${t.step1b}</b><span>${t.step1s}</span></div>
-        <span class="step-line"></span>
-        <div class="step-item"><i>02</i><b>${t.step2b}</b><span>${t.step2s}</span></div>
-        <span class="step-line"></span>
-        <div class="step-item"><i>03</i><b>${t.step3b}</b><span>${t.step3s}</span></div>
-      </div>
-      ${renderLeaderboardHtml(activeTier)}
-      <button type="button" class="btn-main pulse" data-go><span>${t.startBtn}</span><span class="btn-play-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 6.5v11l9-5.5z"/></svg></span></button>
     </div>`;
   } else if (status === 'win') {
     sc.className = 'compact';
@@ -2770,13 +2797,11 @@ function renderScreen() {
     const factTxt = (curSc.fact && curSc.fact[lang]) || '';
     const rankTxt = t.rankNames[lastStars] || t.rankNames[1];
     sc.innerHTML = `<div class="panel small glass">
-      <div class="badge win">✓</div>
-      <div class="rank-pill">★ ${rankTxt}</div>
       <h1>${wTitle}</h1>
       <div class="stars">${[1, 2, 3].map(i => `<i class="${i <= lastStars ? 'on' : ''}">★</i>`).join('')}</div>
+      <div class="rank-pill">${rankTxt}</div>
       <div class="stats">
         <div><b>${lastElapsed.toFixed(1)}s</b><span>${t.statElapsed}</span></div>
-        <div><b>${placed.length}/${tray.length}</b><span>${t.statMods}</span></div>
         <div><b>${fmt(timeLeft)}</b><span>${t.statLeft}</span></div>
       </div>
       ${factTxt ? `<div class="fact-box"><b>${t.factTitle}</b>${factTxt}</div>` : ''}
@@ -2791,13 +2816,13 @@ function renderScreen() {
       ${renderLeaderboardHtml(activeTier, lastSavedTs)}
       <button type="button" class="btn-main" data-go>${t.newRoundBtn}</button>
       ${autoLine}
+      ${creditHtml()}
     </div>`;
   } else if (status === 'lose') {
     const area = level.hole.reduce((a, b) => a + b, 0);
     let filled = 0; for (let i = 0; i < N * N; i++) if (occ[i] !== -1) filled++;
     sc.className = 'compact';
     sc.innerHTML = `<div class="panel small glass">
-      <div class="badge lose">⏱</div>
       <h1>${t.loseTitle}</h1>
       <p>${t.loseDesc}</p>
       <div class="stats">
@@ -2814,13 +2839,11 @@ function setStatus(s) {
   status = s;
   document.body.dataset.state = s;
   if (s !== 'play') hideHand();
-  if (s === 'ready') { attractTimer = 0; }
+  if (s === 'ready') { attractTimer = 0; } else pickOpen = false;
   if (s === 'play') { camOrbit = 0; placeCamera(); lastInput = performance.now() - (HAND_DELAY - 1.2) * 1000; }
   renderScreen();
   endTime = performance.now();
   updateTimer();
-  lastCamOffset = -1;
-  applyCamViewOffset();
   placeCamera();
 }
 
@@ -2845,8 +2868,7 @@ function applyLangUI() {
   if ($('staff').classList.contains('show')) renderStaff();
 }
 function setLang(l) {
-  lang = l === 'en' ? 'en' : 'az';
-  try { localStorage.setItem('pf_lang', lang); } catch { }
+  lang = l === 'az' ? 'az' : 'en';
   applyLangUI();
 }
 $('trayLang').addEventListener('click', e => {
@@ -2965,6 +2987,66 @@ function confetti() {
   }
   scene.add(im);
   effects.push({ m: im, t: 0, dur: 5, kind: 'confetti', parts });
+}
+// ---- win: power-on sequence. Modules come online one after another along the adjacency graph (BFS from the
+// first module the player installed) and the seams between connected modules light up. Generic power-on only,
+// no process-order claim. ?winfx=classic brings back the old confetti celebration.
+const WIN_FX = params0.get('winfx') === 'classic' ? 'classic' : 'power';
+const SEAM_X = new THREE.BoxGeometry(0.07, 0.04, 0.84); SEAM_X.userData.shared = true;   // boundary between x and x+1
+const SEAM_Z = new THREE.BoxGeometry(0.84, 0.04, 0.07); SEAM_Z.userData.shared = true;   // boundary between y and y+1
+const POWER_LEAD = 0.35, POWER_STEP = 0.38;
+let power = null;
+function clearPower() {
+  if (!power) return;
+  for (const s of power.seams) { if (s.m.parent) s.m.parent.remove(s.m); s.m.material.dispose(); }
+  power = null;
+}
+function buildPower() {
+  clearPower();
+  const owner = new Map();
+  placed.forEach((p, k) => { for (const [cx, cy] of p.cells) owner.set((p.y + cy) * N + p.x + cx, k); });
+  const adj = placed.map(() => new Set()), pairs = [];
+  for (const [i, k] of owner) {
+    const x = i % N, y = (i / N) | 0;
+    for (const [dx, dy] of [[1, 0], [0, 1]]) {
+      if (x + dx >= N || y + dy >= N) continue;
+      const k2 = owner.get((y + dy) * N + x + dx);
+      if (k2 === undefined || k2 === k) continue;
+      adj[k].add(k2); adj[k2].add(k);
+      pairs.push({ a: k, b: k2, x, y, dx, dy });
+    }
+  }
+  const t = placed.map(() => Infinity), q = [0];
+  let step = 0; t[0] = POWER_LEAD;
+  while (q.length) { const k = q.shift(); for (const n of adj[k]) if (t[n] === Infinity) { t[n] = POWER_LEAD + (++step) * POWER_STEP; q.push(n); } }
+  placed.forEach((p, k) => { if (t[k] === Infinity) t[k] = POWER_LEAD + (++step) * POWER_STEP; });   // isolated modules
+  const seams = pairs.map(pr => {
+    const m = new THREE.Mesh(pr.dx ? SEAM_X : SEAM_Z, new THREE.MeshBasicMaterial({ color: 0x46ffa0, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false }));
+    const c = cellPos(pr.x, pr.y);
+    m.position.set(c.x + pr.dx * 0.5, 0.09, c.z + pr.dy * 0.5);
+    levelGroup.add(m);
+    return { m, t: Math.max(t[pr.a], t[pr.b]) };
+  });
+  power = { t, done: placed.map(() => false), seams, end: POWER_LEAD + step * POWER_STEP + 1.0 };
+}
+function updatePower(time, silent = false) {
+  if (!power) return;
+  placed.forEach((p, k) => {
+    if (power.done[k] || time < power.t[k]) return;
+    power.done[k] = true;
+    const ud = p.mesh.userData;
+    if (ud.led) ud.led.material = ledMat;
+    if (ud.ledGlow) ud.ledGlow.material.color.setHex(0x3fe28a);
+    if (silent) return;
+    ud.bounce = 0;
+    burstCells(p.cells, p.x, p.y, 0x3fe28a);
+    const n = power.done.filter(Boolean).length;
+    sfx('place', () => beep(480 + n * 80, 0.07, 'triangle', 0.1), 1 + n * 0.08);
+  });
+  for (const s of power.seams) {
+    const a = time - s.t;
+    s.m.material.opacity = a < 0 ? 0 : a < 0.25 ? a / 0.25 : 0.6 + 0.3 * Math.sin(T * 5 - s.t * 6);
+  }
 }
 const dummy = new THREE.Object3D();
 function updateEffects(dt) {
@@ -3213,7 +3295,8 @@ function confirm() {
   else if (status === 'play') place();
   else if (status === 'celebrating' && celebT > 1.0) { setStatus('win'); }
   else if (status !== 'celebrating' && performance.now() - endTime > 600) {
-    newRound({ advanceScene: true }); setStatus('play'); sfx('start', () => beep(520, 0.1, 'triangle', 0.12));
+    // stand format: one player, one round -> back to the idle screen, which keeps cycling the scenes
+    newRound({ advanceScene: true }); sfx('select', () => beep(480, 0.05, 'triangle', 0.06));
   }
 }
 function win() {
@@ -3224,11 +3307,17 @@ function win() {
   setStatus('celebrating');
   if (ghost) ghost.visible = false;
   beaconLensMat.emissive.setHex(0x3fe28a);
-  placed.forEach((p, i) => {
-    p.mesh.userData.bounce = -i * 0.14;
-    setTimeout(() => { if (status === 'celebrating' || status === 'win') burstCells(p.cells, p.x, p.y, 0x3fe28a); }, i * 140);
-  });
-  confetti();
+  if (WIN_FX === 'power') {
+    buildPower();
+    celebDur = Math.max(CELEB_DUR, power.end);
+  } else {
+    celebDur = CELEB_DUR;
+    placed.forEach((p, i) => {
+      p.mesh.userData.bounce = -i * 0.14;
+      setTimeout(() => { if (status === 'celebrating' || status === 'win') burstCells(p.cells, p.x, p.y, 0x3fe28a); }, i * 140);
+    });
+    confetti();
+  }
   // Launch SOCAR helicopter commissioning sequence
   const hd = heli.userData;
   hd.active = true; hd.t = 0;
@@ -3637,6 +3726,7 @@ $('screen').addEventListener('pointerdown', e => {
   if (wb) { e.stopPropagation(); pickWorld(wb.dataset.world); return; }
   if (e.target.closest('.full-btn')) { e.stopPropagation(); toggleFull(); return; }
   if (e.target.closest('[data-lb-all]')) { e.stopPropagation(); openLbModal(); return; }
+  if (e.target.closest('[data-pick]')) { e.stopPropagation(); pickOpen = !pickOpen; attractTimer = 0; renderScreen(); return; }
   const clearBtn = e.target.closest('[data-clear-lb]');
   if (clearBtn) { e.stopPropagation(); openPwdModal(); return; }
   const saveBtn = e.target.closest('[data-save]');
@@ -3708,6 +3798,7 @@ function pollPad(dt) {
 // ---------------------------------------------------------------- expo UX: idle reset, tutorial hand, drag feedback, hint, staff menu
 let lastInput = performance.now(), ghostArmed = false, hintUsed = false, hintTimer = 0, qLocked = false;
 const IDLE_RESET = 35;
+const LANG_IDLE_RESET = 45;
 const HAND_DELAY = 6;
 const remPx = () => parseFloat(getComputedStyle(document.documentElement).fontSize);
 function noteInput() { lastInput = performance.now(); attractTimer = 0; hideHand(); if ($('staff').classList.contains('show')) resetStaffTimer(); }
@@ -3777,8 +3868,10 @@ function tickExpo(now, dt) {
   if (status === 'play') {
     if (idle > IDLE_RESET) { newRound(); return; }
     if (!handOn && !drag && placed.length === 0 && idle > HAND_DELAY) showHand();
+  } else if (status === 'ready' && lang !== DEFAULT_LANG && idle > LANG_IDLE_RESET) {
+    setLang(DEFAULT_LANG);   // next visitor starts in English
   } else if (status === 'ready' && !orbitDrag && !params0.has('scene') && !lbModalOpen()) {
-    const pool = WORLD_IDS.filter(id => sceneReady(id));
+    const pool = worldPool();
     if (pool.length > 1) {
       attractTimer += dt;
       if (attractTimer >= ATTRACT_CYCLE) {
@@ -3834,33 +3927,41 @@ $('staff').addEventListener('click', e => {
 });
 
 // ---------------------------------------------------------------- loop
-let camOrbit = 0, viewAspect = 1, lastCamOffset = -1;
+let camOrbit = 0, viewAspect = 1, lastCamOffset = -1, camBotFrac = 0;
 function sidePx() {
   const pad = 2 * parseFloat(getComputedStyle(document.documentElement).fontSize) * 1.2;
-  if (status === 'ready') {
-    const p = document.querySelector('#screen.side .panel');
-    if (p && p.offsetWidth) return p.offsetWidth + pad;
-  }
+  if (status === 'ready') return 0;   // idle bar sits at the bottom, scene keeps the full width
   const t = $('tray');
   return t ? t.offsetWidth + pad : 0;
 }
 function placeCamera() {
   const fit = Math.max(1.04, 1.4 / viewAspect), s = Math.sin(camOrbit), c = Math.cos(camOrbit);
   const sc = (typeof SCENES !== 'undefined' && SCENES[sceneId]) || {};
-  const f = fit * (sc.camFit || 1) * (1 - 0.14 * celebCamMix) * (1 + 0.22 * readyCamMix), dx = sc.camX || 0, dz = sc.camZ || 0;
+  const f = fit * (sc.camFit || 1) * (1 - 0.14 * celebCamMix) * (1 + (0.04 + camBotFrac) * readyCamMix), dx = sc.camX || 0, dz = sc.camZ || 0;
   camera.position.set(s * (7.4 + 0.6 * readyCamMix) * f + dx, (12.4 - 2.4 * celebCamMix) * f + camPunch, c * (7.4 + 0.6 * readyCamMix) * f + dz);
   camera.lookAt(s * 0.25 + dx, -0.6 + 0.35 * celebCamMix, c * 0.25 + dz);
 }
-function applyCamViewOffset() {
+function bottomPx() {
+  if (status !== 'ready') return 0;
+  const b = document.querySelector('#screen.attract .attract-bar');
+  return b && b.offsetHeight ? b.offsetHeight + parseFloat(getComputedStyle(document.documentElement).fontSize) * 1.2 : 0;
+}
+// Screen-space room taken by UI (right tray in play, bottom bar when idle). Eased every frame from the loop so
+// switching ready -> play pans the scene smoothly instead of jumping; dt = null snaps (resize).
+let camSideCur = 0, camBotCur = 0;
+function applyCamViewOffset(dt = null) {
   const w = innerWidth, h = innerHeight;
-  const side = Math.min(sidePx(), w * 0.45);
-  const off = (side / 2) * (1 - celebCamMix);
-  if (Math.abs(off - lastCamOffset) > 0.25) {
-    lastCamOffset = off;
-    camera.setViewOffset(w, h, off, 0, w, h);
-    viewAspect = (w - side * (1 - celebCamMix)) / h;
-    camera.updateProjectionMatrix();
-  }
+  const side = Math.min(sidePx(), w * 0.45) * (1 - celebCamMix), bot = Math.min(bottomPx(), h * 0.5) * readyCamMix;
+  const k = dt === null ? 1 : Math.min(1, dt * 5);
+  camSideCur += (side - camSideCur) * k; camBotCur += (bot - camBotCur) * k;
+  const key = camSideCur * 10000 + camBotCur;
+  if (Math.abs(key - lastCamOffset) <= 0.25) return false;
+  lastCamOffset = key;
+  camera.setViewOffset(w, h, camSideCur / 2, camBotCur / 2, w, h);
+  viewAspect = (w - camSideCur) / h;
+  camBotFrac = camBotCur / h;
+  camera.updateProjectionMatrix();
+  return true;
 }
 function applyQuality() {
   const q = QUALITY[qLevel];
@@ -3956,16 +4057,17 @@ function loop(now) {
     updateTimer();
   } else if (status === 'celebrating') {
     celebT += dt;
-    if (celebT >= CELEB_DUR) setStatus('win');
+    updatePower(celebT);
+    if (celebT >= celebDur) setStatus('win');
   }
   const targetMix = status === 'celebrating' ? 1 : 0;
   const targetReady = status === 'ready' ? 1 : 0;
   if (Math.abs(celebCamMix - targetMix) > 0.001 || Math.abs(readyCamMix - targetReady) > 0.001) {
     celebCamMix += (targetMix - celebCamMix) * Math.min(1, dt * 4.5);
     readyCamMix += (targetReady - readyCamMix) * Math.min(1, dt * 5.0);
-    applyCamViewOffset();
     placeCamera();
   }
+  if (applyCamViewOffset(dt)) placeCamera();
   if (camPunch > 0.001) {
     camPunch *= Math.exp(-dt * 12);
     placeCamera();
@@ -4002,6 +4104,7 @@ function loop(now) {
   }
   tickExpo(now, dt);
   if (status === 'lose') hintMat.opacity = 0.35 + 0.2 * Math.sin(T * 4);
+  if (status === 'win' && power) updatePower(1e6, true);   // finish instantly if the sequence was skipped; keep seams pulsing
   if (status === 'win' || status === 'lose') {
     const typing = document.activeElement && document.activeElement.tagName === 'INPUT';
     if ($('pwdModal').classList.contains('show') || typing) endTime = now;
