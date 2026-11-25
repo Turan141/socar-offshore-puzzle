@@ -18,9 +18,9 @@
   :root{
     --socar-blue:#0085ca;--socar-red:#e4002b;--socar-green:#009639;
     --cyan:#29d3ff;--line:rgba(255,255,255,.14);--good:#3fe28a;--bad:#ff5a4e;--gold:#ffc23d;
-    --side:27.5rem;--gap:1.2rem;
+    --side:min(27.5rem,38vw);--dock:18vh;--gap:1.2rem;
   }
-  html{font-size:min(calc(100vh / 54),max(calc(100vw / 96),14px))} /* 14px floor: tablet text stays readable */
+  html{font-size:min(calc(100vh / 54),max(calc(100vw / 96),14px));-webkit-text-size-adjust:100%;text-size-adjust:100%} /* 14px floor: tablet text stays readable; no iOS landscape text inflation */
   html,body{margin:0;height:100%;overflow:hidden;background:#0d2330;font-family:Montserrat,"Segoe UI",Arial,sans-serif;color:#fff;
             user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;touch-action:none;overscroll-behavior:none}
   button{font-family:inherit;color:inherit;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
@@ -94,11 +94,12 @@
   #timer{font-size:2rem;font-weight:800;letter-spacing:.05rem;font-variant-numeric:tabular-nums}
   .timer.warn .ring{stroke:var(--bad)} .timer.warn #timer{color:var(--bad);animation:pulse 1s infinite}
   @keyframes pulse{50%{opacity:.55}}
-  #title{flex:1;text-align:center;font-size:1.32rem;font-weight:900;letter-spacing:.08rem;
+  #title{flex:1;min-width:0;text-align:center;font-size:min(1.32rem,1.5vw);line-height:1.15;text-wrap:balance;font-weight:900;letter-spacing:.04rem;
          text-shadow:0 .12rem .35rem rgba(0,0,0,.65)}
   #recBadge{flex:none;display:flex;align-items:center;gap:.42rem;padding:.5rem .95rem;border-radius:2rem;font-size:.8rem;font-weight:800;
             letter-spacing:.04rem;color:#ffe69c;border-color:rgba(255,194,61,.35);font-variant-numeric:tabular-nums}
-  #recBadge b{color:#fff;font-weight:900}
+  #recBadge b{color:#fff;font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+  #recBadge{max-width:min(16rem,15vw)}
 
   /* side tray */
   #tray{position:fixed;top:var(--gap);right:var(--gap);bottom:var(--gap);width:var(--side);box-sizing:border-box;border-radius:1.45rem;overflow:hidden;
@@ -122,7 +123,7 @@
   .card{position:relative;border-radius:1rem;box-sizing:border-box;padding:.22rem .35rem .30rem;cursor:pointer;touch-action:none;
         background:linear-gradient(165deg,rgba(14,45,66,.86),rgba(5,19,30,.92));border:.1rem solid rgba(118,185,224,.22);
         display:flex;flex-direction:column;align-items:center;justify-content:center;transition:transform .15s,border-color .15s,opacity .15s}
-  .card canvas.thumb{width:min(8.1rem,76%);aspect-ratio:1;pointer-events:none}
+  .card canvas.thumb{width:min(8.1rem,76%);aspect-ratio:1;max-height:calc(100% - 1.5rem);min-height:0;object-fit:contain;pointer-events:none}   /* never taller than its card */
   .card span.cname{font-size:.78rem;font-weight:700;margin-top:.06rem;opacity:.94;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;text-align:center}
   .card-mini{position:absolute;top:.42rem;left:.44rem;display:grid;gap:2px;pointer-events:none;opacity:.96;
              background:rgba(4,16,24,.78);padding:3.5px;border-radius:.34rem;border:1px solid rgba(255,255,255,.16);z-index:1}
@@ -407,6 +408,45 @@
             background:#0b1d26;font-size:5vw;font-weight:800;text-align:center;padding:0 8vw}
   #portrait svg{width:22vw;height:22vw;animation:turn 2s ease-in-out infinite}
   @keyframes turn{40%,60%{transform:rotate(-90deg)}}
+  /* ---- bottom dock (replaces the side tray): the bay keeps the whole width, modules sit in one row under it */
+  #tray{top:auto;left:0;right:0;margin:0 auto;bottom:calc(var(--gap) + env(safe-area-inset-bottom));width:min(82rem,calc(100vw - var(--gap) * 2));
+        height:var(--dock);border-radius:1rem;overflow:visible;
+        display:grid;grid-template-columns:9.4rem minmax(0,1fr) 9.4rem;align-items:stretch;gap:0 1rem;pointer-events:none;
+        padding:.6rem 1.1rem}
+  body:not([data-state=play]) #tray{transform:translateY(2.4rem)}
+  body:not([data-state=play]) #tray *{pointer-events:none}
+  #tray .brand,#tray .side-head,#tray #modInfo{display:none}
+  #tray #cards{grid-column:2;grid-row:1;grid-template-rows:minmax(0,1fr);gap:.4rem;padding:0}
+  #tray .card{background:rgba(255,255,255,.03);border:1px solid rgba(118,185,224,.16);padding:0;min-height:0;border-radius:.8rem;pointer-events:auto}
+  #tray .card.gone{visibility:hidden;pointer-events:none}
+  #tray .card.sel{background:rgba(41,211,255,.07);border-color:var(--cyan);box-shadow:inset 0 0 0 .1rem var(--cyan),0 0 1.1rem rgba(41,211,255,.3)}
+  #tray .card.sel::after{content:none}
+  #tray .card-mini,#tray .card-code,#tray .cname{display:none}
+  #tray .card canvas.thumb{height:100%;width:auto;max-width:100%;max-height:none}
+  #tray #hintBtn{grid-column:1;grid-row:1;justify-self:start;align-self:center;padding:0 1.2rem;height:3.6rem;pointer-events:auto}
+  #tray .actions{grid-column:3;grid-row:1;justify-self:end;align-self:center;display:flex;gap:.5rem}
+  #tray .act{position:relative;width:4.2rem;height:4.2rem;border-radius:50%;font-size:.66rem;gap:.05rem;pointer-events:auto}
+  #tray #hintBtn{position:relative}
+  .pk{display:none;align-items:center;justify-content:center;box-sizing:border-box;min-width:1.5rem;height:1.5rem;padding:0 .32rem;border-radius:.75rem;flex:none;
+      background:#fff;color:#062430;font-size:.8rem;font-weight:900;font-style:normal;line-height:1;letter-spacing:0;text-transform:none;box-shadow:0 .1rem .3rem rgba(0,0,0,.4)}
+  body.pad .pk{display:inline-flex}
+  #tray .act .pk,#tray #hintBtn .pk{position:absolute;top:-.45rem;right:-.45rem}
+  #tray > .pk{position:absolute;top:-.8rem}
+  #tray > .pk[data-pk=lb]{left:calc(1.1rem + 9.4rem + 1rem)}
+  #tray > .pk[data-pk=rb]{right:calc(1.1rem + 9.4rem + 1rem)}
+  .ab-more{position:relative}
+  .ab-more .pk{position:absolute;top:-.7rem}
+  .ab-more .pk[data-pk=lb]{left:-.3rem}
+  .ab-more .pk[data-pk=rb]{right:-.3rem}
+  .ab-tools > .pk{align-self:center}
+  .hud-top{right:0}
+  #title{visibility:hidden}
+  .hud-top .timer{position:absolute;left:50%;top:calc(var(--gap) - .3rem);transform:translateX(-50%)}
+  #toast{left:50%;bottom:calc(var(--dock) + var(--gap) + 1.2rem)}
+  body.dock3d #tray{background:none;border-color:transparent;box-shadow:none}   /* the bar itself is drawn in the canvas, under the 3D modules */
+  body.dock3d #tray .card{background:none}
+  body.dock3d #tray .card canvas.thumb{display:none}
+  body.dock3d #dragIcon,body.dock3d .flyback{display:none !important}
   @media (orientation:portrait){#portrait{display:flex}}
 </style>
 <script type="importmap">{"imports":{"three":"./vendor/three/build/three.module.js","three/addons/":"./vendor/three/examples/jsm/"}}</script>
@@ -455,11 +495,12 @@
   </div>
   <div class="side-head"><span id="lblModules">MODULES</span><div id="dots"></div></div>
   <div id="cards"></div>
+  <i class="pk" data-pk="lb"></i><i class="pk" data-pk="rb"></i>
   <div id="modInfo"><i>i</i><div class="mi-txt"><b id="modInfoTitle">—</b><span id="modInfoDesc">—</span></div></div>
-  <button id="hintBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.4 1 1.1 1 1.8V16h5v-.3c0-.7.4-1.4 1-1.8A6 6 0 0 0 12 3z"/></svg><span id="lblHintBtn">HINT</span></button>
+  <button id="hintBtn"><i class="pk" data-pk="y"></i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.4 1 1.1 1 1.8V16h5v-.3c0-.7.4-1.4 1-1.8A6 6 0 0 0 12 3z"/></svg><span id="lblHintBtn">HINT</span></button>
   <div class="actions">
-    <button class="act rot" id="btnRot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v5h-5"/></svg><span id="lblBtnRot">Rotate</span></button>
-    <button class="act" id="btnBack"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg><span id="lblBtnBack">Undo</span></button>
+    <button class="act rot" id="btnRot"><i class="pk" data-pk="x"></i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v5h-5"/></svg><span id="lblBtnRot">Rotate</span></button>
+    <button class="act" id="btnBack"><i class="pk" data-pk="b"></i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg><span id="lblBtnBack">Undo</span></button>
   </div>
 </aside>
 <div id="info"></div>
@@ -846,9 +887,15 @@ scene.fog = new THREE.Fog(0x182b38, 28, 86);
 const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 220);
 
 const params0 = new URLSearchParams(location.search);
-// Stand mode: pieces arrive already turned the way the solution needs them (no Rotate step). ?rotate restores free rotation.
-const LOCK_ROT = !params0.has('rotate');
+// Free rotation is the default. ?norot hands the pieces out already turned the way the solution needs them (no Rotate step).
+const LOCK_ROT = params0.has('norot');
+// Gamepad button glyphs, shown only while a pad is the active input (body.pad).
+const PADK = { a: 'A', b: 'B', x: 'X', y: 'Y', lb: 'LB', rb: 'RB' };
+const pk = k => `<i class="pk" data-pk="${k}">${PADK[k]}</i>`;
 if (LOCK_ROT) document.body.classList.add('norot');
+// Dock modules are real 3D pieces drawn over the scene; ?dock2d falls back to the flat thumbnails.
+const DOCK3D = !params0.has('dock2d');
+if (DOCK3D) document.body.classList.add('dock3d');
 const IS_TOUCH = matchMedia('(pointer: coarse)').matches;
 const QUALITY = IS_TOUCH ? [
   { maxPixels: 1.45e6, prCap: 1.5, shadows: true, shadowSize: 1024 },
@@ -1203,14 +1250,14 @@ function indKindForName(name) {
 // (3 fetches, no extra geometry or draw calls). Only outer-terrain materials: the 8x8 pad keeps its own material.
 // amp = [macro, mid, grit, patch-tint mix], tint = colour multiplier of the patches.
 const GROUND_DETAIL = {
-  kc_earth:   { amp: [0.11, 0.07, 0.05, 0.55], tint: [0.80, 0.70, 0.56] },   // Absheron: compacted brown vs pale limestone dust
-  on_wheat:   { amp: [0.09, 0.06, 0.04, 0.40], tint: [1.10, 1.03, 0.72] },   // ripening patches
-  on_stubble: { amp: [0.08, 0.05, 0.05, 0.35], tint: [0.90, 0.84, 0.72] },
-  on_soil:    { amp: [0.09, 0.06, 0.06, 0.35], tint: [0.86, 0.80, 0.70] },
-  gr_earth:   { amp: [0.10, 0.07, 0.05, 0.50], tint: [1.12, 1.05, 0.74] },   // Gobustan steppe: sun-dried golden patches
-  rf_earth:   { amp: [0.10, 0.07, 0.06, 0.45], tint: [0.80, 0.74, 0.68] },   // oil-darkened refinery yard soil
-  tm_sand:    { amp: [0.07, 0.05, 0.06, 0.40], tint: [0.92, 0.88, 0.80] },   // wet / dry beach sand
-  tm_earth:   { amp: [0.09, 0.06, 0.05, 0.40], tint: [0.86, 0.82, 0.72] },
+  kc_earth:   { amp: [0.14, 0.09, 0.06, 0.75], tint: [0.78, 0.66, 0.52] },   // Absheron: compacted brown vs pale limestone dust
+  on_wheat:   { amp: [0.12, 0.08, 0.05, 0.70], tint: [1.16, 1.06, 0.62] },   // ripening (yellower) patches in the green wheat
+  on_stubble: { amp: [0.11, 0.07, 0.06, 0.55], tint: [0.86, 0.80, 0.66] },
+  on_soil:    { amp: [0.11, 0.08, 0.07, 0.50], tint: [0.84, 0.78, 0.68] },
+  gr_earth:   { amp: [0.13, 0.08, 0.06, 0.70], tint: [1.14, 1.06, 0.70] },   // Gobustan steppe: sun-dried golden patches
+  rf_earth:   { amp: [0.13, 0.08, 0.07, 0.60], tint: [0.76, 0.70, 0.64] },   // oil-darkened refinery yard soil
+  tm_sand:    { amp: [0.09, 0.06, 0.07, 0.55], tint: [0.90, 0.86, 0.78] },   // wet / dry beach sand
+  tm_earth:   { amp: [0.11, 0.07, 0.06, 0.55], tint: [0.84, 0.80, 0.70] },
 };
 const GND_TEX = (() => {
   const S = 256, data = new Uint8Array(S * S * 4);
@@ -1249,11 +1296,11 @@ function applyGroundDetail(material, spec) {
       .replace('#include <common>', '#include <common>\nvarying vec2 vGndW;\nuniform sampler2D uGndTex;\nuniform vec4 uGndAmp;\nuniform vec3 uGndTint;')
       .replace('#include <color_fragment>', `#include <color_fragment>
         {
-          float n1 = texture2D(uGndTex, vGndW * 0.031).r;          // ~8 m patches
+          float n1 = texture2D(uGndTex, vGndW * 0.055).r;          // ~4.5 m patches
           float n2 = texture2D(uGndTex, vGndW * 0.052 + 0.37).g;   // ~1.2 m mottling
           float n3 = texture2D(uGndTex, vGndW * 0.104 + 0.71).b;   // ~15 cm grit
           diffuseColor.rgb *= 1.0 + uGndAmp.x * (n1 * 2.0 - 1.0) + uGndAmp.y * (n2 * 2.0 - 1.0) + uGndAmp.z * (n3 * 2.0 - 1.0);
-          float gPatch = smoothstep(0.48, 0.72, n1 * 0.75 + n2 * 0.25);
+          float gPatch = smoothstep(0.44, 0.62, n1 * 0.75 + n2 * 0.25);   // value noise clusters near 0.5
           diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * uGndTint, gPatch * uGndAmp.w);
         }`);
   };
@@ -2297,11 +2344,80 @@ const thumbCtx = (() => {
 
 function ensureThumb(sId, type, r) {
   const key = sId + ':' + type + ':' + r;
-  if (THUMB_CACHE[key]) return THUMB_CACHE[key];
+  if (!THUMB_CACHE[key]) bakeThumbs([[sId, type, r]]);
+  return THUMB_CACHE[key] || null;
+}
+// Renders many thumbnails into one atlas target and reads it back ONCE: the GPU->CPU readback stalls the
+// pipeline (~20 ms each on Intel UHD / tablets), so per-thumb readbacks froze every world switch for 100-300 ms.
+function bakeThumbs(jobs) {
+  const { S, tScene, tCam, srgbLut } = thumbCtx;
+  const items = [];
+  for (const [sId, type, r] of jobs) {
+    const key = sId + ':' + type + ':' + r;
+    if (THUMB_CACHE[key]) continue;
+    const t = thumbHolder(sId, type, r);
+    if (t) items.push({ key, ...t });
+  }
+  if (!items.length) return;
+  const cols = Math.ceil(Math.sqrt(items.length)), rows = Math.ceil(items.length / cols);
+  const single = items.length === 1;
+  const W = cols * S, H = rows * S;
+  const rt = single ? thumbCtx.rt : new THREE.WebGLRenderTarget(W, H, { type: THREE.UnsignedByteType, depthBuffer: true });
+  const raw = single ? thumbCtx.raw : new Uint8Array(W * H * 4);
+  const prevRT = renderer.getRenderTarget();
+  const prevCol = renderer.getClearColor(new THREE.Color());
+  const prevAlpha = renderer.getClearAlpha();
+  const prevShadow = renderer.shadowMap.enabled;
+  renderer.shadowMap.enabled = false;
+  try {
+    renderer.setClearColor(0x000000, 0);
+    rt.viewport.set(0, 0, W, H); rt.scissor.set(0, 0, W, H); rt.scissorTest = false;
+    renderer.setRenderTarget(rt);
+    renderer.clear(true, true, true);
+    items.forEach((it, i) => {
+      it.x0 = (i % cols) * S; it.y0 = Math.floor(i / cols) * S;
+      rt.viewport.set(it.x0, it.y0, S, S); rt.scissor.set(it.x0, it.y0, S, S); rt.scissorTest = true;
+      renderer.setRenderTarget(rt);
+      tScene.add(it.holder);
+      tCam.left = -it.hs; tCam.right = it.hs; tCam.top = it.hs; tCam.bottom = -it.hs;
+      tCam.updateProjectionMatrix();
+      renderer.render(tScene, tCam);
+      tScene.remove(it.holder);
+    });
+    rt.viewport.set(0, 0, W, H); rt.scissor.set(0, 0, W, H); rt.scissorTest = false;
+    renderer.setRenderTarget(rt);
+    renderer.readRenderTargetPixels(rt, 0, 0, W, H, raw);
+  } finally {
+    renderer.shadowMap.enabled = prevShadow;
+    renderer.setRenderTarget(prevRT);
+    renderer.setClearColor(prevCol, prevAlpha);
+    for (const it of items) if (it.holder.parent) tScene.remove(it.holder);
+    if (!single) rt.dispose();
+  }
+  for (const it of items) {
+    const outCv = document.createElement('canvas'); outCv.width = outCv.height = S;
+    const ctx = outCv.getContext('2d'), imgData = ctx.createImageData(S, S), dst = imgData.data;
+    for (let y = 0; y < S; y++) {
+      const sy = it.y0 + S - 1 - y;
+      for (let x = 0; x < S; x++) {
+        const si = (sy * W + it.x0 + x) * 4, di = (y * S + x) * 4;
+        const a = raw[si + 3];
+        if (a === 0) { dst[di] = dst[di + 1] = dst[di + 2] = dst[di + 3] = 0; continue; }
+        dst[di] = srgbLut[raw[si]];
+        dst[di + 1] = srgbLut[raw[si + 1]];
+        dst[di + 2] = srgbLut[raw[si + 2]];
+        dst[di + 3] = a;
+      }
+    }
+    ctx.putImageData(imgData, 0, 0);
+    THUMB_CACHE[it.key] = outCv;
+  }
+}
+function thumbHolder(sId, type, r) {
   const kit = KITS[sId];
   const m = kit && kit['piece_' + type] ? kitPiece(type, r, 'solid', kit) : null;
   if (!m) return null;
-  const { S, tScene, tCam, rt, raw, srgbLut, geoPad, geoBarH, geoBarV, geoDivX, geoDivZ, darkPadMat, typeMats } = thumbCtx;
+  const { geoPad, geoBarH, geoBarV, geoDivX, geoDivZ, darkPadMat, typeMats } = thumbCtx;
   const { rim, div } = typeMats[type];
   const cells = ROTS[type][r];
   let w = 0, h = 0;
@@ -2320,46 +2436,7 @@ function ensureThumb(sId, type, r) {
     if (cellSet.has((cx + 1) + ',' + cy)) { const d = new THREE.Mesh(geoDivX, div); d.position.set(cx + 0.5, 0.070, cy); holder.add(d); }
     if (cellSet.has(cx + ',' + (cy + 1))) { const d = new THREE.Mesh(geoDivZ, div); d.position.set(cx, 0.070, cy + 0.5); holder.add(d); }
   }
-  tScene.add(holder);
-  const hs = Math.max(w, h, 3) * 0.58;
-  tCam.left = -hs; tCam.right = hs; tCam.top = hs; tCam.bottom = -hs;
-  tCam.updateProjectionMatrix();
-
-  const prevRT = renderer.getRenderTarget();
-  const prevCol = renderer.getClearColor(new THREE.Color());
-  const prevAlpha = renderer.getClearAlpha();
-  const prevShadow = renderer.shadowMap.enabled;
-  renderer.shadowMap.enabled = false;
-  try {
-    renderer.setRenderTarget(rt);
-    renderer.setClearColor(0x000000, 0);
-    renderer.clear(true, true, true);
-    renderer.render(tScene, tCam);
-    renderer.readRenderTargetPixels(rt, 0, 0, S, S, raw);
-  } finally {
-    renderer.shadowMap.enabled = prevShadow;
-    renderer.setRenderTarget(prevRT);
-    renderer.setClearColor(prevCol, prevAlpha);
-    tScene.remove(holder);
-  }
-
-  const outCv = document.createElement('canvas'); outCv.width = outCv.height = S;
-  const ctx = outCv.getContext('2d'), imgData = ctx.createImageData(S, S), dst = imgData.data;
-  for (let y = 0; y < S; y++) {
-    const sy = S - 1 - y;
-    for (let x = 0; x < S; x++) {
-      const si = (sy * S + x) * 4, di = (y * S + x) * 4;
-      const a = raw[si + 3];
-      if (a === 0) { dst[di] = dst[di + 1] = dst[di + 2] = dst[di + 3] = 0; continue; }
-      dst[di] = srgbLut[raw[si]];
-      dst[di + 1] = srgbLut[raw[si + 1]];
-      dst[di + 2] = srgbLut[raw[si + 2]];
-      dst[di + 3] = a;
-    }
-  }
-  ctx.putImageData(imgData, 0, 0);
-  THUMB_CACHE[key] = outCv;
-  return outCv;
+  return { holder, hs: Math.max(w, h, 3) * 0.58 };
 }
 
 function makePiece(type, cells, kind, r = 0) {
@@ -2862,10 +2939,10 @@ function renderScreen() {
       <div class="ab-main">
         <div class="ab-copy"><h1>${t.startTitle.replace('{s}', roundDuration())}</h1><p>${desc}</p>${rec}${creditHtml()}</div>
         <div class="ab-side">
-          <button type="button" class="btn-main" data-go><span>${t.startBtn}</span><span class="btn-play-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 6.5v11l9-5.5z"/></svg></span></button>
+          <button type="button" class="btn-main" data-go>${pk('a')}<span>${t.startBtn}</span><span class="btn-play-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 6.5v11l9-5.5z"/></svg></span></button>
           <div class="ab-tools">
-            ${pool.length > 1 ? `<button type="button" class="ab-more${pickOpen ? ' on' : ''}" data-pick>${t.otherWorlds}</button>` : ''}
-            <div class="lang-pill"><button type="button" data-lang="az" class="${lang === 'az' ? 'on' : ''}">AZ</button><button type="button" data-lang="en" class="${lang === 'en' ? 'on' : ''}">EN</button></div>
+            ${pool.length > 1 ? `<button type="button" class="ab-more${pickOpen ? ' on' : ''}" data-pick>${pk('lb')}${t.otherWorlds}${pk('rb')}</button>` : ''}
+            ${pk('y')}<div class="lang-pill"><button type="button" data-lang="az" class="${lang === 'az' ? 'on' : ''}">AZ</button><button type="button" data-lang="en" class="${lang === 'en' ? 'on' : ''}">EN</button></div>
             <button type="button" class="full-btn" title="Fullscreen">${fsIco()}</button>
           </div>
         </div>
@@ -2894,7 +2971,7 @@ function renderScreen() {
         </div>
       </div>
       ${renderLeaderboardHtml(activeTier, lastSavedTs)}
-      <button type="button" class="btn-main" data-go>${t.newRoundBtn}</button>
+      <button type="button" class="btn-main" data-go>${pk('a')}${t.newRoundBtn}</button>
       ${autoLine}
       ${creditHtml()}
     </div>`;
@@ -2909,7 +2986,7 @@ function renderScreen() {
         <div><b>${placed.length}/${tray.length}</b><span>${t.statMods}</span></div>
         <div><b>${Math.round(filled / area * 100)}%</b><span>${t.statFilled}</span></div>
       </div>
-      <button type="button" class="btn-main" data-go>${t.retryBtn}</button>
+      <button type="button" class="btn-main" data-go>${pk('a')}${t.retryBtn}</button>
       ${autoLine}
     </div>`;
   }
@@ -3484,15 +3561,18 @@ function makeMiniGrid(type, r) {
 function renderTray() {
   $('dots').innerHTML = tray.map(t => `<i class="${t.placed ? 'on' : ''}"></i>`).join('');
   const box = $('cards'); box.innerHTML = '';
-  const u = unplaced(), si = Math.min(sel, u.length - 1), selLabel = TR().selBadge;
-  u.forEach((t, i) => {
-    const r = (i === si ? rot : (t.rot || 0)) % ROTS[t.type].length;
+  const u = unplaced(), cur = current(), selLabel = TR().selBadge;
+  box.style.gridTemplateColumns = `repeat(${tray.length}, minmax(0, 1fr))`;
+  tray.forEach(t => {   // every module keeps its slot; a placed one just leaves it empty
+    const isSel = !!cur && cur.id === t.id;
+    const r = (isSel ? rot : (t.rot || 0)) % ROTS[t.type].length;
     const d = document.createElement('div');
-    d.className = 'card' + (i === si ? ' sel' : '') + (drag && drag.moved && drag.id === t.id ? ' lifted' : '');
+    d.className = 'card' + (t.placed ? ' gone' : '') + (isSel ? ' sel' : '') + (drag && drag.moved && drag.id === t.id ? ' lifted' : '');
     d.dataset.id = t.id;
     d.dataset.selLabel = selLabel;
+    if (t.placed) { box.append(d); return; }
     const cv = document.createElement('canvas'); cv.width = cv.height = 224; cv.className = 'thumb';
-    drawIcon(cv, t.type, r);
+    if (!DOCK3D) drawIcon(cv, t.type, r);
     const code = document.createElement('span'); code.className = 'card-code';
     code.textContent = SHAPES[t.type].code;
     code.style.borderColor = hex(COLORS[t.type]);
@@ -3510,6 +3590,7 @@ function renderTray() {
   }
   $('btnBack').disabled = !placed.length;
   $('btnRot').disabled = !u.length;
+  dock.slots = null;
 }
 
 // ---------------------------------------------------------------- audio (SFX + subtle procedural ambient + mute)
@@ -3653,16 +3734,18 @@ let drag = null, orbitDrag = null;
 function touchLift(e) {
   return e.pointerType !== 'mouse' ? Math.min(innerHeight * 0.065, 3.5 * remPx()) : 0;
 }
-function isOverTray(clientX) {
-  return clientX >= innerWidth - sidePx();
+function isOverTray(y) {   // y = the lifted point the module is drawn at, so the lowest bay row stays reachable
+  const t = $('tray');
+  return status === 'play' && !!t && y >= t.offsetTop;
 }
 function aimAt(e) {
   const lift = touchLift(e);
-  const overTray = isOverTray(e.clientX);
+  const overTray = isOverTray(e.clientY - lift);
   const c = overTray ? null : cellAt(e.clientX, e.clientY - lift);
   drag.over = !!c;
   drag.overTray = overTray;
   ghostArmed = true; lastInput = performance.now();
+  drag.px = e.clientX; drag.py = e.clientY - lift;
   dragIconAt(e, lift);
   if (c && (c.x !== cursor.x || c.y !== cursor.y || !snapMode)) {
     cursor = c; snapMode = true; refreshValidity();
@@ -3691,7 +3774,7 @@ canvas.addEventListener('pointerdown', e => {
   const c = cellAt(e.clientX, e.clientY) || (hitP ? { x: hitP.x + hitP.cells[0][0], y: hitP.y + hitP.cells[0][1] } : null);
   if (!c) return;
   const i = hitP ? ((hitP.y + hitP.cells[0][1]) * N + hitP.x + hitP.cells[0][0]) : (c.y * N + c.x);
-  const base = { pid: e.pointerId, sx: e.clientX, sy: e.clientY, moved: false, over: true, overTray: false, card: false };
+  const base = { pid: e.pointerId, sx: e.clientX, sy: e.clientY, px: e.clientX, py: e.clientY - touchLift(e), moved: false, over: true, overTray: false, card: false };
   if (occ[i] !== -1) {
     const prevPlace = pickUp(i);
     cursor = c; snapMode = true; refreshValidity();
@@ -3732,17 +3815,18 @@ function endDrag(e) {
         ghostArmed = false; refreshValidity(); flyBack(e.clientX, e.clientY);
       } else if (d.over && place(false)) {
         // successfully placed
-      } else if (d.picked && d.prevPlace) {
-        restorePiece(d.prevPlace);
       } else {
+        // nowhere to put it (also a module lifted off the bay): it always goes back to the dock, never stays
+        // half-placed and never leaves a red ghost behind
+        ghostArmed = false; refreshValidity();
         flyBack(e.clientX, e.clientY);
       }
     } else if (d.picked) {
       ghostArmed = false; refreshValidity(); flyBack(e.clientX, e.clientY);
     } else if (d.card) {
       if (d.wasSel) rotate();
-    } else {
-      place(false);
+    } else if (!place(false) && e.pointerType !== 'mouse') {
+      ghostArmed = false;   // failed tap: the toast and shake say why; no red ghost left behind
     }
   } else if (e.type === 'pointercancel' && d.picked && d.prevPlace) {
     restorePiece(d.prevPlace);
@@ -3874,33 +3958,68 @@ function goFull() {
 }
 
 // ---------------------------------------------------------------- input: gamepad
+// Standard mapping; the inputs of all connected pads are merged, so a phantom device in slot 0 can't block the real one.
+//   idle:  A / Start - start, LB / RB - previous / next facility, Y - language
+//   round: d-pad / left stick - move, A - place or lift, X - rotate, B - undo, Y - hint, LB / RB - previous / next module
+//   end:   A / Start - back to the idle screen
 const prevBtn = [];
-let padDir = null, padTimer = 0;
+let padDir = null, padTimer = 0, padActive = false, padRumble = null, padId = null;
+function applyPadGlyphs(id) {
+  const ps = /054c|dualsense|dualshock|playstation/i.test(id || '');
+  Object.assign(PADK, ps ? { a: '\u2715', b: '\u25CB', x: '\u25A1', y: '\u25B3', lb: 'L1', rb: 'R1' } : { a: 'A', b: 'B', x: 'X', y: 'Y', lb: 'LB', rb: 'RB' });
+  for (const el of document.querySelectorAll('[data-pk]')) el.textContent = PADK[el.dataset.pk];
+}
+applyPadGlyphs('');
+function setPad(on, gp) {
+  if (on && gp) { padRumble = gp.vibrationActuator || null; if (gp.id !== padId) { padId = gp.id; applyPadGlyphs(gp.id); } }
+  if (on === padActive) return;
+  padActive = on; document.body.classList.toggle('pad', on);
+  if (on) hideHand();
+}
+addEventListener('pointerdown', () => setPad(false), true);   // touch takes over: the glyphs go away
+function stepWorld(d) {
+  const pool = worldPool();
+  if (pool.length > 1) pickWorld(pool[(pool.indexOf(sceneId) + d + pool.length) % pool.length]);
+}
 function pollPad(dt) {
   const pads = navigator.getGamepads ? navigator.getGamepads() : [];
-  let gp = null; for (const p of pads) if (p && p.connected) { gp = p; break; }
-  if (!gp) return;
-  const pressed = i => !!(gp.buttons[i] && gp.buttons[i].pressed);
-  const edges = [];
-  for (let i = 0; i < 16; i++) { const p = pressed(i); edges[i] = p && !prevBtn[i]; prevBtn[i] = p; }
-  if (edges.some(Boolean)) { ensureAudio(); noteInput(); }
-  if (edges[0]) confirm();
-  if (edges[1]) back();
-  if (edges[2] || edges[3]) rotate();
-  if (edges[4]) cycle(-1);
-  if (edges[5]) cycle(1);
-  if (edges[9]) newRound({ advanceScene: true });
-  let dx = 0, dy = 0;
-  if (pressed(14)) dx = -1; else if (pressed(15)) dx = 1; else if (pressed(12)) dy = -1; else if (pressed(13)) dy = 1;
-  if (!dx && !dy) {
-    const ax = gp.axes[0] || 0, ay = gp.axes[1] || 0;
-    if (Math.max(Math.abs(ax), Math.abs(ay)) > 0.55) { if (Math.abs(ax) > Math.abs(ay)) dx = Math.sign(ax); else dy = Math.sign(ay); }
+  const down = []; let src = null, ax = 0, ay = 0;
+  for (const p of pads) {
+    if (!p || !p.connected) continue;
+    for (let i = 0; i < 16; i++) if (p.buttons[i] && p.buttons[i].pressed) { down[i] = true; src = p; }
+    const x = p.axes[0] || 0, y = p.axes[1] || 0;
+    if (Math.hypot(x, y) > Math.hypot(ax, ay)) { ax = x; ay = y; if (Math.hypot(x, y) > 0.55) src = src || p; }
   }
-  if (dx || dy) {
-    const key = dx + ',' + dy;
-    if (key !== padDir) { padDir = key; padTimer = 0.24; move(dx, dy); }
-    else if ((padTimer -= dt) <= 0) { padTimer = 0.11; move(dx, dy); }
-  } else padDir = null;
+  const edges = [];
+  for (let i = 0; i < 16; i++) { edges[i] = !!down[i] && !prevBtn[i]; prevBtn[i] = !!down[i]; }
+  let dx = 0, dy = 0;
+  if (down[14]) dx = -1; else if (down[15]) dx = 1; else if (down[12]) dy = -1; else if (down[13]) dy = 1;
+  else if (Math.max(Math.abs(ax), Math.abs(ay)) > 0.55) { if (Math.abs(ax) > Math.abs(ay)) dx = Math.sign(ax); else dy = Math.sign(ay); }
+  if (!src) { padDir = null; return; }
+  // Only a fresh press or an actual step counts as activity: a pad lying on a button must not freeze the idle screen.
+  const active = () => { ensureAudio(); noteInput(); setPad(true, src); };
+  if (edges.some(Boolean)) active();
+  if (lbModalOpen()) return;
+  if (status === 'ready') {
+    if (edges[0] || edges[9]) confirm();
+    else if (edges[4]) stepWorld(-1);
+    else if (edges[5]) stepWorld(1);
+    else if (edges[3]) setLang(lang === 'az' ? 'en' : 'az');
+    padDir = null;
+  } else if (status === 'play') {
+    if (edges[0]) confirm();
+    if (edges[1]) back();
+    if (edges[2]) rotate();
+    if (edges[3] && $('hintBtn').classList.contains('show')) useHint();
+    if (edges[4]) cycle(-1);
+    if (edges[5]) cycle(1);
+    if (dx || dy) {
+      const key = dx + ',' + dy;
+      if (key !== padDir) { padDir = key; padTimer = 0.24; active(); move(dx, dy); }
+      else if ((padTimer -= dt) <= 0) { padTimer = 0.11; active(); move(dx, dy); }
+    } else padDir = null;
+    if (padActive && status === 'play' && !ghostArmed) { ghostArmed = true; refreshValidity(); }   // a pad player always sees where the module will land
+  } else if (edges[0] || edges[9]) confirm();
 }
 
 // ---------------------------------------------------------------- expo UX: idle reset, tutorial hand, drag feedback, hint, staff menu
@@ -3912,13 +4031,22 @@ const remPx = () => parseFloat(getComputedStyle(document.documentElement).fontSi
 function noteInput() { lastInput = performance.now(); attractTimer = 0; hideHand(); if ($('staff').classList.contains('show')) resetStaffTimer(); }
 addEventListener('pointerdown', noteInput, true);
 addEventListener('keydown', noteInput, true);
-function buzz(p) { try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) { } }
+function buzz(p) {
+  try { if (!padActive && navigator.vibrate) navigator.vibrate(p); } catch (e) { }   // a pad player feels it in the pad, not in the tablet
+  try {
+    if (padActive && padRumble && padRumble.playEffect) {
+      const pat = Array.isArray(p), ms = pat ? p.reduce((a, b) => a + b, 0) : p;
+      const r = padRumble.playEffect('dual-rumble', { duration: Math.max(70, ms * 2), weakMagnitude: pat ? 0.6 : 0.35, strongMagnitude: pat ? 0.7 : 0.15 });
+      if (r && r.catch) r.catch(() => { });
+    }
+  } catch (e) { }
+}
 
 // tutorial hand: points to the geometric centroid of the open bay ONLY before the first module is placed (never leaks solution!)
 const hand = $('hand'); let handOn = false;
 function showHand() {
   if (placed.length > 0) return;
-  const card = document.querySelector('.card.sel') || document.querySelector('.card');
+  const card = document.querySelector('.card.sel') || document.querySelector('.card:not(.gone)');
   if (!card) return;
   let cx = 0, cy = 0, n = 0;
   for (let i = 0; i < N * N; i++) if (level.hole[i]) { cx += i % N; cy += (i / N) | 0; n++; }
@@ -3936,6 +4064,7 @@ function hideHand() { if (handOn) { hand.classList.remove('run'); handOn = false
 function drawDragIcon() { const c = current(); if (c) drawIcon($('dragIcon'), c.type, rot); }
 function dragIconAt(e, lift) {
   const el = $('dragIcon');
+  if (DOCK3D) return;   // the dock module itself follows the finger
   if (drag.over) { el.style.display = 'none'; return; }
   if (el.style.display !== 'block') { drawDragIcon(); el.style.display = 'block'; }
   const sz = 5 * remPx();
@@ -3944,6 +4073,7 @@ function dragIconAt(e, lift) {
 function flyBack(x, y) {
   const c = current(), card = document.querySelector('.card.sel');
   if (!c || !card) return;
+  if (DOCK3D) { card.classList.add('shake'); return; }   // the 3D module flies back by itself
   const cv = document.createElement('canvas'); cv.width = cv.height = 224; cv.className = 'flyback';
   drawIcon(cv, c.type, rot);
   const sz = 5 * remPx(), r = card.getBoundingClientRect();
@@ -3975,7 +4105,7 @@ function tickExpo(now, dt) {
   const idle = (now - lastInput) / 1000;
   if (status === 'play') {
     if (idle > IDLE_RESET) { newRound(); return; }
-    if (!handOn && !drag && placed.length === 0 && idle > HAND_DELAY) showHand();
+    if (!padActive && !handOn && !drag && placed.length === 0 && idle > HAND_DELAY) showHand();
   } else if (status === 'ready' && lang !== DEFAULT_LANG && idle > LANG_IDLE_RESET) {
     setLang(DEFAULT_LANG);   // next visitor starts in English
   } else if (status === 'ready' && !orbitDrag && !params0.has('scene') && !lbModalOpen()) {
@@ -4034,22 +4164,136 @@ $('staff').addEventListener('click', e => {
   renderStaff();
 });
 
+// ---------------------------------------------------------------- dock (bottom row of real 3D modules)
+// The unplaced modules are the same meshes as on the bay, drawn in a second orthographic pass over the scene.
+// The DOM cards stay as invisible hit areas, so picking, selection and the tutorial hand are unchanged.
+const dock = { scene: new THREE.Scene(), bg: new THREE.Scene(), cam: new THREE.OrthographicCamera(-1, 1, 1, -1, -4000, 4000), items: [], tray: null, mix: 0, slots: null, fade: null };
+{
+  dock.scene.add(new THREE.HemisphereLight(0xdaf0ff, 0x1a3340, 1.45));
+  const kl = new THREE.DirectionalLight(0xfff4df, 2.8); kl.position.set(-5, 11, 7); dock.scene.add(kl);
+  const rl = new THREE.DirectionalLight(0x58c8ff, 0.9); rl.position.set(6, 5, -6); dock.scene.add(rl);
+  const cv = document.createElement('canvas'); cv.width = cv.height = 8;
+  const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace;
+  dock.barCv = cv; dock.barTex = tex; dock.barKey = '';
+  dock.fade = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthTest: false, depthWrite: false, toneMapped: false }));
+  dock.bg.add(dock.fade);   // own scene: drawn before the modules, so it never tints them
+}
+// dark footprint under each dock module: shows the cell shape and keeps pale modules readable over sand or water
+const DOCK_PAD = new THREE.BoxGeometry(1.06, 0.06, 1.06); DOCK_PAD.userData.shared = true;
+const DOCK_PAD_MAT = new THREE.MeshBasicMaterial({ color: 0x06141d });
+// The bar is the same dark plate as the idle screen bar, redrawn at pixel size so its corners stay round.
+function drawDockBar(bw, bh, slots, ox, oy) {
+  const pr = Math.min(2, devicePixelRatio || 1), cv = dock.barCv, rem = remPx();
+  const key = [bw, bh, pr, Object.values(slots).map(s => Math.round(s.x) + ':' + s.w).join(',')].join('|');
+  if (key === dock.barKey) return;
+  dock.barKey = key;
+  cv.width = Math.round(bw * pr); cv.height = Math.round(bh * pr);
+  const g = cv.getContext('2d');
+  g.setTransform(pr, 0, 0, pr, 0, 0); g.clearRect(0, 0, bw, bh);
+  g.beginPath(); g.roundRect(0.5, 0.5, bw - 1, bh - 1, rem); g.fillStyle = 'rgba(7,19,28,.94)'; g.fill();
+  g.strokeStyle = 'rgba(255,255,255,.12)'; g.lineWidth = 1; g.stroke();
+  for (const s of Object.values(slots)) {   // slot wells
+    g.beginPath(); g.roundRect(s.x - s.w / 2 - ox, s.y - s.h / 2 - oy, s.w, s.h, rem * 0.8);
+    g.fillStyle = 'rgba(255,255,255,.035)'; g.fill();
+  }
+  dock.barTex.needsUpdate = true;
+}
+function dockMesh(it) {
+  const t = it.t, r = (t.rot || 0) % ROTS[t.type].length, cells = ROTS[t.type][r];
+  disposeGroup(it.holder);
+  const m = makePiece(t.type, cells, 'solid', r);
+  let x0 = 9, x1 = -9, y0 = 9, y1 = -9;
+  for (const [x, y] of cells) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+  m.position.set(-(x0 + x1) / 2, 0, -(y0 + y1) / 2);
+  it.holder.add(m); it.rot = r; it.w = x1 - x0 + 1; it.h = y1 - y0 + 1;
+  if (!LOCK_ROT) it.w = it.h = Math.max(it.w, it.h);   // the slot is sized for any turn of the module
+  for (const [x, y] of cells) { const pad = new THREE.Mesh(DOCK_PAD, DOCK_PAD_MAT); pad.position.set(x - (x0 + x1) / 2, -0.04, y - (y0 + y1) / 2); it.holder.add(pad); }
+}
+function buildDock() {
+  for (const it of dock.items) { dock.scene.remove(it.holder); disposeGroup(it.holder); }
+  dock.items = tray.map(t => ({ id: t.id, t, holder: new THREE.Group(), rot: -1, w: 1, h: 1, x: 0, y: 0, s: 0, k: 0, spin: 0, fresh: true }));
+  for (const it of dock.items) { dock.scene.add(it.holder); dockMesh(it); }
+  dock.tray = tray; dock.slots = null;
+  renderer.compile(dock.scene, dock.cam);
+}
+const _dR = new THREE.Vector3(), _dU = new THREE.Vector3(), _dB = new THREE.Vector3(), _dP = new THREE.Vector3();
+// Returns true when there is something to draw this frame.
+function updateDock(dt) {
+  if (!DOCK3D) return false;
+  const play = status === 'play';
+  dock.mix += ((play ? 1 : 0) - dock.mix) * Math.min(1, dt * 7);
+  if (!play && dock.mix < 0.01) { dock.mix = 0; return false; }
+  if (play && dock.tray !== tray) buildDock();
+  const trayEl = $('tray');
+  if (!dock.items.length || !trayEl) return false;
+  const w = innerWidth, h = innerHeight, dockH = trayEl.offsetHeight;
+  if (!dock.slots) {
+    dock.slots = {};
+    for (const c of document.querySelectorAll('#cards .card')) {   // offset* ignores the slide-in transform of the tray
+      dock.slots[c.dataset.id] = { x: trayEl.offsetLeft + c.offsetLeft + c.offsetWidth / 2, y: trayEl.offsetTop + c.offsetTop + c.offsetHeight / 2, w: c.offsetWidth, h: c.offsetHeight };
+    }
+  }
+  const cam = dock.cam;
+  if (cam.right !== w / 2 || cam.top !== h / 2) { cam.left = -w / 2; cam.right = w / 2; cam.top = h / 2; cam.bottom = -h / 2; cam.updateProjectionMatrix(); }
+  cam.quaternion.copy(camera.quaternion);   // same tilt as the bay, so a module looks the same in the dock and on the deck
+  const right = _dR.set(1, 0, 0).applyQuaternion(cam.quaternion), up = _dU.set(0, 1, 0).applyQuaternion(cam.quaternion), back = _dB.set(0, 0, 1).applyQuaternion(cam.quaternion);
+  const put = (obj, sx, sy, depth) => obj.position.set(0, 0, 0).addScaledVector(right, sx - w / 2).addScaledVector(up, h / 2 - sy).addScaledVector(back, depth);
+  const slide = (1 - dock.mix) * (h - trayEl.offsetTop), bw = trayEl.offsetWidth;
+  drawDockBar(bw, dockH, dock.slots, trayEl.offsetLeft, trayEl.offsetTop);
+  dock.fade.quaternion.copy(cam.quaternion); dock.fade.scale.set(bw, dockH, 1);
+  put(dock.fade, trayEl.offsetLeft + bw / 2, trayEl.offsetTop + dockH / 2 + slide, -3000);
+  dock.fade.material.opacity = Math.min(1, dock.mix * 1.5);
+  // every module fills its own slot, but none is more than a quarter larger than the smallest one
+  let cell = 1e9;
+  for (const it of dock.items) {
+    const s = dock.slots[it.id];
+    if (!s) continue;
+    it.fit = Math.min(s.w * 0.9 / it.w, s.h * 0.92 / (it.h * 0.86 + 0.6));
+    cell = Math.min(cell, it.fit);
+  }
+  const cur = current(), dg = drag && (drag.moved || drag.picked) ? drag : null;
+  let boardCell = cell;
+  if (dg) {
+    const ax = _dP.set(-0.5, 0, 0).project(camera).x, bx = _dP.set(0.5, 0, 0).project(camera).x;
+    boardCell = Math.abs(bx - ax) / 2 * w;
+  }
+  for (const it of dock.items) {
+    const t = it.t, s = dock.slots[it.id];
+    if (!s) continue;
+    if (it.rot !== (t.rot || 0) % ROTS[t.type].length) { dockMesh(it); it.spin = Math.PI / 2; }
+    it.spin *= Math.exp(-dt * 18); it.holder.rotation.y = it.spin;
+    const mine = !!dg && dg.id === t.id;
+    const own = Math.min(it.fit || cell, cell * 1.25);
+    let tx = s.x, ty = s.y + own * 0.22, ts = own, show = !t.placed, kf = 12;
+    if (mine) { tx = dg.px ?? s.x; ty = dg.py ?? s.y; ts = boardCell; show = !dg.over; kf = 45; }
+    else if (cur && cur.id === t.id) { ts *= 1.05; ty -= own * (0.05 + Math.sin(T * 3) * 0.025); }
+    if (it.fresh || (mine && !it.holder.visible)) { it.x = tx; it.y = ty; if (it.fresh) it.s = ts; it.fresh = false; }
+    it.x += (tx - it.x) * Math.min(1, dt * kf); it.y += (ty - it.y) * Math.min(1, dt * kf);
+    it.s += (ts - it.s) * Math.min(1, dt * 14);
+    it.k += ((show ? 1 : 0) - it.k) * Math.min(1, dt * (show ? 14 : 40));
+    it.holder.visible = it.k > 0.03;
+    it.holder.scale.setScalar(Math.max(0.001, it.s * (0.55 + 0.45 * it.k) * (1 + 0.1 * it.spin)));
+    put(it.holder, it.x, it.y + slide, mine ? 600 : 0);
+  }
+  return true;
+}
+
 // ---------------------------------------------------------------- loop
 let camOrbit = 0, viewAspect = 1, lastCamOffset = -1, camBotFrac = 0;
 function sidePx() {
-  const pad = 2 * parseFloat(getComputedStyle(document.documentElement).fontSize) * 1.2;
-  if (status === 'ready') return 0;   // idle bar sits at the bottom, scene keeps the full width
-  const t = $('tray');
-  return t ? t.offsetWidth + pad : 0;
+  if (status !== 'win' && status !== 'lose') return 0;   // dock and idle bar sit at the bottom: the scene keeps the full width
+  const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
+  return 27.5 * rem + 2.4 * rem;   // result panel on the right
 }
 function placeCamera() {
   const fit = Math.max(1.04, 1.4 / viewAspect), s = Math.sin(camOrbit), c = Math.cos(camOrbit);
   const sc = (typeof SCENES !== 'undefined' && SCENES[sceneId]) || {};
-  const f = fit * (sc.camFit || 1) * (1 - 0.14 * celebCamMix) * (1 + (0.04 + camBotFrac) * readyCamMix), dx = sc.camX || 0, dz = sc.camZ || 0;
+  const f = fit * (sc.camFit || 1) * (1 - 0.14 * celebCamMix) * (1 + camBotFrac + 0.04 * readyCamMix), dx = sc.camX || 0, dz = sc.camZ || 0;
   camera.position.set(s * (7.4 + 2.6 * readyCamMix) * f + dx, (12.4 - 3.4 * readyCamMix - 2.4 * celebCamMix) * f + camPunch, c * (7.4 + 2.6 * readyCamMix) * f + dz);
   camera.lookAt(s * 0.25 + dx, -0.6 + 0.35 * celebCamMix, c * 0.25 + dz);
 }
 function bottomPx() {
+  if (status === 'play') { const t = $('tray'); return t ? innerHeight - t.offsetTop : 0; }
   if (status !== 'ready') return 0;
   const b = document.querySelector('#screen.attract .attract-bar');
   return b && b.offsetHeight ? b.offsetHeight + parseFloat(getComputedStyle(document.documentElement).fontSize) * 1.2 : 0;
@@ -4059,7 +4303,7 @@ function bottomPx() {
 let camSideCur = 0, camBotCur = 0;
 function applyCamViewOffset(dt = null) {
   const w = innerWidth, h = innerHeight;
-  const side = Math.min(sidePx(), w * 0.45) * (1 - celebCamMix), bot = Math.min(bottomPx(), h * 0.5) * readyCamMix;
+  const side = Math.min(sidePx(), w * 0.45) * (1 - celebCamMix), bot = Math.min(bottomPx(), h * 0.5) * (status === 'ready' ? readyCamMix : 1);
   const k = dt === null ? 1 : Math.min(1, dt * 5);
   camSideCur += (side - camSideCur) * k; camBotCur += (bot - camBotCur) * k;
   const key = camSideCur * 10000 + camBotCur;
@@ -4090,6 +4334,7 @@ function resize() {
   lastCamOffset = -1;
   applyCamViewOffset();
   placeCamera();
+  dock.slots = null;
 }
 addEventListener('resize', resize);
 // mobile browsers: never let the page zoom (pinch / double-tap / rotation keep-zoom)
@@ -4122,12 +4367,14 @@ function trackPerf(rawMs, now) {
   if (now - perf.since < 2500) return;
   perf.ms = perf.acc / perf.n; perf.fps = 1000 / perf.ms;
   if (now - bootReadyAt > 5000 && !params0.has('q') && !qLocked) {
-    if (perf.fps < 40) {
+    // Step down below 50 fps (40-56 fps used to be a dead zone that never adapted and stayed choppy). Never step
+    // back up to a level that already failed: every switch reallocates buffers, and ping-pong caused hitches.
+    if (perf.fps < 50) {
       perf.lowStreak++; perf.highStreak = 0;
-      if (perf.lowStreak >= 2 && qLevel < QUALITY.length - 1) { qLevel++; perf.lowStreak = 0; applyQuality(); }
-    } else if (perf.fps >= 57) {
+      if (perf.lowStreak >= 2 && qLevel < QUALITY.length - 1) { perf.floor = Math.max(perf.floor || 0, qLevel + 1); qLevel++; perf.lowStreak = 0; applyQuality(); }
+    } else if (perf.fps >= 58) {
       perf.highStreak++; perf.lowStreak = 0;
-      if (perf.highStreak >= 3 && qLevel > 0) { qLevel--; perf.highStreak = 0; applyQuality(); }
+      if (perf.highStreak >= 3 && qLevel > (perf.floor || 0)) { qLevel--; perf.highStreak = 0; applyQuality(); }
     } else {
       perf.lowStreak = 0; perf.highStreak = 0;
     }
@@ -4251,6 +4498,7 @@ function loop(now) {
   }
   if (shadowFrames > 0) { renderer.shadowMap.needsUpdate = true; shadowFrames--; }
   renderer.render(scene, camera);
+  if (updateDock(dt)) { renderer.autoClear = false; renderer.render(dock.bg, dock.cam); renderer.clearDepth(); renderer.render(dock.scene, dock.cam); renderer.autoClear = true; }
   trackPerf(rawMs, now);
   requestAnimationFrame(loop);
 }
@@ -4274,7 +4522,7 @@ window.__game = {
     }
   },
   newRound, setTime(v) { timeLeft = v; },
-  dbg: { THREE, ROTS, scene, renderer, camera, waterMat, sfxBuf, THUMB_CACHE, heli, perf,
+  dbg: { THREE, ROTS, scene, renderer, camera, dock, waterMat, sfxBuf, THUMB_CACHE, heli, perf,
     holdOrbit(v) { orbitHold = v; if (v !== null) { camOrbit = v; placeCamera(); } } },
 };
 
@@ -4282,6 +4530,17 @@ await loadKit();
 KIT = KITS.platform || null;
 applyKitPlatform();
 applyKitMarine();
+// Warm-up behind the loader so the stand never hitches later: one batched thumbnail readback per world, and one
+// render of every world to compile its shaders and upload its meshes before the first world switch.
+for (const id of Object.keys(SCENES)) {
+  if (!sceneReady(id)) continue;
+  const jobs = [];
+  for (const type of Object.keys(SHAPES)) for (let r = 0; r < ROTS[type].length; r++) jobs.push([id, type, r]);
+  try { bakeThumbs(jobs); } catch (e) { console.warn('thumb bake', id, e); }
+  if (SCENES[id].hidden) continue;
+  try { setScene(id); renderer.render(scene, camera); } catch (e) { console.warn('warm', id, e); }
+}
+dirtyShadows();
 setLoadProgress(100);
 if (params0.has('lbdemo')) fillDemoLeaderboard();
 newRound();
